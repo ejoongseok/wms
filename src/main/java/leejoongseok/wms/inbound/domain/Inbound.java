@@ -9,6 +9,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -49,6 +50,10 @@ public class Inbound {
     @Comment("입고 진행 상태")
     @Enumerated(EnumType.STRING)
     private InboundStatus status = InboundStatus.ORDER_REQUESTED;
+    @Lob
+    @Column(name = "rejection_reasons", nullable = true)
+    @Comment("입고 거부 사유")
+    private String rejectionReasons;
 
     public Inbound(
             final LocalDateTime orderRequestAt,
@@ -92,5 +97,14 @@ public class Inbound {
             throw new IllegalStateException(String.format("입고 확정 할 수 있는 상태가 아닙니다. 현재 상태:[%s]", status.getDescription()));
         }
         status = InboundStatus.CONFIRM_INSPECTED;
+    }
+
+    public void reject(final String rejectionReasons) {
+        Assert.hasText(rejectionReasons, "입고 거부 사유는 필수입니다.");
+        if (InboundStatus.ORDER_REQUESTED != status) {
+            throw new IllegalStateException(String.format("입고 거부 할 수 있는 상태가 아닙니다. 현재 상태:[%s]", status.getDescription()));
+        }
+        status = InboundStatus.REJECTED;
+        this.rejectionReasons = rejectionReasons;
     }
 }
