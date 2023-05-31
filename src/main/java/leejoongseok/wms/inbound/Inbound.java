@@ -54,8 +54,8 @@ public class Inbound {
         if (null == estimatedArrivalAt || today.isAfter(estimatedArrivalAt)) {
             throw new IllegalArgumentException("예상 도착일시는 현재시간보다 미래여야 합니다.");
         }
-        if (null == totalAmount || 0 > totalAmount.compareTo(BigDecimal.ZERO)) {
-            throw new IllegalArgumentException("총 주문 금액은 0원보다 커야 합니다.");
+        if (null == totalAmount || 0 > totalAmount.intValue()) {
+            throw new IllegalArgumentException("총 주문 금액은 0원원 이상이어야 합니다.");
         }
         this.orderRequestAt = orderRequestAt;
         this.estimatedArrivalAt = estimatedArrivalAt;

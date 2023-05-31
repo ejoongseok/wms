@@ -1,25 +1,36 @@
 package leejoongseok.wms.inbound;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import leejoongseok.wms.item.domain.Item;
 import leejoongseok.wms.item.domain.ItemRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Component
+@RestController
 @RequiredArgsConstructor
 public class CreateInbound {
     private final InboundRepository inboundRepository;
     private final ItemRepository itemRepository;
 
     @Transactional
-    public void request(final Request request) {
+    @PostMapping("/inbounds")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void request(@RequestBody @Valid final Request request) {
         final Inbound inbound = request.toEntity();
         final List<InboundItem> inboundItems = toInboundItems(request.itemRequests);
         inbound.addInboundItems(inboundItems);
@@ -43,9 +54,16 @@ public class CreateInbound {
     }
 
     public record Request(
+            @Past(message = "주문 요청일시는 현재시간보다 과거여야 합니다.")
+            @NotNull(message = "주문 요청일은 필수입니다.")
             LocalDateTime orderRequestAt,
+            @Future(message = "예상 도착일시는 현재시간보다 미래여야 합니다.")
+            @NotNull(message = "예상 도착일시는 필수입니다.")
             LocalDateTime estimatedArrivalAt,
+            @PositiveOrZero(message = "총 주문 금액은 0원 이상이어야 합니다.")
+            @NotNull(message = "총 주문 금액은 필수입니다.")
             BigDecimal totalAmount,
+            @NotEmpty(message = "입고할 상품목록은 필수입니다.")
             List<ItemRequest> itemRequests
     ) {
         Inbound toEntity() {
@@ -61,7 +79,7 @@ public class CreateInbound {
                 Long itemId,
                 @Positive(message = "입고 수량은 1개 이상이어야 합니다.")
                 Integer receivedQuantity,
-                @Positive(message = "입고 단가는 1원 이상이어야 합니다.")
+                @PositiveOrZero(message = "입고 단가는 0원 이상이어야 합니다.")
                 BigDecimal unitPurchasePrice,
                 String description
         ) {

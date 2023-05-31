@@ -55,8 +55,8 @@ public class InboundItem {
         if (null == receivedQuantity || 0 >= receivedQuantity) {
             throw new IllegalArgumentException("입고 수량은 1개 이상이어야 합니다.");
         }
-        if (null == unitPurchasePrice || 0 >= unitPurchasePrice.compareTo(BigDecimal.ZERO)) {
-            throw new IllegalArgumentException("구매 가격은 0원보다 커야 합니다.");
+        if (null == unitPurchasePrice || 0 > unitPurchasePrice.intValue()) {
+            throw new IllegalArgumentException("구매 가격은 0원 이상이어야 합니다.");
         }
         this.item = item;
         this.receivedQuantity = receivedQuantity;
