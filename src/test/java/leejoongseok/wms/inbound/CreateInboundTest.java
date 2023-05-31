@@ -25,12 +25,18 @@ class CreateInboundTest extends ApiTest {
         new Scenario().createItem().request();
 
         final long itemId = 1L;
-        final CreateInbound.Request.ItemRequest itemRequest = new CreateInbound.Request.ItemRequest(itemId, 1, BigDecimal.valueOf(1000), "파손 주의 상품");
-
+        final int receivedQuantity = 1;
+        final BigDecimal unitPurchasePrice = BigDecimal.valueOf(1000);
+        final String description = "파손 주의 상품";
+        final CreateInbound.Request.ItemRequest itemRequest = new CreateInbound.Request.ItemRequest(
+                itemId,
+                receivedQuantity,
+                unitPurchasePrice,
+                description);
 
         final LocalDateTime orderRequestAt = LocalDateTime.now().minusDays(1);
         final LocalDateTime estimatedArrivalAt = LocalDateTime.now().plusDays(1);
-        final BigDecimal totalAmount = BigDecimal.valueOf(2000);
+        final BigDecimal totalAmount = BigDecimal.valueOf(1000);
         final CreateInbound.Request request = new CreateInbound.Request(
                 orderRequestAt,
                 estimatedArrivalAt,
