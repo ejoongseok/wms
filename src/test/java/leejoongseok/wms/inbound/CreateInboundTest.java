@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class CreateInboundTest {
 
     private CreateInbound createInbound;
@@ -14,6 +16,7 @@ class CreateInboundTest {
 
     @BeforeEach
     void setUp() {
+        inboundRepository = new InboundRepository();
         createInbound = new CreateInbound(inboundRepository);
     }
 
@@ -30,5 +33,8 @@ class CreateInboundTest {
         );
 
         createInbound.request(request);
+
+        final Inbound inbound = inboundRepository.inbounds.get(1L);
+        assertThat(inbound).isNotNull();
     }
 }

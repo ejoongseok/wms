@@ -12,7 +12,7 @@ public class CreateInbound {
 
     public void request(final Request request) {
         final Inbound inbound = request.toEntity();
-
+        inboundRepository.save(inbound);
     }
 
     public record Request(
@@ -20,7 +20,11 @@ public class CreateInbound {
             LocalDateTime estimatedArrivalAt,
             BigDecimal totalAmount) {
         Inbound toEntity() {
-            return new Inbound();
+            return new Inbound(
+                    orderRequestAt,
+                    estimatedArrivalAt,
+                    totalAmount
+            );
         }
     }
 }

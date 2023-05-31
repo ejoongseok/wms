@@ -1,13 +1,16 @@
 package leejoongseok.wms.inbound;
 
+import lombok.Getter;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Inbound {
+    @Getter
+    private Long id;
     private final LocalDateTime orderRequestAt;
     private final LocalDateTime estimatedArrivalAt;
     private final BigDecimal totalAmount;
-    private Long id;
 
     public Inbound(
             final LocalDateTime orderRequestAt,
