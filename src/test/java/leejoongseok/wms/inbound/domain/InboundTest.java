@@ -110,6 +110,7 @@ class InboundTest {
         inbound.reject("입고 거부 사유");
 
         assertThat(inbound.getStatus()).isEqualTo(InboundStatus.REJECTED);
+        assertThat(inbound.getRejectionReasons()).isEqualTo("입고 거부 사유");
     }
 
     @Test

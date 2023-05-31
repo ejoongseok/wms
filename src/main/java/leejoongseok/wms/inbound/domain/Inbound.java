@@ -50,6 +50,7 @@ public class Inbound {
     @Comment("입고 진행 상태")
     @Enumerated(EnumType.STRING)
     private InboundStatus status = InboundStatus.ORDER_REQUESTED;
+    @Getter
     @Lob
     @Column(name = "rejection_reasons", nullable = true)
     @Comment("입고 거부 사유")
