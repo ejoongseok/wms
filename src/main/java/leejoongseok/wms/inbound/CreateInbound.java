@@ -6,6 +6,7 @@ import leejoongseok.wms.item.domain.Item;
 import leejoongseok.wms.item.domain.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ public class CreateInbound {
     private final InboundRepository inboundRepository;
     private final ItemRepository itemRepository;
 
+    @Transactional
     public void request(final Request request) {
         final Inbound inbound = request.toEntity();
         final List<InboundItem> inboundItems = toInboundItems(request.itemRequests);
