@@ -6,8 +6,8 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 
+@Getter
 public class InboundItem {
-    @Getter
     private final Item item;
     private final Integer receivedQuantity;
     private final BigDecimal unitPurchasePrice;

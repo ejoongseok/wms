@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ public class Inbound {
     @Column(name = "estimated_arrival_at", nullable = false)
     @Comment("예상 도착일시")
     private LocalDateTime estimatedArrivalAt;
+    @Getter
     @Column(name = "total_amount", nullable = false)
     @Comment("입고 총액")
     private BigDecimal totalAmount;
@@ -59,6 +61,12 @@ public class Inbound {
     }
 
     public void addInboundItems(final List<InboundItem> inboundItems) {
-
+        Assert.notEmpty(inboundItems, "입고 상품은 1개 이상이어야 합니다.");
+        final BigDecimal purchaseTotal = inboundItems.stream()
+                .map(item -> item.getUnitPurchasePrice().multiply(BigDecimal.valueOf(item.getReceivedQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (0 != totalAmount.compareTo(purchaseTotal)) {
+            throw new IllegalStateException(String.format("입고 상품의 총 금액이 주문 금액과 일치하지 않습니다. 입고총액: %s, 단품 합산액: %s", totalAmount, purchaseTotal));
+        }
     }
 }
