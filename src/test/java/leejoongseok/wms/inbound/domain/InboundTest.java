@@ -100,4 +100,41 @@ class InboundTest {
         }).isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("입고 확정 할 수 있는 상태가 아닙니다. 현재 상태:[입고 확정]");
     }
+
+
+    @Test
+    @DisplayName("입고를 거부한다.")
+    void rejectInbound() {
+        final Inbound inbound = new Inbound(orderRequestAt, estimatedArrivalAt, totalAmount);
+
+        inbound.reject("입고 거부 사유");
+
+        assertThat(inbound.getStatus()).isEqualTo(InboundStatus.REJECTED);
+        assertThat(inbound.getRejectionReasons()).isEqualTo("입고 거부 사유");
+    }
+
+    @Test
+    @DisplayName("[실패] 입고를 거부한다. - 입고 거부 사유를 입력하지 않음.")
+    void fail_empty_reason_rejectInbound() {
+        final Inbound inbound = new Inbound(orderRequestAt, estimatedArrivalAt, totalAmount);
+
+        assertThatThrownBy(() -> {
+            inbound.reject("");
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("입고 거부 사유는 필수입니다.");
+    }
+
+    @Test
+    @DisplayName("[실패] 입고를 거부한다. - 입고 거부 사유를 입력하지 않음.")
+    void fail_invalid_status_rejectInbound() {
+        final Inbound inbound = new Inbound(orderRequestAt, estimatedArrivalAt, totalAmount);
+
+        inbound.confirmInspected();
+
+        assertThatThrownBy(() -> {
+            inbound.reject("입고 거부 사유");
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("입고 거부 할 수 있는 상태가 아닙니다. 현재 상태:[입고 확정]");
+    }
+
 }
