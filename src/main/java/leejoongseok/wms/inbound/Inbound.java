@@ -1,16 +1,38 @@
 package leejoongseok.wms.inbound;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "inbound")
+@Comment("입고")
 public class Inbound {
     @Getter
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("입고 ID")
     private Long id;
-    private final LocalDateTime orderRequestAt;
-    private final LocalDateTime estimatedArrivalAt;
-    private final BigDecimal totalAmount;
+    @Column(name = "order_request_at", nullable = false)
+    @Comment("발주 요청일시")
+    private LocalDateTime orderRequestAt;
+    @Column(name = "estimated_arrival_at", nullable = false)
+    @Comment("예상 도착일시")
+    private LocalDateTime estimatedArrivalAt;
+    @Column(name = "total_amount", nullable = false)
+    @Comment("입고 총액")
+    private BigDecimal totalAmount;
 
     public Inbound(
             final LocalDateTime orderRequestAt,
