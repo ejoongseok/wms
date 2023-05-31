@@ -31,7 +31,7 @@ class CreateInboundTest extends ApiTest {
 
         createInbound.request(request);
 
-        final Inbound inbound = inboundRepository.inbounds.get(1L);
+        final Inbound inbound = inboundRepository.findById(1L).get();
         assertThat(inbound).isNotNull();
     }
 }
