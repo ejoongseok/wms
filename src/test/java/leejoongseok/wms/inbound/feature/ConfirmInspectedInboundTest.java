@@ -1,39 +1,32 @@
 package leejoongseok.wms.inbound.feature;
 
-import leejoongseok.wms.inbound.domain.Inbound;
+import leejoongseok.wms.ApiTest;
+import leejoongseok.wms.Scenario;
 import leejoongseok.wms.inbound.domain.InboundRepository;
 import leejoongseok.wms.inbound.domain.InboundStatus;
-import org.instancio.Instancio;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Optional;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import static org.instancio.Select.field;
+class ConfirmInspectedInboundTest extends ApiTest {
 
-public class ConfirmInspectedInboundTest {
-
+    @Autowired
     private ConfirmInspectedInbound confirmInspectedInbound;
+    @Autowired
     private InboundRepository inboundRepository;
-
-    @BeforeEach
-    void setUp() {
-        inboundRepository = Mockito.mock(InboundRepository.class);
-        confirmInspectedInbound = new ConfirmInspectedInbound(inboundRepository);
-    }
 
     @Test
     @DisplayName("입고를 확정한다.")
     void confirmInspectedInbound() {
-        final Inbound inbound = Instancio.of(Inbound.class)
-                .supply(field(Inbound::getStatus), () -> InboundStatus.ORDER_REQUESTED)
-                .create();
+        new Scenario()
+                .createItem().request()
+                .createInbound().request();
         final long inboundId = 1L;
-        Mockito.when(inboundRepository.findById(inboundId)).thenReturn(Optional.of(inbound));
 
         confirmInspectedInbound.request(inboundId);
 
+        assertThat(inboundRepository.findById(inboundId).get().getStatus()).isEqualTo(InboundStatus.CONFIRM_INSPECTED);
     }
 }
