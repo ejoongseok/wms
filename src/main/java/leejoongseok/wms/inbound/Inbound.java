@@ -13,6 +13,7 @@ import org.hibernate.annotations.Comment;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -55,5 +56,9 @@ public class Inbound {
 
     public void assignId(final Long id) {
         this.id = id;
+    }
+
+    public void addInboundItems(final List<InboundItem> inboundItems) {
+
     }
 }

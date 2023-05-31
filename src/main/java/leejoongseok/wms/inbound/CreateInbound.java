@@ -20,6 +20,7 @@ public class CreateInbound {
     public void request(final Request request) {
         final Inbound inbound = request.toEntity();
         final List<InboundItem> inboundItems = toInboundItems(request.itemRequests);
+        inbound.addInboundItems(inboundItems);
         inboundRepository.save(inbound);
     }
 
