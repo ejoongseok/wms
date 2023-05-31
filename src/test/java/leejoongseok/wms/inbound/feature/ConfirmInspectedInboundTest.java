@@ -22,11 +22,10 @@ class ConfirmInspectedInboundTest extends ApiTest {
     void confirmInspectedInbound() {
         new Scenario()
                 .createItem().request()
-                .createInbound().request();
-        final long inboundId = 1L;
+                .createInbound().request()
+                .confirmInspected().request()
+        ;
 
-        confirmInspectedInbound.request(inboundId);
-
-        assertThat(inboundRepository.findById(inboundId).get().getStatus()).isEqualTo(InboundStatus.CONFIRM_INSPECTED);
+        assertThat(inboundRepository.findById(1L).get().getStatus()).isEqualTo(InboundStatus.CONFIRM_INSPECTED);
     }
 }
