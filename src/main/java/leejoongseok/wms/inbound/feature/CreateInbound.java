@@ -1,4 +1,4 @@
-package leejoongseok.wms.inbound;
+package leejoongseok.wms.inbound.feature;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
@@ -7,6 +7,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import leejoongseok.wms.inbound.domain.Inbound;
+import leejoongseok.wms.inbound.domain.InboundItem;
+import leejoongseok.wms.inbound.domain.InboundRepository;
 import leejoongseok.wms.item.domain.Item;
 import leejoongseok.wms.item.domain.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -74,7 +77,7 @@ public class CreateInbound {
             );
         }
 
-        record ItemRequest(
+        public record ItemRequest(
                 @NotNull(message = "상품 ID는 필수입니다.")
                 Long itemId,
                 @Positive(message = "입고 수량은 1개 이상이어야 합니다.")

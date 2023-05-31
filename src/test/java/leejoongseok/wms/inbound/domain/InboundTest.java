@@ -1,4 +1,4 @@
-package leejoongseok.wms.inbound;
+package leejoongseok.wms.inbound.domain;
 
 import leejoongseok.wms.item.domain.Item;
 import org.instancio.Instancio;
@@ -37,9 +37,9 @@ class InboundTest {
     @Test
     @DisplayName("[실패]입고에 입고 상품을 등록한다. - 입고 총액과 입고 상품 개별 총액이 일치하지 않는 경우")
     void fail_wrong_total_amount_addInboundItems() {
-        final Item item = createItem(itemId);
         final BigDecimal wrongTotalAmount = BigDecimal.valueOf(3000);
         final Inbound inbound = new Inbound(orderRequestAt, estimatedArrivalAt, wrongTotalAmount);
+        final Item item = createItem(itemId);
         final InboundItem wrongInboundItem = createInboundItem(item, receivedQuantity, unitPurchasePrice);
 
         assertThatThrownBy(() -> {
@@ -52,9 +52,10 @@ class InboundTest {
     @DisplayName("[실패]입고에 입고 상품을 등록한다. - 입고상품이 비어있는 경우")
     void fail_empty_inboundItems_addInboundItems() {
         final Inbound inbound = new Inbound(orderRequestAt, estimatedArrivalAt, totalAmount);
+        final List<InboundItem> emptyList = List.of();
 
         assertThatThrownBy(() -> {
-            inbound.addInboundItems(List.of());
+            inbound.addInboundItems(emptyList);
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("입고 상품은 1개 이상이어야 합니다.");
     }

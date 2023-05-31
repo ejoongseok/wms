@@ -1,6 +1,6 @@
 package leejoongseok.wms;
 
-import leejoongseok.wms.inbound.CreateInboundSteps;
+import leejoongseok.wms.inbound.steps.CreateInboundSteps;
 import leejoongseok.wms.item.steps.CreateItemSteps;
 
 public class Scenario {

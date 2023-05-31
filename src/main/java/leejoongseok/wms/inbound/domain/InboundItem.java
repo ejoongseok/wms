@@ -1,4 +1,4 @@
-package leejoongseok.wms.inbound;
+package leejoongseok.wms.inbound.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

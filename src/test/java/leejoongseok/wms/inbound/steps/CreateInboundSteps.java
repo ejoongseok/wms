@@ -1,8 +1,9 @@
-package leejoongseok.wms.inbound;
+package leejoongseok.wms.inbound.steps;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import leejoongseok.wms.Scenario;
+import leejoongseok.wms.inbound.feature.CreateInbound;
 import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
