@@ -66,6 +66,7 @@ public class Inbound {
         validateInboundItems(inboundItems);
         for (final InboundItem inboundItem : inboundItems) {
             this.inboundItems.add(inboundItem);
+            inboundItem.assignInbound(this);
         }
     }
 

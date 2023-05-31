@@ -63,4 +63,9 @@ public class InboundItem {
         this.unitPurchasePrice = unitPurchasePrice;
         this.description = description;
     }
+
+    void assignInbound(final Inbound inbound) {
+        Assert.notNull(inbound, "입고는 필수입니다.");
+        this.inbound = inbound;
+    }
 }
