@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class InboundTest {
@@ -75,5 +76,28 @@ class InboundTest {
                 .supply(Select.field(InboundItem::getReceivedQuantity), () -> receivedQuantity)
                 .supply(Select.field(InboundItem::getUnitPurchasePrice), () -> unitPurchasePrice)
                 .create();
+    }
+
+    @Test
+    @DisplayName("입고를 확정한다.")
+    void confirmInspected() {
+        final Inbound inbound = new Inbound(orderRequestAt, estimatedArrivalAt, totalAmount);
+
+        inbound.confirmInspected();
+
+        assertThat(inbound.getStatus()).isEqualTo(InboundStatus.CONFIRM_INSPECTED);
+    }
+
+    @Test
+    @DisplayName("[실패]입고를 확정한다. - 입고를 확정할 수 있는 상태가 아님(확정은 발주 요청 시 가능)")
+    void fail_invalid_status_confirmInspected() {
+        final Inbound inbound = new Inbound(orderRequestAt, estimatedArrivalAt, totalAmount);
+
+        inbound.confirmInspected();
+
+        assertThatThrownBy(() -> {
+            inbound.confirmInspected();
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("입고 확정 할 수 있는 상태가 아닙니다. 현재 상태:[입고 확정]");
     }
 }

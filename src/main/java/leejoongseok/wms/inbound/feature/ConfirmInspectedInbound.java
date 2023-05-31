@@ -12,5 +12,7 @@ public class ConfirmInspectedInbound {
     public void request(final Long inboundId) {
         final Inbound inbound = inboundRepository.findById(inboundId)
                 .orElseThrow(() -> new InboundIdNotFoundException(inboundId));
+
+        inbound.confirmInspected();
     }
 }
