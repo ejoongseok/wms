@@ -1,6 +1,7 @@
 package leejoongseok.wms.inbound;
 
 import leejoongseok.wms.ApiTest;
+import leejoongseok.wms.Scenario;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ class CreateInboundTest extends ApiTest {
     @Test
     @DisplayName("입고를 등록한다.")
     void createInbound() {
+        new Scenario().createItem().request();
+
         final long itemId = 1L;
         final CreateInbound.Request.ItemRequest itemRequest = new CreateInbound.Request.ItemRequest(itemId, 1, BigDecimal.valueOf(1000), "파손 주의 상품");
 
