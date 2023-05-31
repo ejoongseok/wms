@@ -1,11 +1,13 @@
 package leejoongseok.wms.inbound;
 
 import leejoongseok.wms.item.domain.Item;
+import lombok.Getter;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 
 public class InboundItem {
+    @Getter
     private final Item item;
     private final Integer receivedQuantity;
     private final BigDecimal unitPurchasePrice;
