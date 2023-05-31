@@ -3,6 +3,8 @@ package leejoongseok.wms.inbound.domain;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -42,6 +44,11 @@ public class Inbound {
     private BigDecimal totalAmount;
     @OneToMany(mappedBy = "inbound", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private final List<InboundItem> inboundItems = new ArrayList<>();
+    @Getter
+    @Column(name = "status", nullable = false)
+    @Comment("입고 진행 상태")
+    @Enumerated(EnumType.STRING)
+    private InboundStatus status = InboundStatus.ORDER_REQUESTED;
 
     public Inbound(
             final LocalDateTime orderRequestAt,
@@ -78,5 +85,12 @@ public class Inbound {
         if (0 != totalAmount.compareTo(purchaseTotal)) {
             throw new IllegalStateException(String.format("입고 상품의 총 금액이 주문 금액과 일치하지 않습니다. 입고총액: %s, 단품 합산액: %s", totalAmount, purchaseTotal));
         }
+    }
+
+    public void confirmInspected() {
+        if (InboundStatus.ORDER_REQUESTED != status) {
+            throw new IllegalStateException(String.format("입고 확정 할 수 있는 상태가 아닙니다. 현재 상태:[%s]", status.getDescription()));
+        }
+        status = InboundStatus.CONFIRM_INSPECTED;
     }
 }

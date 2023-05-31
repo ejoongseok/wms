@@ -36,6 +36,15 @@ public class ExceptionAdvice {
         return new ErrorResponse(errors);
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotFoundException(
+            final NotFoundException e) {
+        final List<String> errors = List.of(e.getMessage());
+        log.warn("NotFoundException: {}", errors);
+        return new ErrorResponse(errors);
+    }
+
     record ErrorResponse(
             List<String> errors) {
     }
