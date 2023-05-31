@@ -1,24 +1,21 @@
 package leejoongseok.wms.inbound;
 
-import org.junit.jupiter.api.BeforeEach;
+import leejoongseok.wms.ApiTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CreateInboundTest {
+class CreateInboundTest extends ApiTest {
 
+    @Autowired
     private CreateInbound createInbound;
+    @Autowired
     private InboundRepository inboundRepository;
-
-    @BeforeEach
-    void setUp() {
-        inboundRepository = new InboundRepository();
-        createInbound = new CreateInbound(inboundRepository);
-    }
 
     @Test
     @DisplayName("입고를 등록한다.")

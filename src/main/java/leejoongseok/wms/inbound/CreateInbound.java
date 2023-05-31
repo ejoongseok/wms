@@ -1,8 +1,11 @@
 package leejoongseok.wms.inbound;
 
+import org.springframework.stereotype.Component;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Component
 public class CreateInbound {
     private final InboundRepository inboundRepository;
 
