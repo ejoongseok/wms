@@ -1,3 +1,7 @@
+logging:
+  pattern:
+  level:
+    org.hibernate.orm.jdbc.bind: trace
 spring:
   jpa:
     hibernate:
