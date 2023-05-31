@@ -61,6 +61,10 @@ public class Inbound {
     }
 
     public void addInboundItems(final List<InboundItem> inboundItems) {
+        validateInboundItems(inboundItems);
+    }
+
+    private void validateInboundItems(final List<InboundItem> inboundItems) {
         Assert.notEmpty(inboundItems, "입고 상품은 1개 이상이어야 합니다.");
         final BigDecimal purchaseTotal = inboundItems.stream()
                 .map(item -> item.getUnitPurchasePrice().multiply(BigDecimal.valueOf(item.getReceivedQuantity())))
