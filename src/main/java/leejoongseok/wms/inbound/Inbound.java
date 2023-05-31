@@ -1,0 +1,82 @@
+package leejoongseok.wms.inbound;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
+import org.springframework.util.Assert;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "inbound")
+@Comment("입고")
+public class Inbound {
+    @Getter
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("입고 ID")
+    private Long id;
+    @Column(name = "order_request_at", nullable = false)
+    @Comment("발주 요청일시")
+    private LocalDateTime orderRequestAt;
+    @Column(name = "estimated_arrival_at", nullable = false)
+    @Comment("예상 도착일시")
+    private LocalDateTime estimatedArrivalAt;
+    @Getter
+    @Column(name = "total_amount", nullable = false)
+    @Comment("입고 총액")
+    private BigDecimal totalAmount;
+    @OneToMany(mappedBy = "inbound", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private final List<InboundItem> inboundItems = new ArrayList<>();
+
+    public Inbound(
+            final LocalDateTime orderRequestAt,
+            final LocalDateTime estimatedArrivalAt,
+            final BigDecimal totalAmount) {
+        final LocalDateTime today = LocalDateTime.now();
+        if (null == orderRequestAt || today.isBefore(orderRequestAt)) {
+            throw new IllegalArgumentException("발주 요청일시는 현재시간보다 과거여야 합니다.");
+        }
+        if (null == estimatedArrivalAt || today.isAfter(estimatedArrivalAt)) {
+            throw new IllegalArgumentException("예상 도착일시는 현재시간보다 미래여야 합니다.");
+        }
+        if (null == totalAmount || 0 > totalAmount.intValue()) {
+            throw new IllegalArgumentException("총 주문 금액은 0원원 이상이어야 합니다.");
+        }
+        this.orderRequestAt = orderRequestAt;
+        this.estimatedArrivalAt = estimatedArrivalAt;
+        this.totalAmount = totalAmount;
+    }
+
+    public void addInboundItems(final List<InboundItem> inboundItems) {
+        validateInboundItems(inboundItems);
+        for (final InboundItem inboundItem : inboundItems) {
+            this.inboundItems.add(inboundItem);
+            inboundItem.assignInbound(this);
+        }
+    }
+
+    private void validateInboundItems(final List<InboundItem> inboundItems) {
+        Assert.notEmpty(inboundItems, "입고 상품은 1개 이상이어야 합니다.");
+        final BigDecimal purchaseTotal = inboundItems.stream()
+                .map(item -> item.getUnitPurchasePrice().multiply(BigDecimal.valueOf(item.getReceivedQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (0 != totalAmount.compareTo(purchaseTotal)) {
+            throw new IllegalStateException(String.format("입고 상품의 총 금액이 주문 금액과 일치하지 않습니다. 입고총액: %s, 단품 합산액: %s", totalAmount, purchaseTotal));
+        }
+    }
+}
