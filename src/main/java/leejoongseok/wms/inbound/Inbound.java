@@ -62,10 +62,6 @@ public class Inbound {
         this.totalAmount = totalAmount;
     }
 
-    public void assignId(final Long id) {
-        this.id = id;
-    }
-
     public void addInboundItems(final List<InboundItem> inboundItems) {
         validateInboundItems(inboundItems);
         for (final InboundItem inboundItem : inboundItems) {
