@@ -6,10 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CreateInboundTest extends ApiTest {
@@ -22,29 +18,8 @@ class CreateInboundTest extends ApiTest {
     @Test
     @DisplayName("입고를 등록한다.")
     void createInbound() {
-        new Scenario().createItem().request();
-
-        final long itemId = 1L;
-        final int receivedQuantity = 1;
-        final BigDecimal unitPurchasePrice = BigDecimal.valueOf(1000);
-        final String description = "파손 주의 상품";
-        final CreateInbound.Request.ItemRequest itemRequest = new CreateInbound.Request.ItemRequest(
-                itemId,
-                receivedQuantity,
-                unitPurchasePrice,
-                description);
-
-        final LocalDateTime orderRequestAt = LocalDateTime.now().minusDays(1);
-        final LocalDateTime estimatedArrivalAt = LocalDateTime.now().plusDays(1);
-        final BigDecimal totalAmount = BigDecimal.valueOf(1000);
-        final CreateInbound.Request request = new CreateInbound.Request(
-                orderRequestAt,
-                estimatedArrivalAt,
-                totalAmount,
-                List.of(itemRequest)
-        );
-
-        createInbound.request(request);
+        new Scenario().createItem().request()
+                .createInbound().request();
 
         final Inbound inbound = inboundRepository.findById(1L).get();
         assertThat(inbound).isNotNull();
