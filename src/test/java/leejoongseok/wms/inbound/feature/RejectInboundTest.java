@@ -5,7 +5,6 @@ import leejoongseok.wms.Scenario;
 import leejoongseok.wms.inbound.domain.Inbound;
 import leejoongseok.wms.inbound.domain.InboundRepository;
 import leejoongseok.wms.inbound.domain.InboundStatus;
-import net.datafaker.providers.base.BaseFaker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +22,8 @@ class RejectInboundTest extends ApiTest {
     void rejectInbound() {
         new Scenario()
                 .createItem().request()
-                .createInbound().request();
-
-        final long inboundId = 1L;
-        final String rejectionReasons = BaseFaker.instance().lorem().sentence(10);
-        final RejectInbound.Request request = new RejectInbound.Request(rejectionReasons);
-
-        rejectInbound.request(inboundId, request);
+                .createInbound().request()
+                .rejectInbound().request();
 
         final Inbound inbound = inboundRepository.findById(1L).get();
 
