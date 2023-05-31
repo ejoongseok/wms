@@ -1,10 +1,13 @@
 package leejoongseok.wms.inbound;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,6 +17,7 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,6 +40,8 @@ public class Inbound {
     @Column(name = "total_amount", nullable = false)
     @Comment("입고 총액")
     private BigDecimal totalAmount;
+    @OneToMany(mappedBy = "inbound", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private final List<InboundItem> inboundItems = new ArrayList<>();
 
     public Inbound(
             final LocalDateTime orderRequestAt,
@@ -62,6 +68,9 @@ public class Inbound {
 
     public void addInboundItems(final List<InboundItem> inboundItems) {
         validateInboundItems(inboundItems);
+        for (final InboundItem inboundItem : inboundItems) {
+            this.inboundItems.add(inboundItem);
+        }
     }
 
     private void validateInboundItems(final List<InboundItem> inboundItems) {
