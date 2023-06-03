@@ -115,12 +115,12 @@ public class Inbound {
             final Long inboundItemId,
             final String lpnBarcode,
             final LocalDateTime expirationAt) {
-        validateCreateLPN(inboundItemId, lpnBarcode, expirationAt);
+        validateLPNCreation(inboundItemId, lpnBarcode, expirationAt);
         final InboundItem lpnCreationTargetInboundItem = getInboundItemBy(inboundItemId);
         return lpnCreationTargetInboundItem.createLPN(lpnBarcode, expirationAt);
     }
 
-    private void validateCreateLPN(
+    private void validateLPNCreation(
             final Long inboundItemId,
             final String lpnBarcode,
             final LocalDateTime expirationAt) {

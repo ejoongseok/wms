@@ -2,6 +2,7 @@ package leejoongseok.wms;
 
 import leejoongseok.wms.inbound.steps.ConfirmInspectedInboundSteps;
 import leejoongseok.wms.inbound.steps.CreateInboundSteps;
+import leejoongseok.wms.inbound.steps.CreateLPNSteps;
 import leejoongseok.wms.inbound.steps.RejectInboundSteps;
 import leejoongseok.wms.item.steps.CreateItemSteps;
 
@@ -14,11 +15,15 @@ public class Scenario {
         return new CreateInboundSteps.Request();
     }
 
-    public ConfirmInspectedInboundSteps.Request confirmInspected() {
+    public ConfirmInspectedInboundSteps.Request confirmInspectedInbound() {
         return new ConfirmInspectedInboundSteps.Request();
     }
 
     public RejectInboundSteps.Request rejectInbound() {
         return new RejectInboundSteps.Request();
+    }
+
+    public CreateLPNSteps.Request createLPN() {
+        return new CreateLPNSteps.Request();
     }
 }
