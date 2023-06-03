@@ -1,5 +1,7 @@
 package leejoongseok.wms.inbound.domain;
 
+import leejoongseok.wms.inbound.exception.InboundItemIdNotFoundException;
+import leejoongseok.wms.inbound.exception.NotConfirmedInboundException;
 import leejoongseok.wms.item.domain.Item;
 import org.instancio.Instancio;
 import org.instancio.Select;
@@ -137,4 +139,155 @@ class InboundTest {
                 .hasMessageContaining("입고 거부 할 수 있는 상태가 아닙니다. 현재 상태:[입고 확정]");
     }
 
+    @Test
+    @DisplayName("LPN을 생성한다.")
+    void createLPN() {
+        final Long inboundItemId = 1L;
+        final Inbound inbound = createLPNCreationTargetInbound(inboundItemId);
+        final LocalDateTime availableExpirationAt = LocalDateTime.now().plusDays(1);
+        final String lpnBarcode = "lpnBarcode";
+        inbound.confirmInspected();
+
+        final LPN lpn = inbound.createLPN(
+                inboundItemId,
+                lpnBarcode,
+                availableExpirationAt);
+
+        assertThat(lpn).isNotNull();
+    }
+
+    private Inbound createLPNCreationTargetInbound(final Long inboundItemId) {
+        final Item item = createItem(itemId);
+        final Inbound inbound = new Inbound(
+                orderRequestAt,
+                estimatedArrivalAt,
+                totalAmount);
+        final InboundItem lpnCreationTargetInboundItem = createInboundItem(
+                inboundItemId,
+                item,
+                receivedQuantity,
+                unitPurchasePrice);
+        inbound.addInboundItems(List.of(lpnCreationTargetInboundItem));
+        return inbound;
+    }
+
+    private InboundItem createInboundItem(
+            final Long inboundItemId,
+            final Item item,
+            final int receivedQuantity,
+            final BigDecimal unitPurchasePrice) {
+        return Instancio.of(InboundItem.class)
+                .supply(Select.field(InboundItem::getId), () -> inboundItemId)
+                .supply(Select.field(InboundItem::getItem), () -> item)
+                .supply(Select.field(InboundItem::getReceivedQuantity), () -> receivedQuantity)
+                .supply(Select.field(InboundItem::getUnitPurchasePrice), () -> unitPurchasePrice)
+                .create();
+    }
+
+    @Test
+    @DisplayName("[실패] LPN을 생성한다. - 입고의 현재 상태가 LPN을 생성가능한 상태가 아닌경우.")
+    void fail_inbound_invalid_status_createLPN() {
+        final Long inboundItemId = 1L;
+        final Inbound inbound = createLPNCreationTargetInbound(inboundItemId);
+        final LocalDateTime availableExpirationAt = LocalDateTime.now().plusDays(1);
+        final String lpnBarcode = "lpnBarcode";
+
+        assertThatThrownBy(() -> {
+            inbound.createLPN(
+                    inboundItemId,
+                    lpnBarcode,
+                    availableExpirationAt);
+        }).isInstanceOf(NotConfirmedInboundException.class)
+                .hasMessageContaining("입고 확인이 완료되지 않은 입고 아이템에는 LPN을 생성할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("[실패] LPN을 생성한다. - LPN을 생성할 입고 아이템이 해당 입고에 속하지 않는 경우.")
+    void fail_invalid_create_lpn_paramter_createLPN() {
+        final Long inboundItemId = 2L;
+        final Inbound inbound = createLPNCreationTargetInbound(1L);
+        final LocalDateTime availableExpirationAt = LocalDateTime.now().plusDays(1);
+        final String lpnBarcode = "lpnBarcode";
+        inbound.confirmInspected();
+
+        assertThatThrownBy(() -> {
+            inbound.createLPN(
+                    inboundItemId,
+                    lpnBarcode,
+                    availableExpirationAt);
+        }).isInstanceOf(InboundItemIdNotFoundException.class)
+                .hasMessageContaining("입고 아이템 ID [2]에 해당하는 입고 아이템을 찾을 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("[실패] LPN을 생성한다. - 유통기한이 지난 경우 생성이 불가하다.")
+    void fail_expired_lpn_createLPN() {
+        final Long inboundItemId = 1L;
+        final Inbound inbound = createLPNCreationTargetInbound(inboundItemId);
+        final LocalDateTime availableExpirationAt = LocalDateTime.now().minusDays(1);
+        final String lpnBarcode = "lpnBarcode";
+        inbound.confirmInspected();
+
+        assertThatThrownBy(() -> {
+            inbound.createLPN(
+                    inboundItemId,
+                    lpnBarcode,
+                    availableExpirationAt);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("유통기한은 현재시간보다 미래여야 합니다.");
+    }
+
+    @Test
+    @DisplayName("[실패] LPN을 생성한다. - inbound item id null")
+    void fail_inbound_item_id_null_lpn_createLPN() {
+        final Long null_inboundItemId = null;
+        final Inbound inbound = createLPNCreationTargetInbound(null_inboundItemId);
+        final LocalDateTime availableExpirationAt = LocalDateTime.now().minusDays(1);
+        final String lpnBarcode = "lpnBarcode";
+        inbound.confirmInspected();
+
+        assertThatThrownBy(() -> {
+            inbound.createLPN(
+                    null_inboundItemId,
+                    lpnBarcode,
+                    availableExpirationAt);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("입고 상품 ID는 필수입니다.");
+    }
+
+    @Test
+    @DisplayName("[실패] LPN을 생성한다. - lpn barcode null")
+    void fail_lpn_barcode_null_lpn_createLPN() {
+        final Long inboundItemId = 1L;
+        final Inbound inbound = createLPNCreationTargetInbound(inboundItemId);
+        final LocalDateTime availableExpirationAt = LocalDateTime.now().minusDays(1);
+        final String null_lpnBarcode = null;
+        inbound.confirmInspected();
+
+        assertThatThrownBy(() -> {
+            inbound.createLPN(
+                    inboundItemId,
+                    null_lpnBarcode,
+                    availableExpirationAt);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("LPN 바코드는 필수입니다.");
+    }
+
+    @Test
+    @DisplayName("[실패] LPN을 생성한다. - expirationAt null")
+    void fail_expirationAt_null_lpn_createLPN() {
+        final Long inboundItemId = 1L;
+        final Inbound inbound = createLPNCreationTargetInbound(inboundItemId);
+        final LocalDateTime null_ExpirationAt = null;
+        final String lpnBarcode = "lpnBarcode";
+        inbound.confirmInspected();
+
+        assertThatThrownBy(() -> {
+            inbound.createLPN(
+                    inboundItemId,
+                    lpnBarcode,
+                    null_ExpirationAt);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("유통기한은 필수입니다.");
+    }
 }
