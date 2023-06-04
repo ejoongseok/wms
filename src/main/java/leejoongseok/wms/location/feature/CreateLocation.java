@@ -2,12 +2,13 @@ package leejoongseok.wms.location.feature;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.StorageType;
 import leejoongseok.wms.location.domain.UsagePurpose;
 
 public class CreateLocation {
     public void request(final Request request) {
-
+        final Location location = request.toEntity();
     }
 
     public record Request(
@@ -17,5 +18,12 @@ public class CreateLocation {
             StorageType storageType,
             @NotNull(message = "보관 목적은 필수입니다.")
             UsagePurpose usagePurpose) {
+        public Location toEntity() {
+            return new Location(
+                    locationBarcode,
+                    storageType,
+                    usagePurpose
+            );
+        }
     }
 }
