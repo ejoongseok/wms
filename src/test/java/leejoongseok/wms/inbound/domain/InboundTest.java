@@ -140,20 +140,22 @@ class InboundTest {
     }
 
     @Test
-    @DisplayName("LPN을 생성한다.")
-    void createLPN() {
+    @DisplayName("LPN을 등록한다.")
+    void assignLPN() {
         final Long inboundItemId = 1L;
         final Inbound inbound = createInboundForLPNCreation(inboundItemId);
         final LocalDateTime availableExpirationAt = LocalDateTime.now().plusDays(1);
         final String lpnBarcode = "lpnBarcode";
         inbound.confirmInspected();
 
-        final LPN lpn = inbound.createLPN(
+        inbound.assignLPN(
                 inboundItemId,
                 lpnBarcode,
                 availableExpirationAt);
 
-        assertThat(lpn).isNotNull();
+        final InboundItem inboundItem = inbound.testingGetInboundItemBy(1L);
+        assertThat(inboundItem.getLpnBarcode()).isEqualTo("lpnBarcode");
+        assertThat(inboundItem.getExpirationAt()).isEqualTo(availableExpirationAt);
     }
 
     private Inbound createInboundForLPNCreation(final Long inboundItemId) {
@@ -186,14 +188,14 @@ class InboundTest {
 
     @Test
     @DisplayName("[실패] LPN을 생성한다. - 입고의 현재 상태가 LPN을 생성가능한 상태가 아닌경우.")
-    void fail_inbound_invalid_status_createLPN() {
+    void fail_inbound_invalid_status_assignLPN() {
         final Long inboundItemId = 1L;
         final Inbound inbound = createInboundForLPNCreation(inboundItemId);
         final LocalDateTime availableExpirationAt = LocalDateTime.now().plusDays(1);
         final String lpnBarcode = "lpnBarcode";
 
         assertThatThrownBy(() -> {
-            inbound.createLPN(
+            inbound.assignLPN(
                     inboundItemId,
                     lpnBarcode,
                     availableExpirationAt);
@@ -203,7 +205,7 @@ class InboundTest {
 
     @Test
     @DisplayName("[실패] LPN을 생성한다. - LPN을 생성할 입고 아이템이 해당 입고에 속하지 않는 경우.")
-    void fail_invalid_create_lpn_paramter_createLPN() {
+    void fail_invalid_create_lpn_paramter_assignLPN() {
         final Long inboundItemId = 2L;
         final Inbound inbound = createInboundForLPNCreation(1L);
         final LocalDateTime availableExpirationAt = LocalDateTime.now().plusDays(1);
@@ -211,7 +213,7 @@ class InboundTest {
         inbound.confirmInspected();
 
         assertThatThrownBy(() -> {
-            inbound.createLPN(
+            inbound.assignLPN(
                     inboundItemId,
                     lpnBarcode,
                     availableExpirationAt);
@@ -221,7 +223,7 @@ class InboundTest {
 
     @Test
     @DisplayName("[실패] LPN을 생성한다. - 유통기한이 지난 경우 생성이 불가하다.")
-    void fail_expired_lpn_createLPN() {
+    void fail_expired_lpn_assignLPN() {
         final Long inboundItemId = 1L;
         final Inbound inbound = createInboundForLPNCreation(inboundItemId);
         final LocalDateTime availableExpirationAt = LocalDateTime.now().minusDays(1);
@@ -229,7 +231,7 @@ class InboundTest {
         inbound.confirmInspected();
 
         assertThatThrownBy(() -> {
-            inbound.createLPN(
+            inbound.assignLPN(
                     inboundItemId,
                     lpnBarcode,
                     availableExpirationAt);
@@ -239,7 +241,7 @@ class InboundTest {
 
     @Test
     @DisplayName("[실패] LPN을 생성한다. - inbound item id null")
-    void fail_inbound_item_id_null_lpn_createLPN() {
+    void fail_inbound_item_id_null_lpn_assignLPN() {
         final Long null_inboundItemId = null;
         final Inbound inbound = createInboundForLPNCreation(null_inboundItemId);
         final LocalDateTime availableExpirationAt = LocalDateTime.now().minusDays(1);
@@ -247,7 +249,7 @@ class InboundTest {
         inbound.confirmInspected();
 
         assertThatThrownBy(() -> {
-            inbound.createLPN(
+            inbound.assignLPN(
                     null_inboundItemId,
                     lpnBarcode,
                     availableExpirationAt);
@@ -257,7 +259,7 @@ class InboundTest {
 
     @Test
     @DisplayName("[실패] LPN을 생성한다. - lpn barcode null")
-    void fail_lpn_barcode_null_lpn_createLPN() {
+    void fail_lpn_barcode_null_lpn_assignLPN() {
         final Long inboundItemId = 1L;
         final Inbound inbound = createInboundForLPNCreation(inboundItemId);
         final LocalDateTime availableExpirationAt = LocalDateTime.now().minusDays(1);
@@ -265,7 +267,7 @@ class InboundTest {
         inbound.confirmInspected();
 
         assertThatThrownBy(() -> {
-            inbound.createLPN(
+            inbound.assignLPN(
                     inboundItemId,
                     null_lpnBarcode,
                     availableExpirationAt);
@@ -275,7 +277,7 @@ class InboundTest {
 
     @Test
     @DisplayName("[실패] LPN을 생성한다. - expirationAt null")
-    void fail_expirationAt_null_lpn_createLPN() {
+    void fail_expirationAt_null_lpn_assignLPN() {
         final Long inboundItemId = 1L;
         final Inbound inbound = createInboundForLPNCreation(inboundItemId);
         final LocalDateTime null_ExpirationAt = null;
@@ -283,7 +285,7 @@ class InboundTest {
         inbound.confirmInspected();
 
         assertThatThrownBy(() -> {
-            inbound.createLPN(
+            inbound.assignLPN(
                     inboundItemId,
                     lpnBarcode,
                     null_ExpirationAt);
