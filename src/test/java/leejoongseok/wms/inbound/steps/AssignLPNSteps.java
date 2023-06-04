@@ -45,7 +45,7 @@ public class AssignLPNSteps {
                     .contentType(ContentType.JSON)
                     .body(request)
                     .when()
-                    .post("/inbounds/{inboundId}/inbound-items/{inboundItemId}/lpns", inboundId, inboundItemId)
+                    .post("/inbounds/{inboundId}/inbound-items/{inboundItemId}/assign-lpn", inboundId, inboundItemId)
                     .then()
                     .log().all()
                     .statusCode(HttpStatus.CREATED.value());
