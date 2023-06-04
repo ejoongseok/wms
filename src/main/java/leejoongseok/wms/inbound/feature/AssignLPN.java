@@ -5,8 +5,6 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import leejoongseok.wms.inbound.domain.Inbound;
 import leejoongseok.wms.inbound.domain.InboundRepository;
-import leejoongseok.wms.inbound.domain.LPNRepository;
-import leejoongseok.wms.inbound.exception.AlreadyExistsLPNException;
 import leejoongseok.wms.inbound.exception.InboundIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +21,6 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class AssignLPN {
     private final InboundRepository inboundRepository;
-    private final LPNRepository lpnRepository;
 
     @Transactional
     @ResponseStatus(HttpStatus.CREATED)
@@ -32,9 +29,6 @@ public class AssignLPN {
             @PathVariable final Long inboundId,
             @PathVariable final Long inboundItemId,
             @RequestBody @Valid final Request request) {
-        lpnRepository.findByInboundItemId(inboundItemId).ifPresent(lpn -> {
-            throw new AlreadyExistsLPNException(inboundItemId);
-        });
         final Inbound inbound = getInbound(inboundId);
         inbound.assignLPN(
                 inboundItemId,
