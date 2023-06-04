@@ -127,7 +127,7 @@ class InboundTest {
     }
 
     @Test
-    @DisplayName("[실패] 입고를 거부한다. - 입고 거부 사유를 입력하지 않음.")
+    @DisplayName("[실패] 입고를 거부한다. - 입고를 거부할 수 있는 상태가 아님(거부는 발주 요청 일때만)")
     void fail_invalid_status_rejectInbound() {
         final Inbound inbound = new Inbound(orderRequestAt, estimatedArrivalAt, totalAmount);
 

@@ -13,8 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CreateInboundTest extends ApiTest {
 
     @Autowired
-    private CreateInbound createInbound;
-    @Autowired
     private InboundRepository inboundRepository;
 
     @Test
