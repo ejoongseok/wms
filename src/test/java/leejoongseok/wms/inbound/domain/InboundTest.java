@@ -140,7 +140,7 @@ class InboundTest {
     }
 
     @Test
-    @DisplayName("LPN을 등록한다.")
+    @DisplayName("LPN을 생성한다.")
     void createLPN() {
         final Long inboundItemId = 1L;
         final Inbound inbound = createInboundForLPNCreation(inboundItemId);
@@ -148,14 +148,14 @@ class InboundTest {
         final String lpnBarcode = "lpnBarcode";
         inbound.confirmInspected();
 
-        inbound.createLPN(
+        final LPN lpn = inbound.createLPN(
                 inboundItemId,
                 lpnBarcode,
                 availableExpirationAt);
 
-        final InboundItem inboundItem = inbound.testingGetInboundItemBy(1L);
-        assertThat(inboundItem.getLpnBarcode()).isEqualTo("lpnBarcode");
-        assertThat(inboundItem.getExpirationAt()).isEqualTo(availableExpirationAt);
+        assertThat(lpn).isNotNull();
+        assertThat(lpn.getLpnBarcode()).isEqualTo("lpnBarcode");
+        assertThat(lpn.getExpirationAt()).isEqualTo(availableExpirationAt);
     }
 
     private Inbound createInboundForLPNCreation(final Long inboundItemId) {

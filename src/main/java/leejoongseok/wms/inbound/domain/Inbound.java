@@ -111,13 +111,13 @@ public class Inbound {
         this.rejectionReasons = rejectionReasons;
     }
 
-    public void createLPN(
+    public LPN createLPN(
             final Long inboundItemId,
             final String lpnBarcode,
             final LocalDateTime expirationAt) {
         validateLPNCreation(inboundItemId, lpnBarcode, expirationAt);
         final InboundItem lpnAssignTargetInboundItem = getInboundItemBy(inboundItemId);
-        lpnAssignTargetInboundItem.createLPN(lpnBarcode, expirationAt);
+        return lpnAssignTargetInboundItem.createLPN(lpnBarcode, expirationAt);
     }
 
     private void validateLPNCreation(
