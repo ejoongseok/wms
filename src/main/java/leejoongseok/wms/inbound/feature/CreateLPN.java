@@ -5,7 +5,10 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import leejoongseok.wms.inbound.domain.Inbound;
 import leejoongseok.wms.inbound.domain.InboundRepository;
+import leejoongseok.wms.inbound.domain.LPN;
+import leejoongseok.wms.inbound.domain.LPNRepository;
 import leejoongseok.wms.inbound.exception.InboundIdNotFoundException;
+import leejoongseok.wms.inbound.exception.LPNBarcodeAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,21 +22,27 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
-public class AssignLPN {
+public class CreateLPN {
     private final InboundRepository inboundRepository;
+    private final LPNRepository lpnRepository;
 
     @Transactional
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/inbounds/{inboundId}/inbound-items/{inboundItemId}/assign-lpn")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/inbounds/{inboundId}/inbound-items/{inboundItemId}/lpns")
     public void request(
             @PathVariable final Long inboundId,
             @PathVariable final Long inboundItemId,
             @RequestBody @Valid final Request request) {
+        lpnRepository.findByLPNBarcode(request.lpnBarcode)
+                .ifPresent(lpn -> {
+                    throw new LPNBarcodeAlreadyExistsException(request.lpnBarcode);
+                });
         final Inbound inbound = getInbound(inboundId);
-        inbound.assignLPN(
+        final LPN lpn = inbound.createLPN(
                 inboundItemId,
                 request.lpnBarcode,
                 request.expirationAt);
+        lpnRepository.save(lpn);
     }
 
     private Inbound getInbound(final Long inboundId) {

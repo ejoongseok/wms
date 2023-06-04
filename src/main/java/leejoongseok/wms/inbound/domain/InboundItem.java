@@ -46,12 +46,6 @@ public class InboundItem {
     @JoinColumn(name = "inbound_id")
     @Comment("입고 ID")
     private Inbound inbound;
-    @Column(name = "lpn_barcode")
-    @Comment("LPN 바코드")
-    private String lpnBarcode;
-    @Column(name = "expiration_at")
-    @Comment("유통기한")
-    private LocalDateTime expirationAt;
 
     public InboundItem(
             final Item item,
@@ -76,7 +70,7 @@ public class InboundItem {
         this.inbound = inbound;
     }
 
-    public void assignLPN(
+    public LPN createLPN(
             final String lpnBarcode,
             final LocalDateTime expirationAt) {
         Assert.notNull(lpnBarcode, "LPN 바코드는 필수입니다.");
@@ -84,7 +78,11 @@ public class InboundItem {
         if (expirationAt.isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("유통기한은 현재시간보다 미래여야 합니다.");
         }
-        this.lpnBarcode = lpnBarcode;
-        this.expirationAt = expirationAt;
+        return new LPN(
+                lpnBarcode,
+                item.getId(),
+                expirationAt,
+                id
+        );
     }
 }

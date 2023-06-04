@@ -9,7 +9,7 @@ import leejoongseok.wms.item.domain.Item;
 import leejoongseok.wms.item.domain.ItemRepository;
 import leejoongseok.wms.item.domain.ItemSize;
 import leejoongseok.wms.item.domain.TemperatureZone;
-import leejoongseok.wms.item.exception.AlreadyExistsItemException;
+import leejoongseok.wms.item.exception.ItemAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +26,7 @@ public class CreateItem {
     @ResponseStatus(HttpStatus.CREATED)
     void request(@RequestBody @Valid final Request request) {
         itemRepository.findByItemBarcode(request.itemBarcode).ifPresent(item -> {
-            throw new AlreadyExistsItemException(request.itemBarcode);
+            throw new ItemAlreadyExistsException(request.itemBarcode);
         });
 
         final Item item = request.toEntity();

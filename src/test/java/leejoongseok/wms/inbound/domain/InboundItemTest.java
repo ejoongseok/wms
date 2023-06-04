@@ -12,27 +12,27 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class InboundItemTest {
 
     @Test
-    @DisplayName("입고 아이템의 LPN을 등록한다.")
-    void assignLPN() {
+    @DisplayName("입고 아이템의 LPN을 생성한다.")
+    void createLPN() {
         final InboundItem inboundItem = Instancio.create(InboundItem.class);
         final String lpnBarcode = "lpnBarcode";
         final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
 
-        inboundItem.assignLPN(lpnBarcode, expirationAt);
+        final LPN lpn = inboundItem.createLPN(lpnBarcode, expirationAt);
 
-        assertThat(inboundItem.getLpnBarcode()).isEqualTo("lpnBarcode");
-        assertThat(inboundItem.getExpirationAt()).isEqualTo(expirationAt);
+        assertThat(lpn.getLpnBarcode()).isEqualTo("lpnBarcode");
+        assertThat(lpn.getExpirationAt()).isEqualTo(expirationAt);
     }
 
     @Test
     @DisplayName("[실패] 입고 아이템의 LPN을 생성한다. - LPN 바코드가 null")
-    void fail_null_lpn_barcode_assignLPN() {
+    void fail_null_lpn_barcode_createLPN() {
         final InboundItem inboundItem = Instancio.create(InboundItem.class);
         final String invalid_lpnBarcode = null;
         final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
 
         assertThatThrownBy(() -> {
-            inboundItem.assignLPN(
+            inboundItem.createLPN(
                     invalid_lpnBarcode,
                     expirationAt
             );
@@ -42,13 +42,13 @@ class InboundItemTest {
 
     @Test
     @DisplayName("[실패] 입고 아이템의 LPN을 생성한다. - 유통기한이 null")
-    void fail_null_expirationAt_assignLPN() {
+    void fail_null_expirationAt_createLPN() {
         final InboundItem inboundItem = Instancio.create(InboundItem.class);
         final String lpnBarcode = "lpnBarcode";
         final LocalDateTime invalid_expirationAt = null;
 
         assertThatThrownBy(() -> {
-            inboundItem.assignLPN(
+            inboundItem.createLPN(
                     lpnBarcode,
                     invalid_expirationAt
             );
@@ -58,13 +58,13 @@ class InboundItemTest {
 
     @Test
     @DisplayName("[실패] 입고 아이템의 LPN을 생성한다. - 유통기한이 지난 경우")
-    void fail_expired_assignLPN() {
+    void fail_expired_createLPN() {
         final InboundItem inboundItem = Instancio.create(InboundItem.class);
         final String lpnBarcode = "lpnBarcode";
         final LocalDateTime expiredLPN = LocalDateTime.now().minusDays(1);
 
         assertThatThrownBy(() -> {
-            inboundItem.assignLPN(
+            inboundItem.createLPN(
                     lpnBarcode,
                     expiredLPN
             );
