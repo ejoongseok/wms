@@ -1,7 +1,7 @@
 package leejoongseok.wms.inbound.domain;
 
 import leejoongseok.wms.inbound.exception.InboundItemIdNotFoundException;
-import leejoongseok.wms.inbound.exception.NotConfirmedInboundException;
+import leejoongseok.wms.inbound.exception.UnconfirmedInboundException;
 import leejoongseok.wms.item.domain.Item;
 import org.instancio.Instancio;
 import org.instancio.Select;
@@ -197,7 +197,7 @@ class InboundTest {
                     inboundItemId,
                     lpnBarcode,
                     availableExpirationAt);
-        }).isInstanceOf(NotConfirmedInboundException.class)
+        }).isInstanceOf(UnconfirmedInboundException.class)
                 .hasMessageContaining("입고 확인이 완료되지 않은 입고 아이템에는 LPN을 생성할 수 없습니다.");
     }
 

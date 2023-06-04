@@ -13,7 +13,7 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import leejoongseok.wms.inbound.exception.InboundItemIdNotFoundException;
-import leejoongseok.wms.inbound.exception.NotConfirmedInboundException;
+import leejoongseok.wms.inbound.exception.UnconfirmedInboundException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -131,7 +131,7 @@ public class Inbound {
             throw new IllegalArgumentException("유통기한은 현재시간보다 미래여야 합니다.");
         }
         if (InboundStatus.CONFIRM_INSPECTED != status) {
-            throw new NotConfirmedInboundException("입고 확인이 완료되지 않은 입고 아이템에는 LPN을 생성할 수 없습니다.");
+            throw new UnconfirmedInboundException("입고 확인이 완료되지 않은 입고 아이템에는 LPN을 생성할 수 없습니다.");
         }
     }
 
