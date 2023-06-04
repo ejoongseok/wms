@@ -1,18 +1,19 @@
 package leejoongseok.wms.location.feature;
 
+import leejoongseok.wms.ApiTest;
 import leejoongseok.wms.location.domain.StorageType;
 import leejoongseok.wms.location.domain.UsagePurpose;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-class CreateLocationTest {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class CreateLocationTest extends ApiTest {
+    @Autowired
     private CreateLocation createLocation;
-
-    @BeforeEach
-    void setUp() {
-        createLocation = new CreateLocation();
-    }
+    @Autowired
+    private LocationRepository locationRepository;
 
     @Test
     @DisplayName("로케이션을 등록한다.")
@@ -29,5 +30,6 @@ class CreateLocationTest {
 
         createLocation.request(request);
 
+        assertThat(locationRepository.findById(1L)).isPresent();
     }
 }
