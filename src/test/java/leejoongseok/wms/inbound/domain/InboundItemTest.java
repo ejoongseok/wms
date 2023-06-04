@@ -18,10 +18,10 @@ class InboundItemTest {
         final String lpnBarcode = "lpnBarcode";
         final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
 
-        inboundItem.createLPN(lpnBarcode, expirationAt);
+        final LPN lpn = inboundItem.createLPN(lpnBarcode, expirationAt);
 
-        assertThat(inboundItem.getLpnBarcode()).isEqualTo("lpnBarcode");
-        assertThat(inboundItem.getExpirationAt()).isEqualTo(expirationAt);
+        assertThat(lpn.getLpnBarcode()).isEqualTo("lpnBarcode");
+        assertThat(lpn.getExpirationAt()).isEqualTo(expirationAt);
     }
 
     @Test
