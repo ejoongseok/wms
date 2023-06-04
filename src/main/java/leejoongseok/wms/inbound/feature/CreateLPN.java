@@ -8,6 +8,7 @@ import leejoongseok.wms.inbound.domain.InboundRepository;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.inbound.domain.LPNRepository;
 import leejoongseok.wms.inbound.exception.InboundIdNotFoundException;
+import leejoongseok.wms.inbound.exception.LPNBarcodeAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,10 @@ public class CreateLPN {
             @PathVariable final Long inboundId,
             @PathVariable final Long inboundItemId,
             @RequestBody @Valid final Request request) {
+        lpnRepository.findByLPNBarcode(request.lpnBarcode)
+                .ifPresent(lpn -> {
+                    throw new LPNBarcodeAlreadyExistsException(request.lpnBarcode);
+                });
         final Inbound inbound = getInbound(inboundId);
         final LPN lpn = inbound.createLPN(
                 inboundItemId,
