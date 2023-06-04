@@ -21,7 +21,9 @@ public class CreateLocation {
                 .ifPresent(location -> {
                     throw new LocationBarcodeAlreadyExistsException(request.locationBarcode);
                 });
+
         final Location location = request.toEntity();
+
         locationRepository.save(location);
     }
 
