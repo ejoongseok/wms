@@ -54,6 +54,15 @@ public class ExceptionAdvice {
         return new ErrorResponse(errors);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleRuntimeException(
+            final RuntimeException e) {
+        final List<String> errors = List.of(e.getMessage());
+        log.error("RuntimeException: {}", errors);
+        return new ErrorResponse(List.of("서버 에러가 발생했습니다."));
+    }
+
     record ErrorResponse(
             List<String> errors) {
     }
