@@ -26,7 +26,7 @@ class AssignLPNTest extends ApiTest {
                 .assignLPN().request()
         ;
 
-        final Inbound inbound = inboundRepository.testingFindInboundItemFetJoinByInboundId(1L).get();
+        final Inbound inbound = inboundRepository.testingFindInboundItemFetchJoinByInboundId(1L).get();
 
         final InboundItem inboundItem = inbound.testingGetInboundItemBy(1L);
 
