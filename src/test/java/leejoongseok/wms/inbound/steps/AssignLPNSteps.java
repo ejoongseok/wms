@@ -48,7 +48,7 @@ public class AssignLPNSteps {
                     .post("/inbounds/{inboundId}/inbound-items/{inboundItemId}/assign-lpn", inboundId, inboundItemId)
                     .then()
                     .log().all()
-                    .statusCode(HttpStatus.CREATED.value());
+                    .statusCode(HttpStatus.OK.value());
             return new Scenario();
         }
     }
