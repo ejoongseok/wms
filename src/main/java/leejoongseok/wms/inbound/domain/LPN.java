@@ -25,7 +25,7 @@ public class LPN {
     @Comment("LPN ID")
     private Long id;
     @Column(name = "lpn_barcode", nullable = false, unique = true)
-    @Comment("LPN 바코드")
+    @Comment("LPN 바코드 (중복 불가)")
     private String lpnBarcode;
     @Column(name = "item_id", nullable = false)
     @Comment("상품 ID")
