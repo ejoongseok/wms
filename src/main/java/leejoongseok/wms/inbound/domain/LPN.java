@@ -24,7 +24,7 @@ public class LPN {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("LPN ID")
     private Long id;
-    @Column(name = "lpn_barcode", nullable = false)
+    @Column(name = "lpn_barcode", nullable = false, unique = true)
     @Comment("LPN 바코드")
     private String lpnBarcode;
     @Column(name = "item_id", nullable = false)
