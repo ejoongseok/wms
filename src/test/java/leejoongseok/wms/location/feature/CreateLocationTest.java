@@ -15,7 +15,8 @@ class CreateLocationTest {
     @Test
     @DisplayName("로케이션을 등록한다.")
     void createLocation() {
-        createLocation.request();
+        final CreateLocation.Request request = new CreateLocation.Request();
+        createLocation.request(request);
 
     }
 }
