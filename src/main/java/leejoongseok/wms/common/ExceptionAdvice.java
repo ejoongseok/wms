@@ -1,6 +1,5 @@
 package leejoongseok.wms.common;
 
-import leejoongseok.wms.item.exception.AlreadyExistsItemException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -24,15 +23,6 @@ public class ExceptionAdvice {
                 .map(fieldError -> fieldError.getDefaultMessage())
                 .toList();
         log.warn("MethodArgumentNotValidException: {}", errors);
-        return new ErrorResponse(errors);
-    }
-
-    @ExceptionHandler(AlreadyExistsItemException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleAlreadyExistsItemException(
-            final AlreadyExistsItemException e) {
-        final List<String> errors = List.of(e.getMessage());
-        log.warn("AlreadyExistsItemException: {}", errors);
         return new ErrorResponse(errors);
     }
 
