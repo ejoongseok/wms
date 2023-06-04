@@ -5,6 +5,7 @@ import leejoongseok.wms.inbound.steps.CreateInboundSteps;
 import leejoongseok.wms.inbound.steps.CreateLPNSteps;
 import leejoongseok.wms.inbound.steps.RejectInboundSteps;
 import leejoongseok.wms.item.steps.CreateItemSteps;
+import leejoongseok.wms.location.steps.CreateLocationSteps;
 
 public class Scenario {
     public CreateItemSteps.Request createItem() {
@@ -25,5 +26,9 @@ public class Scenario {
 
     public CreateLPNSteps.Request createLPN() {
         return new CreateLPNSteps.Request();
+    }
+
+    public CreateLocationSteps.Request createLocation() {
+        return new CreateLocationSteps.Request();
     }
 }
