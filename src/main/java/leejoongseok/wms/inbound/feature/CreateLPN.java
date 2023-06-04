@@ -27,7 +27,7 @@ public class CreateLPN {
 
     @Transactional
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/inbounds/{inboundId}/inbound-items/{inboundItemId}/assign-lpn")
+    @PostMapping("/inbounds/{inboundId}/inbound-items/{inboundItemId}/lpns")
     public void request(
             @PathVariable final Long inboundId,
             @PathVariable final Long inboundItemId,

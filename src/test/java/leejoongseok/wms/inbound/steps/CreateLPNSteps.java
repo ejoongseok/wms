@@ -36,6 +36,11 @@ public class CreateLPNSteps {
         }
 
         public Scenario request() {
+            request(HttpStatus.OK.value());
+            return new Scenario();
+        }
+
+        public Scenario request(final int statusCode) {
             final CreateLPN.Request request = new CreateLPN.Request(
                     lpnBarcode,
                     expirationAt
@@ -45,10 +50,10 @@ public class CreateLPNSteps {
                     .contentType(ContentType.JSON)
                     .body(request)
                     .when()
-                    .post("/inbounds/{inboundId}/inbound-items/{inboundItemId}/assign-lpn", inboundId, inboundItemId)
+                    .post("/inbounds/{inboundId}/inbound-items/{inboundItemId}/lpns", inboundId, inboundItemId)
                     .then()
                     .log().all()
-                    .statusCode(HttpStatus.OK.value());
+                    .statusCode(statusCode);
             return new Scenario();
         }
     }
