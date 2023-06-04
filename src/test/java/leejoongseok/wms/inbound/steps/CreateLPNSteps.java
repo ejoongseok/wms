@@ -3,12 +3,12 @@ package leejoongseok.wms.inbound.steps;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import leejoongseok.wms.Scenario;
-import leejoongseok.wms.inbound.feature.AssignLPN;
+import leejoongseok.wms.inbound.feature.CreateLPN;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
-public class AssignLPNSteps {
+public class CreateLPNSteps {
     public static class Request {
         private LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
         private Long inboundId = 1L;
@@ -36,7 +36,7 @@ public class AssignLPNSteps {
         }
 
         public Scenario request() {
-            final AssignLPN.Request request = new AssignLPN.Request(
+            final CreateLPN.Request request = new CreateLPN.Request(
                     lpnBarcode,
                     expirationAt
             );

@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
-public class AssignLPN {
+public class CreateLPN {
     private final InboundRepository inboundRepository;
 
     @Transactional
@@ -30,7 +30,7 @@ public class AssignLPN {
             @PathVariable final Long inboundItemId,
             @RequestBody @Valid final Request request) {
         final Inbound inbound = getInbound(inboundId);
-        inbound.assignLPN(
+        inbound.createLPN(
                 inboundItemId,
                 request.lpnBarcode,
                 request.expirationAt);

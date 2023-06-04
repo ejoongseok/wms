@@ -76,7 +76,7 @@ public class InboundItem {
         this.inbound = inbound;
     }
 
-    public void assignLPN(
+    public void createLPN(
             final String lpnBarcode,
             final LocalDateTime expirationAt) {
         Assert.notNull(lpnBarcode, "LPN 바코드는 필수입니다.");

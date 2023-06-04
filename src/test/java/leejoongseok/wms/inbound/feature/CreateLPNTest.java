@@ -11,19 +11,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AssignLPNTest extends ApiTest {
+class CreateLPNTest extends ApiTest {
 
     @Autowired
     private InboundRepository inboundRepository;
 
     @Test
     @DisplayName("입고 아이템의 LPN을 등록한다.")
-    void assignLPN() {
+    void createLPN() {
         new Scenario()
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()
-                .assignLPN().request()
+                .createLPN().request()
         ;
 
         final Inbound inbound = inboundRepository.testingFindInboundItemFetchJoinByInboundId(1L).get();
