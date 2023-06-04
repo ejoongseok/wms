@@ -111,13 +111,13 @@ public class Inbound {
         this.rejectionReasons = rejectionReasons;
     }
 
-    public LPN assignLPN(
+    public void assignLPN(
             final Long inboundItemId,
             final String lpnBarcode,
             final LocalDateTime expirationAt) {
         validateLPNCreation(inboundItemId, lpnBarcode, expirationAt);
         final InboundItem lpnAssignTargetInboundItem = getInboundItemBy(inboundItemId);
-        return lpnAssignTargetInboundItem.assignLPN(lpnBarcode, expirationAt);
+        lpnAssignTargetInboundItem.assignLPN(lpnBarcode, expirationAt);
     }
 
     private void validateLPNCreation(
@@ -140,5 +140,12 @@ public class Inbound {
                 .filter(inboundItem -> inboundItem.getId().equals(inboundItemId))
                 .findFirst()
                 .orElseThrow(() -> new InboundItemIdNotFoundException(inboundItemId));
+    }
+
+    /**
+     * 테스트용 메서드입니다.
+     */
+    InboundItem testingGetInboundItemBy(final Long inboundItemId) {
+        return getInboundItemBy(inboundItemId);
     }
 }

@@ -148,12 +148,14 @@ class InboundTest {
         final String lpnBarcode = "lpnBarcode";
         inbound.confirmInspected();
 
-        final LPN lpn = inbound.assignLPN(
+        inbound.assignLPN(
                 inboundItemId,
                 lpnBarcode,
                 availableExpirationAt);
 
-        assertThat(lpn).isNotNull();
+        final InboundItem inboundItem = inbound.testingGetInboundItemBy(1L);
+        assertThat(inboundItem.getLpnBarcode()).isEqualTo("lpnBarcode");
+        assertThat(inboundItem.getExpirationAt()).isEqualTo(availableExpirationAt);
     }
 
     private Inbound createInboundForLPNCreation(final Long inboundItemId) {

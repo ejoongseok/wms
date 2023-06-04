@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import leejoongseok.wms.inbound.domain.Inbound;
 import leejoongseok.wms.inbound.domain.InboundRepository;
-import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.inbound.domain.LPNRepository;
 import leejoongseok.wms.inbound.exception.AlreadyExistsLPNException;
 import leejoongseok.wms.inbound.exception.InboundIdNotFoundException;
@@ -37,11 +36,10 @@ public class AssignLPN {
             throw new AlreadyExistsLPNException(inboundItemId);
         });
         final Inbound inbound = getInbound(inboundId);
-        final LPN lpn = inbound.assignLPN(
+        inbound.assignLPN(
                 inboundItemId,
                 request.lpnBarcode,
                 request.expirationAt);
-        lpnRepository.save(lpn);
     }
 
     private Inbound getInbound(final Long inboundId) {
