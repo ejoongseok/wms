@@ -142,10 +142,4 @@ public class Inbound {
                 .orElseThrow(() -> new InboundItemIdNotFoundException(inboundItemId));
     }
 
-    /**
-     * 테스트용 메서드입니다.
-     */
-    public InboundItem testingGetInboundItemBy(final Long inboundItemId) {
-        return getInboundItemBy(inboundItemId);
-    }
 }
