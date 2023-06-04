@@ -1,5 +1,6 @@
 package leejoongseok.wms.location.feature;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.location.domain.Location;
@@ -7,16 +8,22 @@ import leejoongseok.wms.location.domain.StorageType;
 import leejoongseok.wms.location.domain.UsagePurpose;
 import leejoongseok.wms.location.exception.LocationBarcodeAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-@Component
+@RestController
 @RequiredArgsConstructor
 public class CreateLocation {
     private final LocationRepository locationRepository;
 
     @Transactional
-    public void request(final Request request) {
+    @PostMapping("/locations")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void request(@RequestBody @Valid final Request request) {
         locationRepository.findByLocationBarcode(request.locationBarcode)
                 .ifPresent(location -> {
                     throw new LocationBarcodeAlreadyExistsException(request.locationBarcode);
