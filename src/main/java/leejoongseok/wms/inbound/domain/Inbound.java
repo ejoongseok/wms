@@ -116,8 +116,8 @@ public class Inbound {
             final String lpnBarcode,
             final LocalDateTime expirationAt) {
         validateLPNCreation(inboundItemId, lpnBarcode, expirationAt);
-        final InboundItem lpnCreationTargetInboundItem = getInboundItemBy(inboundItemId);
-        return lpnCreationTargetInboundItem.assignLPN(lpnBarcode, expirationAt);
+        final InboundItem lpnAssignTargetInboundItem = getInboundItemBy(inboundItemId);
+        return lpnAssignTargetInboundItem.assignLPN(lpnBarcode, expirationAt);
     }
 
     private void validateLPNCreation(
