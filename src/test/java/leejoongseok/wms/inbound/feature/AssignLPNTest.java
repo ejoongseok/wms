@@ -12,19 +12,19 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CreateLPNTest extends ApiTest {
+class AssignLPNTest extends ApiTest {
 
     @Autowired
     private LPNRepository lpnRepository;
 
     @Test
-    @DisplayName("입고 아이템의 LPN을 생성한다.")
-    void createLPN() {
+    @DisplayName("입고 아이템의 LPN을 등록한다.")
+    void assignLPN() {
         new Scenario()
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()
-                .createLPN().request()
+                .assignLPN().request()
         ;
 
         final Optional<LPN> lpn = lpnRepository.findById(1L);

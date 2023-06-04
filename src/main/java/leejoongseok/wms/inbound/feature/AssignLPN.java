@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
-public class CreateLPN {
+public class AssignLPN {
     private final InboundRepository inboundRepository;
     private final LPNRepository lpnRepository;
 
@@ -37,7 +37,7 @@ public class CreateLPN {
             throw new AlreadyExistsLPNException(inboundItemId);
         });
         final Inbound inbound = getInbound(inboundId);
-        final LPN lpn = inbound.createLPN(
+        final LPN lpn = inbound.assignLPN(
                 inboundItemId,
                 request.lpnBarcode,
                 request.expirationAt);

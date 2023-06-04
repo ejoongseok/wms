@@ -1,8 +1,8 @@
 package leejoongseok.wms;
 
+import leejoongseok.wms.inbound.steps.AssignLPNSteps;
 import leejoongseok.wms.inbound.steps.ConfirmInspectedInboundSteps;
 import leejoongseok.wms.inbound.steps.CreateInboundSteps;
-import leejoongseok.wms.inbound.steps.CreateLPNSteps;
 import leejoongseok.wms.inbound.steps.RejectInboundSteps;
 import leejoongseok.wms.item.steps.CreateItemSteps;
 
@@ -23,7 +23,7 @@ public class Scenario {
         return new RejectInboundSteps.Request();
     }
 
-    public CreateLPNSteps.Request createLPN() {
-        return new CreateLPNSteps.Request();
+    public AssignLPNSteps.Request assignLPN() {
+        return new AssignLPNSteps.Request();
     }
 }
