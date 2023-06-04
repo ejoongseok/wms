@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.StorageType;
 import leejoongseok.wms.location.domain.UsagePurpose;
+import leejoongseok.wms.location.exception.LocationBarcodeAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,10 @@ public class CreateLocation {
 
     @Transactional
     public void request(final Request request) {
+        locationRepository.findByLocationBarcode(request.locationBarcode)
+                .ifPresent(location -> {
+                    throw new LocationBarcodeAlreadyExistsException(request.locationBarcode);
+                });
         final Location location = request.toEntity();
         locationRepository.save(location);
     }
