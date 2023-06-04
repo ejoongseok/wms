@@ -36,7 +36,7 @@ public class CreateLPNSteps {
         }
 
         public Scenario request() {
-            request(HttpStatus.OK.value());
+            request(HttpStatus.CREATED.value());
             return new Scenario();
         }
 
