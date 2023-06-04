@@ -2,20 +2,19 @@ package leejoongseok.wms.inbound.feature;
 
 import leejoongseok.wms.ApiTest;
 import leejoongseok.wms.Scenario;
-import leejoongseok.wms.inbound.domain.LPN;
-import leejoongseok.wms.inbound.domain.LPNRepository;
+import leejoongseok.wms.inbound.domain.Inbound;
+import leejoongseok.wms.inbound.domain.InboundItem;
+import leejoongseok.wms.inbound.domain.InboundRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AssignLPNTest extends ApiTest {
 
     @Autowired
-    private LPNRepository lpnRepository;
+    private InboundRepository inboundRepository;
 
     @Test
     @DisplayName("입고 아이템의 LPN을 등록한다.")
@@ -27,8 +26,11 @@ class AssignLPNTest extends ApiTest {
                 .assignLPN().request()
         ;
 
-        final Optional<LPN> lpn = lpnRepository.findById(1L);
+        final Inbound inbound = inboundRepository.testingFindInboundItemFetJoinByInboundId(1L).get();
 
-        assertThat(lpn).isPresent();
+        final InboundItem inboundItem = inbound.testingGetInboundItemBy(1L);
+
+        assertThat(inboundItem.getLpnBarcode()).isEqualTo("lpnBarcode");
+        assertThat(inboundItem.getExpirationAt()).isNotNull();
     }
 }
