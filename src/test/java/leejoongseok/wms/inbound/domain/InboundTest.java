@@ -37,6 +37,23 @@ class InboundTest {
         inbound.addInboundItems(List.of(inboundItem));
     }
 
+    private Item createItem(final long itemId) {
+        return Instancio.of(Item.class)
+                .supply(Select.field(Item::getId), () -> itemId)
+                .create();
+    }
+
+    private InboundItem createInboundItem(
+            final Item item,
+            final int receivedQuantity,
+            final BigDecimal unitPurchasePrice) {
+        return Instancio.of(InboundItem.class)
+                .supply(Select.field(InboundItem::getItem), () -> item)
+                .supply(Select.field(InboundItem::getReceivedQuantity), () -> receivedQuantity)
+                .supply(Select.field(InboundItem::getUnitPurchasePrice), () -> unitPurchasePrice)
+                .create();
+    }
+
     @Test
     @DisplayName("[실패]입고에 입고 상품을 등록한다. - 입고 총액과 입고 상품 개별 총액이 일치하지 않는 경우")
     void fail_wrong_total_amount_addInboundItems() {
@@ -61,23 +78,6 @@ class InboundTest {
             inbound.addInboundItems(emptyList);
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("입고 상품은 1개 이상이어야 합니다.");
-    }
-
-    private Item createItem(final long itemId) {
-        return Instancio.of(Item.class)
-                .supply(Select.field(Item::getId), () -> itemId)
-                .create();
-    }
-
-    private InboundItem createInboundItem(
-            final Item item,
-            final int receivedQuantity,
-            final BigDecimal unitPurchasePrice) {
-        return Instancio.of(InboundItem.class)
-                .supply(Select.field(InboundItem::getItem), () -> item)
-                .supply(Select.field(InboundItem::getReceivedQuantity), () -> receivedQuantity)
-                .supply(Select.field(InboundItem::getUnitPurchasePrice), () -> unitPurchasePrice)
-                .create();
     }
 
     @Test
