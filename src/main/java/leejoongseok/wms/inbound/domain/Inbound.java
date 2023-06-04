@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import leejoongseok.wms.inbound.exception.InboundItemIdNotFoundException;
+import leejoongseok.wms.inbound.exception.UnconfirmedInboundException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -107,5 +109,36 @@ public class Inbound {
         }
         status = InboundStatus.REJECTED;
         this.rejectionReasons = rejectionReasons;
+    }
+
+    public LPN createLPN(
+            final Long inboundItemId,
+            final String lpnBarcode,
+            final LocalDateTime expirationAt) {
+        validateLPNCreation(inboundItemId, lpnBarcode, expirationAt);
+        final InboundItem lpnCreationTargetInboundItem = getInboundItemBy(inboundItemId);
+        return lpnCreationTargetInboundItem.createLPN(lpnBarcode, expirationAt);
+    }
+
+    private void validateLPNCreation(
+            final Long inboundItemId,
+            final String lpnBarcode,
+            final LocalDateTime expirationAt) {
+        Assert.notNull(inboundItemId, "입고 상품 ID는 필수입니다.");
+        Assert.hasText(lpnBarcode, "LPN 바코드는 필수입니다.");
+        Assert.notNull(expirationAt, "유통기한은 필수입니다.");
+        if (expirationAt.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("유통기한은 현재시간보다 미래여야 합니다.");
+        }
+        if (InboundStatus.CONFIRM_INSPECTED != status) {
+            throw new UnconfirmedInboundException("입고 확인이 완료되지 않은 입고 아이템에는 LPN을 생성할 수 없습니다.");
+        }
+    }
+
+    private InboundItem getInboundItemBy(final Long inboundItemId) {
+        return inboundItems.stream()
+                .filter(inboundItem -> inboundItem.getId().equals(inboundItemId))
+                .findFirst()
+                .orElseThrow(() -> new InboundItemIdNotFoundException(inboundItemId));
     }
 }

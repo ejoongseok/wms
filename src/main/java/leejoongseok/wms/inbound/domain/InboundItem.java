@@ -17,6 +17,7 @@ import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -67,5 +68,20 @@ public class InboundItem {
     void assignInbound(final Inbound inbound) {
         Assert.notNull(inbound, "입고는 필수입니다.");
         this.inbound = inbound;
+    }
+
+    public LPN createLPN(
+            final String lpnBarcode,
+            final LocalDateTime expirationAt) {
+        Assert.notNull(lpnBarcode, "LPN 바코드는 필수입니다.");
+        Assert.notNull(expirationAt, "유통기한은 필수입니다.");
+        if (expirationAt.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("유통기한은 현재시간보다 미래여야 합니다.");
+        }
+        return new LPN(
+                lpnBarcode,
+                item.getId(),
+                expirationAt,
+                id);
     }
 }

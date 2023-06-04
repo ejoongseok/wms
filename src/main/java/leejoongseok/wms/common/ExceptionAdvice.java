@@ -45,6 +45,15 @@ public class ExceptionAdvice {
         return new ErrorResponse(errors);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBadRequestException(
+            final BadRequestException e) {
+        final List<String> errors = List.of(e.getMessage());
+        log.warn("BadRequestException: {}", errors);
+        return new ErrorResponse(errors);
+    }
+
     record ErrorResponse(
             List<String> errors) {
     }
