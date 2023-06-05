@@ -79,9 +79,9 @@ public class Location {
     }
 
     /**
-     * 테스트용 메소드입니다.
+     * 테스트 코드 검증용 메소드입니다.
      */
-    LocationLPN TestingGetLocationLPN(final String lpnBarcode) {
+    LocationLPN testingGetLocationLPN(final String lpnBarcode) {
         return locationLPNList.stream()
                 .filter(locationLPN -> lpnBarcode.equals(locationLPN.getLpn().getLpnBarcode()))
                 .findFirst()
