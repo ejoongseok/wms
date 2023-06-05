@@ -16,6 +16,12 @@ class AssignLPNToLocationTest {
     @Test
     @DisplayName("로케이션에 LPN을 할당한다.")
     void assignLPNToLocation() {
-        assignLPNToLocation.request();
+        final String lpnBarcode = "lpnBarcode";
+        final String locationBarcode = "A1-1-1";
+        final AssignLPNToLocation.Request request = new AssignLPNToLocation.Request(
+                lpnBarcode,
+                locationBarcode);
+
+        assignLPNToLocation.request(request);
     }
 }
