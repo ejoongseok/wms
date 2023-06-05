@@ -40,7 +40,8 @@ public class CreateInbound {
         inboundRepository.save(inbound);
     }
 
-    private List<InboundItem> toInboundItems(final List<Request.ItemRequest> itemRequests) {
+    private List<InboundItem> toInboundItems(
+            final List<Request.ItemRequest> itemRequests) {
         return itemRequests.stream()
                 .map(itemRequest -> new InboundItem(
                         getItemBy(itemRequest.itemId),

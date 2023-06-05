@@ -64,7 +64,10 @@ public class CreateItem {
                     description,
                     brandName,
                     makerName,
-                    new ItemSize(widthMillimeter, lengthMillimeter, heightMillimeter),
+                    new ItemSize(
+                            widthMillimeter,
+                            lengthMillimeter,
+                            heightMillimeter),
                     weightInGrams,
                     temperatureZone,
                     category

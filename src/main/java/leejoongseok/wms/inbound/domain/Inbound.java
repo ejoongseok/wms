@@ -85,19 +85,31 @@ public class Inbound {
         }
     }
 
-    private void validateInboundItems(final List<InboundItem> inboundItems) {
+    private void validateInboundItems(
+            final List<InboundItem> inboundItems) {
         Assert.notEmpty(inboundItems, "입고 상품은 1개 이상이어야 합니다.");
-        final BigDecimal purchaseTotal = inboundItems.stream()
-                .map(item -> item.getUnitPurchasePrice().multiply(BigDecimal.valueOf(item.getReceivedQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (0 != totalAmount.compareTo(purchaseTotal)) {
-            throw new IllegalStateException(String.format("입고 상품의 총 금액이 주문 금액과 일치하지 않습니다. 입고총액: %s, 단품 합산액: %s", totalAmount, purchaseTotal));
+        final BigDecimal totalPurchasePrice = calculateTotalPurchasePrice(inboundItems);
+        if (0 != totalAmount.compareTo(totalPurchasePrice)) {
+            throw new IllegalStateException(
+                    String.format("입고 상품의 총 금액이 주문 금액과 일치하지 않습니다. " +
+                                    "입고총액: %s, 단품 합산액: %s",
+                            totalAmount, totalPurchasePrice));
         }
+    }
+
+    private BigDecimal calculateTotalPurchasePrice(
+            final List<InboundItem> inboundItems) {
+        return inboundItems.stream()
+                .map(item -> item.getUnitPurchasePrice()
+                        .multiply(BigDecimal.valueOf(item.getReceivedQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public void confirmInspected() {
         if (InboundStatus.ORDER_REQUESTED != status) {
-            throw new IllegalStateException(String.format("입고 확정 할 수 있는 상태가 아닙니다. 현재 상태:[%s]", status.getDescription()));
+            throw new IllegalStateException(
+                    String.format("입고 확정 할 수 있는 상태가 아닙니다. 현재 상태:[%s]",
+                            status.getDescription()));
         }
         status = InboundStatus.CONFIRM_INSPECTED;
     }
@@ -105,7 +117,9 @@ public class Inbound {
     public void reject(final String rejectionReasons) {
         Assert.hasText(rejectionReasons, "입고 거부 사유는 필수입니다.");
         if (InboundStatus.ORDER_REQUESTED != status) {
-            throw new IllegalStateException(String.format("입고 거부 할 수 있는 상태가 아닙니다. 현재 상태:[%s]", status.getDescription()));
+            throw new IllegalStateException(
+                    String.format("입고 거부 할 수 있는 상태가 아닙니다. 현재 상태:[%s]",
+                            status.getDescription()));
         }
         status = InboundStatus.REJECTED;
         this.rejectionReasons = rejectionReasons;
@@ -131,7 +145,8 @@ public class Inbound {
             throw new IllegalArgumentException("유통기한은 현재시간보다 미래여야 합니다.");
         }
         if (InboundStatus.CONFIRM_INSPECTED != status) {
-            throw new UnconfirmedInboundException("입고 확인이 완료되지 않은 입고 아이템에는 LPN을 생성할 수 없습니다.");
+            throw new UnconfirmedInboundException(
+                    "입고 확인이 완료되지 않은 입고 아이템에는 LPN을 생성할 수 없습니다.");
         }
     }
 

@@ -69,7 +69,8 @@ public class Item {
         Assert.hasText(brandName, "상품의 브랜드명은 필수입니다.");
         Assert.hasText(makerName, "상품의 제조사명은 필수입니다.");
         Assert.notNull(itemSize, "상품의 크기는 필수입니다.");
-        Assert.isTrue(null != weightInGrams && 0 < weightInGrams, "상품의 무게는 1g 이상이어야 합니다.");
+        Assert.isTrue(null != weightInGrams && 0 < weightInGrams,
+                "상품의 무게는 1g 이상이어야 합니다.");
         Assert.notNull(temperatureZone, "상품의 보관 온도는 필수입니다.");
         Assert.notNull(category, "상품의 카테고리는 필수입니다.");
         this.itemName = itemName;

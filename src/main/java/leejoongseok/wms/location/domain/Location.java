@@ -69,7 +69,8 @@ public class Location {
         findLocationLPN(lpn)
                 .ifPresentOrElse(
                         LocationLPN::increaseInventoryQuantity,
-                        () -> locationLPNList.add(new LocationLPN(this, lpn)));
+                        () -> locationLPNList.add(
+                                new LocationLPN(this, lpn)));
     }
 
     private Optional<LocationLPN> findLocationLPN(final LPN lpn) {
@@ -83,7 +84,7 @@ public class Location {
      */
     LocationLPN testingGetLocationLPN(final String lpnBarcode) {
         return locationLPNList.stream()
-                .filter(locationLPN -> lpnBarcode.equals(locationLPN.getLpn().getLpnBarcode()))
+                .filter(locationLPN -> lpnBarcode.equals(locationLPN.getLpnBarcode()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("해당 LPN이 존재하지 않습니다."));
     }

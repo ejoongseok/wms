@@ -49,4 +49,8 @@ public class LocationLPN {
     public void increaseInventoryQuantity() {
         inventoryQuantity++;
     }
+
+    public String getLpnBarcode() {
+        return lpn.getLpnBarcode();
+    }
 }
