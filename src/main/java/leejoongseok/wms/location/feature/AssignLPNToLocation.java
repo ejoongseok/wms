@@ -16,7 +16,7 @@ public class AssignLPNToLocation {
     public void request(final Request request) {
         final LPN lpn = getLPN(request);
         final Location location = getLocation(request);
-        location.assignLPN(request.lpnBarcode);
+        location.assignLPN(lpn);
 
     }
 
