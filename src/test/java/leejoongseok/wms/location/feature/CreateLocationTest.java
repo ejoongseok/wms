@@ -1,7 +1,7 @@
 package leejoongseok.wms.location.feature;
 
-import leejoongseok.wms.ApiTest;
-import leejoongseok.wms.Scenario;
+import leejoongseok.wms.common.ApiTest;
+import leejoongseok.wms.common.Scenario;
 import leejoongseok.wms.location.domain.LocationRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

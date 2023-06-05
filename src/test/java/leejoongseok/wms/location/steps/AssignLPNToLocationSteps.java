@@ -2,7 +2,7 @@ package leejoongseok.wms.location.steps;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import leejoongseok.wms.Scenario;
+import leejoongseok.wms.common.Scenario;
 import leejoongseok.wms.location.feature.AssignLPNToLocation;
 import org.springframework.http.HttpStatus;
 

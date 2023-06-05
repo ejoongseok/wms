@@ -1,4 +1,4 @@
-package leejoongseok.wms;
+package leejoongseok.wms.common;
 
 import leejoongseok.wms.inbound.steps.ConfirmInspectedInboundSteps;
 import leejoongseok.wms.inbound.steps.CreateInboundSteps;

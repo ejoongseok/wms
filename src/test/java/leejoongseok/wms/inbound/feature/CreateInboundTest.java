@@ -1,7 +1,7 @@
 package leejoongseok.wms.inbound.feature;
 
-import leejoongseok.wms.ApiTest;
-import leejoongseok.wms.Scenario;
+import leejoongseok.wms.common.ApiTest;
+import leejoongseok.wms.common.Scenario;
 import leejoongseok.wms.inbound.domain.Inbound;
 import leejoongseok.wms.inbound.domain.InboundRepository;
 import org.junit.jupiter.api.DisplayName;

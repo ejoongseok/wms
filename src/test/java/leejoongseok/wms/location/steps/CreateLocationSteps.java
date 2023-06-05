@@ -2,7 +2,7 @@ package leejoongseok.wms.location.steps;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import leejoongseok.wms.Scenario;
+import leejoongseok.wms.common.Scenario;
 import leejoongseok.wms.location.domain.StorageType;
 import leejoongseok.wms.location.domain.UsagePurpose;
 import leejoongseok.wms.location.feature.CreateLocation;

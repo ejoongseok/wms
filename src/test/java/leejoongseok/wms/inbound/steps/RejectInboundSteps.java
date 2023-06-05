@@ -2,7 +2,7 @@ package leejoongseok.wms.inbound.steps;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import leejoongseok.wms.Scenario;
+import leejoongseok.wms.common.Scenario;
 import leejoongseok.wms.inbound.feature.RejectInbound;
 import org.springframework.http.HttpStatus;
 

@@ -2,7 +2,7 @@ package leejoongseok.wms.item.steps;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import leejoongseok.wms.Scenario;
+import leejoongseok.wms.common.Scenario;
 import leejoongseok.wms.item.domain.Category;
 import leejoongseok.wms.item.domain.TemperatureZone;
 import leejoongseok.wms.item.feature.CreateItem;
