@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 로케이션에 LPN을 등록.
+ * LPN이 이미 존재하는경우 LocationLPN의 inventory quantity만 증가.
+ * LPN이 존재하지 않으면 LocationLPN을 새로 생성해서 등록.
+ */
 @RestController
 @RequiredArgsConstructor
 public class AssignLPNToLocation {
@@ -25,7 +30,6 @@ public class AssignLPNToLocation {
         final LPN lpn = getLPN(request);
         final Location location = getLocation(request);
         location.assignLPN(lpn);
-
     }
 
     private LPN getLPN(final Request request) {
