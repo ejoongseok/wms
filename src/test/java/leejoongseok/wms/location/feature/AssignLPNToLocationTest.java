@@ -27,14 +27,8 @@ class AssignLPNToLocationTest extends ApiTest {
                 .createInbound().request()
                 .confirmInspectedInbound().request()
                 .createLPN().request()
-                .createLocation().request();
-
-        final String lpnBarcode = "lpnBarcode";
-        final AssignLPNToLocation.Request request = new AssignLPNToLocation.Request(
-                lpnBarcode,
-                locationBarcode);
-
-        assignLPNToLocation.request(request);
+                .createLocation().request()
+                .assignLPNToLocation().request();
 
         final Location location = locationRepository.findByLocationBarcode(locationBarcode).get();
         assertThat(location.getLocationLPNList()).hasSize(1);
