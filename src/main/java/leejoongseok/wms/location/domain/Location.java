@@ -46,4 +46,20 @@ public class Location {
         this.storageType = storageType;
         this.usagePurpose = usagePurpose;
     }
+
+    /**
+     * 로케이션에 LPN을 등록한다.
+     * LPN이 이미 존재하는경우 LocationLPN의 inventory quantity만 증가시킨다.
+     * LPN이 존재하지 않으면 LocationLPN을 새로 생성해서 등록한다.
+     */
+    public void assignLPN(final String lpnBarcode) {
+        Assert.hasText(lpnBarcode, "LPN 바코드는 필수입니다.");
+    }
+
+    /**
+     * 테스트용 메소드입니다.
+     */
+    public LocationLPN getLocationLPN(final String lpnBarcode) {
+        return new LocationLPN();
+    }
 }

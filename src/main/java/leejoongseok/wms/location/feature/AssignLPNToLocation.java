@@ -15,6 +15,7 @@ public class AssignLPNToLocation {
     public void request(final Request request) {
         validateLPNBarcodeExists(request);
         final Location location = getLocation(request);
+        location.assignLPN(request.lpnBarcode);
 
     }
 
