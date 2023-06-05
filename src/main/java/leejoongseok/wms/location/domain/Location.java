@@ -62,6 +62,7 @@ public class Location {
      * 로케이션에 LPN을 등록한다.
      * LPN이 이미 존재하는경우 LocationLPN의 inventory quantity만 증가시킨다.
      * LPN이 존재하지 않으면 LocationLPN을 새로 생성해서 등록한다.
+     * 새로 등록한 LocationLPN은 재고수량이 1이고 Location의 locationLPNList에 추가된다.
      */
     public void assignLPN(final LPN lpn) {
         Assert.notNull(lpn, "LPN은 필수입니다.");

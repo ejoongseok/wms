@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 로케이션에 LPN을 등록.
  * LPN이 이미 존재하는경우 LocationLPN의 inventory quantity만 증가.
  * LPN이 존재하지 않으면 LocationLPN을 새로 생성해서 등록.
+ * 새로 등록한 LocationLPN은 재고수량이 1이고 Location의 locationLPNList에 추가.
  */
 @RestController
 @RequiredArgsConstructor
