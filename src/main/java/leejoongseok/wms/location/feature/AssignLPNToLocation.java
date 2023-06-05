@@ -7,12 +7,16 @@ import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.exception.LPNBarcodeNotFoundException;
 import leejoongseok.wms.location.exception.LocationBarcodeNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+@Component
 @RequiredArgsConstructor
 public class AssignLPNToLocation {
     private final LocationRepository locationRepository;
     private final LPNRepository lpnRepository;
 
+    @Transactional
     public void request(final Request request) {
         final LPN lpn = getLPN(request);
         final Location location = getLocation(request);

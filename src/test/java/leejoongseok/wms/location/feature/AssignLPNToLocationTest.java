@@ -1,42 +1,42 @@
 package leejoongseok.wms.location.feature;
 
-import leejoongseok.wms.inbound.domain.LPN;
-import leejoongseok.wms.inbound.domain.LPNRepository;
+import leejoongseok.wms.ApiTest;
+import leejoongseok.wms.Scenario;
 import leejoongseok.wms.location.domain.Location;
-import org.instancio.Instancio;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import static org.assertj.core.api.Assertions.assertThat;
 
-class AssignLPNToLocationTest {
+class AssignLPNToLocationTest extends ApiTest {
 
+    @Autowired
     private AssignLPNToLocation assignLPNToLocation;
+    @Autowired
     private LocationRepository locationRepository;
-    private LPNRepository lpnRepository;
-
-    @BeforeEach
-    void setUp() {
-        locationRepository = Mockito.mock(LocationRepository.class);
-        lpnRepository = Mockito.mock(LPNRepository.class);
-        assignLPNToLocation = new AssignLPNToLocation(locationRepository, lpnRepository);
-    }
 
     @Test
     @DisplayName("로케이션에 LPN을 할당한다.")
+    @Transactional
     void assignLPNToLocation() {
-        final String lpnBarcode = "lpnBarcode";
         final String locationBarcode = "A1-1-1";
-        Mockito.when(lpnRepository.findByLPNBarcode(lpnBarcode))
-                .thenReturn(Optional.of(Instancio.create(LPN.class)));
-        Mockito.when(locationRepository.findByLocationBarcode(locationBarcode))
-                .thenReturn(Optional.of(Instancio.create(Location.class)));
+        new Scenario()
+                .createItem().request()
+                .createInbound().request()
+                .confirmInspectedInbound().request()
+                .createLPN().request()
+                .createLocation().request();
+
+        final String lpnBarcode = "lpnBarcode";
         final AssignLPNToLocation.Request request = new AssignLPNToLocation.Request(
                 lpnBarcode,
                 locationBarcode);
 
         assignLPNToLocation.request(request);
+
+        final Location location = locationRepository.findByLocationBarcode(locationBarcode).get();
+        assertThat(location.getLocationLPNList()).hasSize(1);
     }
 }
