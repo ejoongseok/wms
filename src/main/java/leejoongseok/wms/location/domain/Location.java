@@ -1,5 +1,6 @@
 package leejoongseok.wms.location.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,6 +8,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import leejoongseok.wms.inbound.domain.LPN;
 import lombok.AccessLevel;
@@ -41,6 +43,7 @@ public class Location {
     @Enumerated(EnumType.STRING)
     private UsagePurpose usagePurpose;
     @Getter
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<LocationLPN> locationLPNList = new ArrayList<>();
 
     public Location(
