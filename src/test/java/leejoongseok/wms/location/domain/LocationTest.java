@@ -57,7 +57,7 @@ class LocationTest {
             final LPN lpn,
             final int locationLPNListSize,
             final int expectedInventoryQuantity) {
-        final LocationLPN locationLPN = location.getLocationLPN(lpnBarcode);
+        final LocationLPN locationLPN = location.TestingGetLocationLPN(lpnBarcode);
         assertThat(locationLPN).isNotNull();
         assertThat(locationLPN.getLpn()).isEqualTo(lpn);
         assertThat(location.getLocationLPNList()).hasSize(locationLPNListSize);

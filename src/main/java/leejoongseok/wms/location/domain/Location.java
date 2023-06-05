@@ -80,7 +80,7 @@ public class Location {
     /**
      * 테스트용 메소드입니다.
      */
-    LocationLPN getLocationLPN(final String lpnBarcode) {
+    LocationLPN TestingGetLocationLPN(final String lpnBarcode) {
         return locationLPNList.stream()
                 .filter(locationLPN -> lpnBarcode.equals(locationLPN.getLpn().getLpnBarcode()))
                 .findFirst()
