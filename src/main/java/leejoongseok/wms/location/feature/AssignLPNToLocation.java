@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.inbound.domain.LPNRepository;
 import leejoongseok.wms.location.domain.Location;
+import leejoongseok.wms.location.domain.LocationRepository;
 import leejoongseok.wms.location.exception.LPNBarcodeNotFoundException;
 import leejoongseok.wms.location.exception.LocationBarcodeNotFoundException;
 import lombok.RequiredArgsConstructor;

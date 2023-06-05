@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.location.domain.Location;
+import leejoongseok.wms.location.domain.LocationRepository;
 import leejoongseok.wms.location.domain.StorageType;
 import leejoongseok.wms.location.domain.UsagePurpose;
 import leejoongseok.wms.location.exception.LocationBarcodeAlreadyExistsException;

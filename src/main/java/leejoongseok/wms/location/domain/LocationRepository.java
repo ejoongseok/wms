@@ -1,6 +1,5 @@
-package leejoongseok.wms.location.feature;
+package leejoongseok.wms.location.domain;
 
-import leejoongseok.wms.location.domain.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
