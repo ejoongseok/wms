@@ -19,7 +19,24 @@ class LocationTest {
 
         location.assignLPN(lpn);
 
-        assertLocationLPN(location, lpnBarcode, lpn);
+        final int locationLPNListSize = 1;
+        final int expectedInventoryQuantity = 1;
+        assertLocationLPN(location, lpnBarcode, lpn, locationLPNListSize, expectedInventoryQuantity);
+    }
+
+    @Test
+    @DisplayName("로케이션에 같은 LPN을 두번 등록할 경우 LocationLPN은 하나만 생성되고 재고수량이 2가 된다.")
+    void duplicate_assignLPN() {
+        final Location location = createLocation();
+        final String lpnBarcode = "lpnBarcode";
+        final LPN lpn = createLPN(lpnBarcode);
+
+        location.assignLPN(lpn);
+        location.assignLPN(lpn);
+
+        final int locationLPNListSize = 1;
+        final int expectedInventoryQuantity = 2;
+        assertLocationLPN(location, lpnBarcode, lpn, locationLPNListSize, expectedInventoryQuantity);
     }
 
     private Location createLocation() {
@@ -34,10 +51,16 @@ class LocationTest {
                 .create();
     }
 
-    private void assertLocationLPN(final Location location, final String lpnBarcode, final LPN lpn) {
+    private void assertLocationLPN(
+            final Location location,
+            final String lpnBarcode,
+            final LPN lpn,
+            final int locationLPNListSize,
+            final int expectedInventoryQuantity) {
         final LocationLPN locationLPN = location.getLocationLPN(lpnBarcode);
         assertThat(locationLPN).isNotNull();
         assertThat(locationLPN.getLpn()).isEqualTo(lpn);
-        assertThat(location.getLocationLPNList()).hasSize(1);
+        assertThat(location.getLocationLPNList()).hasSize(locationLPNListSize);
+        assertThat(locationLPN.getInventoryQuantity()).isEqualTo(expectedInventoryQuantity);
     }
 }
