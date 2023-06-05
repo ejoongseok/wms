@@ -24,14 +24,19 @@ public class CreateLocation {
     @PostMapping("/locations")
     @ResponseStatus(HttpStatus.CREATED)
     public void request(@RequestBody @Valid final Request request) {
-        locationRepository.findByLocationBarcode(request.locationBarcode)
-                .ifPresent(location -> {
-                    throw new LocationBarcodeAlreadyExistsException(request.locationBarcode);
-                });
+        validateLocationBarcodeAlreadyExists(request.locationBarcode);
 
         final Location location = request.toEntity();
 
         locationRepository.save(location);
+    }
+
+    private void validateLocationBarcodeAlreadyExists(
+            final String locationBarcode) {
+        locationRepository.findByLocationBarcode(locationBarcode)
+                .ifPresent(location -> {
+                    throw new LocationBarcodeAlreadyExistsException(locationBarcode);
+                });
     }
 
     public record Request(

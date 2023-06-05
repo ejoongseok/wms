@@ -33,16 +33,21 @@ public class CreateLPN {
             @PathVariable final Long inboundId,
             @PathVariable final Long inboundItemId,
             @RequestBody @Valid final Request request) {
-        lpnRepository.findByLPNBarcode(request.lpnBarcode)
-                .ifPresent(lpn -> {
-                    throw new LPNBarcodeAlreadyExistsException(request.lpnBarcode);
-                });
+        validateLPNBarcodeAlreadyExists(request.lpnBarcode);
         final Inbound inbound = getInbound(inboundId);
         final LPN lpn = inbound.createLPN(
                 inboundItemId,
                 request.lpnBarcode,
                 request.expirationAt);
         lpnRepository.save(lpn);
+    }
+
+    private void validateLPNBarcodeAlreadyExists(
+            final String lpnBarcode) {
+        lpnRepository.findByLPNBarcode(lpnBarcode)
+                .ifPresent(lpn -> {
+                    throw new LPNBarcodeAlreadyExistsException(lpnBarcode);
+                });
     }
 
     private Inbound getInbound(final Long inboundId) {

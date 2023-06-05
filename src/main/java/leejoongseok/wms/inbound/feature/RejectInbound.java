@@ -22,10 +22,14 @@ public class RejectInbound {
     public void request(
             @PathVariable final Long inboundId,
             @RequestBody @Valid final Request request) {
-        final Inbound inbound = inboundRepository.findById(inboundId)
-                .orElseThrow(() -> new InboundIdNotFoundException(inboundId));
+        final Inbound inbound = getInbound(inboundId);
 
         inbound.reject(request.rejectionReasons);
+    }
+
+    private Inbound getInbound(final Long inboundId) {
+        return inboundRepository.findById(inboundId)
+                .orElseThrow(() -> new InboundIdNotFoundException(inboundId));
     }
 
     public record Request(

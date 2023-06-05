@@ -17,9 +17,13 @@ public class ConfirmInspectedInbound {
     @Transactional
     @PostMapping("/inbounds/{inboundId}/confirm-inspected")
     public void request(@PathVariable final Long inboundId) {
-        final Inbound inbound = inboundRepository.findById(inboundId)
-                .orElseThrow(() -> new InboundIdNotFoundException(inboundId));
+        final Inbound inbound = getInbound(inboundId);
 
         inbound.confirmInspected();
+    }
+
+    private Inbound getInbound(final Long inboundId) {
+        return inboundRepository.findById(inboundId)
+                .orElseThrow(() -> new InboundIdNotFoundException(inboundId));
     }
 }
