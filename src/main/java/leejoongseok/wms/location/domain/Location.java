@@ -10,9 +10,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import leejoongseok.wms.inbound.domain.LPN;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "location")
@@ -35,6 +40,8 @@ public class Location {
     @Comment("사용 목적")
     @Enumerated(EnumType.STRING)
     private UsagePurpose usagePurpose;
+    @Getter
+    private final List<LocationLPN> locationLPNList = new ArrayList<>();
 
     public Location(
             final String locationBarcode,
@@ -55,12 +62,25 @@ public class Location {
      */
     public void assignLPN(final LPN lpn) {
         Assert.notNull(lpn, "LPN은 필수입니다.");
+        findLocationLPN(lpn)
+                .ifPresentOrElse(
+                        LocationLPN::increaseInventoryQuantity,
+                        () -> locationLPNList.add(new LocationLPN(this, lpn)));
+    }
+
+    private Optional<LocationLPN> findLocationLPN(final LPN lpn) {
+        return locationLPNList.stream()
+                .filter(locationLPN -> lpn.equals(locationLPN.getLpn()))
+                .findFirst();
     }
 
     /**
      * 테스트용 메소드입니다.
      */
     public LocationLPN getLocationLPN(final String lpnBarcode) {
-        return new LocationLPN();
+        return locationLPNList.stream()
+                .filter(locationLPN -> lpnBarcode.equals(locationLPN.getLpn().getLpnBarcode()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("해당 LPN이 존재하지 않습니다."));
     }
 }
