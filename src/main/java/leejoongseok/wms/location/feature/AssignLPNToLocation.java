@@ -1,6 +1,7 @@
 package leejoongseok.wms.location.feature;
 
 import jakarta.validation.constraints.NotBlank;
+import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.inbound.domain.LPNRepository;
 import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.exception.LPNBarcodeNotFoundException;
@@ -13,14 +14,14 @@ public class AssignLPNToLocation {
     private final LPNRepository lpnRepository;
 
     public void request(final Request request) {
-        validateLPNBarcodeExists(request);
+        final LPN lpn = getLPN(request);
         final Location location = getLocation(request);
         location.assignLPN(request.lpnBarcode);
 
     }
 
-    private void validateLPNBarcodeExists(final Request request) {
-        lpnRepository.findByLPNBarcode(request.lpnBarcode)
+    private LPN getLPN(final Request request) {
+        return lpnRepository.findByLPNBarcode(request.lpnBarcode)
                 .orElseThrow(() -> new LPNBarcodeNotFoundException(request.lpnBarcode));
     }
 
