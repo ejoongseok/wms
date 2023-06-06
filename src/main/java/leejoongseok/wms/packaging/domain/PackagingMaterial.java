@@ -48,7 +48,6 @@ public class PackagingMaterial {
     @Comment("설명")
     private String description;
 
-
     public PackagingMaterial(
             final Dimension dimension,
             final Integer weightInGrams,
@@ -62,7 +61,7 @@ public class PackagingMaterial {
         Assert.isTrue(1 <= weightInGrams, "무게는 1g 이상이어야 합니다.");
         Assert.isTrue(1 <= thickness, "두께는 1mm 이상이어야 합니다.");
         Assert.hasText(name, "포장재 이름은 필수입니다.");
-        Assert.isTrue(1 <= maxWeightInGrams, "제한 무게는 1g 이상이어야 합니다.");
+        Assert.isTrue(1 <= maxWeightInGrams, "최대 무게는 1g 이상이어야 합니다.");
         Assert.notNull(packagingType, "포장재 종류는 필수입니다.");
         this.dimension = dimension;
         this.weightInGrams = weightInGrams;

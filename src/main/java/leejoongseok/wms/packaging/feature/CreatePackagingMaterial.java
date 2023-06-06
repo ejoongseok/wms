@@ -51,7 +51,7 @@ public class CreatePackagingMaterial {
             @NotBlank(message = "포장재 이름은 필수입니다.")
             String name,
             String code,
-            @Min(value = 1, message = "제한 무게는 1g 이상이어야 합니다.")
+            @Min(value = 1, message = "최대 무게는 1g 이상이어야 합니다.")
             Integer maxWeightInGrams,
             String description
     ) {
