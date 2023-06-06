@@ -5,6 +5,7 @@ import leejoongseok.wms.inbound.steps.CreateInboundSteps;
 import leejoongseok.wms.inbound.steps.CreateLPNSteps;
 import leejoongseok.wms.inbound.steps.RejectInboundSteps;
 import leejoongseok.wms.item.steps.CreateItemSteps;
+import leejoongseok.wms.location.steps.AddManualInventoryToLocationLPNSteps;
 import leejoongseok.wms.location.steps.AssignLPNToLocationSteps;
 import leejoongseok.wms.location.steps.CreateLocationSteps;
 
@@ -35,5 +36,9 @@ public class Scenario {
 
     public AssignLPNToLocationSteps.Request assignLPNToLocation() {
         return new AssignLPNToLocationSteps.Request();
+    }
+
+    public AddManualInventoryToLocationLPNSteps.Request addManualInventoryToLocationLPN() {
+        return new AddManualInventoryToLocationLPNSteps.Request();
     }
 }

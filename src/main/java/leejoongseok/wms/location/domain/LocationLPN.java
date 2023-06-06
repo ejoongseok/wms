@@ -46,11 +46,19 @@ public class LocationLPN {
         this.lpn = lpn;
     }
 
-    public void increaseInventoryQuantity() {
+    void incrementInventoryQuantity() {
         inventoryQuantity++;
     }
 
     public String getLpnBarcode() {
         return lpn.getLpnBarcode();
+    }
+
+    void addManualInventoryQuantity(final Integer inventoryQuantity) {
+        Assert.notNull(inventoryQuantity, "추가할 재고 수량은 필수입니다.");
+        if (0 >= inventoryQuantity)
+            throw new IllegalArgumentException("추가할 재고 수량은 1이상이어야 합니다.");
+
+        this.inventoryQuantity += inventoryQuantity;
     }
 }

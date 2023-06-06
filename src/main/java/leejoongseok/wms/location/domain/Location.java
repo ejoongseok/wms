@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import leejoongseok.wms.inbound.domain.LPN;
+import leejoongseok.wms.location.exception.LocationLPNNotFoundException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("로케이션 ID")
     private Long id;
+    @Getter
     @Column(name = "location_barcode", nullable = false)
     @Comment("로케이션 바코드")
     private String locationBarcode;
@@ -68,7 +70,7 @@ public class Location {
         Assert.notNull(lpn, "LPN은 필수입니다.");
         findLocationLPN(lpn)
                 .ifPresentOrElse(
-                        LocationLPN::increaseInventoryQuantity,
+                        LocationLPN::incrementInventoryQuantity,
                         () -> locationLPNList.add(
                                 new LocationLPN(this, lpn)));
     }
@@ -88,4 +90,27 @@ public class Location {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("해당 LPN이 존재하지 않습니다."));
     }
+
+    public void addManualInventoryToLocationLPN(
+            final LPN lpn,
+            final Integer inventoryQuantity) {
+        validateManualInventoryParameter(lpn, inventoryQuantity);
+        final LocationLPN locationLPN = getLocationLPN(lpn);
+        locationLPN.addManualInventoryQuantity(inventoryQuantity);
+    }
+
+    private void validateManualInventoryParameter(final LPN lpn, final Integer inventoryQuantity) {
+        Assert.notNull(lpn, "재고 수량을 추가할 LPN은 필수입니다.");
+        Assert.notNull(inventoryQuantity, "추가할 재고 수량은 필수입니다.");
+        if (0 >= inventoryQuantity) {
+            throw new IllegalArgumentException("추가할 재고 수량은 1이상이어야 합니다.");
+        }
+    }
+
+    private LocationLPN getLocationLPN(final LPN lpn) {
+        return findLocationLPN(lpn)
+                .orElseThrow(() -> new LocationLPNNotFoundException("LocationLPN을 찾을 수 없습니다."));
+    }
+
+
 }
