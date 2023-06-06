@@ -9,8 +9,11 @@ class CreateOutboundTest {
     @DisplayName("출고를 생성한다.")
     void createOutbound() {
         final CreateOutbound createOutbound = new CreateOutbound();
+        final CreateOutbound.Request request = new CreateOutbound.Request(
 
-        createOutbound.request();
+        );
+
+        createOutbound.request(request);
 
     }
 }
