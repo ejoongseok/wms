@@ -93,6 +93,7 @@ public class Location {
     public void addManualInventoryToLocationLPN(
             final LPN lpn,
             final Integer inventoryQuantity) {
-
     }
+
+
 }
