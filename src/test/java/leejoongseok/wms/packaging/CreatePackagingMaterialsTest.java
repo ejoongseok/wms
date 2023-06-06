@@ -16,6 +16,7 @@ class CreatePackagingMaterialsTest {
     @Test
     @DisplayName("포장재를 등록한다.")
     void createPackagingMaterials() {
-        createPackagingMaterials.request();
+        final CreatePackagingMaterials.Request request = new CreatePackagingMaterials.Request();
+        createPackagingMaterials.request(request);
     }
 }
