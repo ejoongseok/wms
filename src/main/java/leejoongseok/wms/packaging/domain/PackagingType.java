@@ -7,6 +7,10 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public enum PackagingType {
-    BOX("박스");
+    BOX("박스"),
+    BAG("봉투"),
+    BUBBLE_WRAP("버블랩"),
+    PAPER("종이"),
+    OTHER("기타");
     private final String description;
 }
