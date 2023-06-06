@@ -38,8 +38,13 @@ public class LocationLPN {
     @Column(name = "inventory_quantity", nullable = false)
     @Comment("재고 수량")
     private Integer inventoryQuantity = 1;
+    @Getter
+    @Column(name = "item_id", nullable = false)
+    @Comment("상품 ID")
+    private Long itemId;
 
-    public LocationLPN(final Location location, final LPN lpn) {
+    public LocationLPN(final Location location, final LPN lpn, final Long itemId) {
+        this.itemId = itemId;
         Assert.notNull(location, "로케이션은 필수입니다.");
         Assert.notNull(lpn, "LPN은 필수입니다.");
         this.location = location;
