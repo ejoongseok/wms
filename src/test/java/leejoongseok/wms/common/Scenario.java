@@ -8,6 +8,7 @@ import leejoongseok.wms.item.steps.CreateItemSteps;
 import leejoongseok.wms.location.steps.AddManualInventoryToLocationLPNSteps;
 import leejoongseok.wms.location.steps.AssignLPNToLocationSteps;
 import leejoongseok.wms.location.steps.CreateLocationSteps;
+import leejoongseok.wms.packaging.steps.CreatePackagingMaterialSteps;
 
 public class Scenario {
     public CreateItemSteps.Request createItem() {
@@ -40,5 +41,9 @@ public class Scenario {
 
     public AddManualInventoryToLocationLPNSteps.Request addManualInventoryToLocationLPN() {
         return new AddManualInventoryToLocationLPNSteps.Request();
+    }
+
+    public CreatePackagingMaterialSteps.Request createPackagingMaterial() {
+        return new CreatePackagingMaterialSteps.Request();
     }
 }

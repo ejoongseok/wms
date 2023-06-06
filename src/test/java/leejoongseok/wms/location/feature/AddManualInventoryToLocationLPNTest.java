@@ -14,8 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AddManualInventoryToLocationLPNTest extends ApiTest {
 
     @Autowired
-    private AddManualInventoryToLocationLPN sut;
-    @Autowired
     private LocationRepository locationRepository;
 
 
