@@ -1,5 +1,6 @@
 package leejoongseok.wms.packaging.feature;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,16 +9,22 @@ import leejoongseok.wms.packaging.domain.PackagingMaterial;
 import leejoongseok.wms.packaging.domain.PackagingMaterialRepository;
 import leejoongseok.wms.packaging.domain.PackagingType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-@Component
+@RestController
 @RequiredArgsConstructor
-public class CreatePackagingMaterials {
+public class CreatePackagingMaterial {
     private final PackagingMaterialRepository packagingMaterialRepository;
 
     @Transactional
-    public void request(final Request request) {
+    @PostMapping("/packaging-materials")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void request(@RequestBody @Valid final Request request) {
         final PackagingMaterial packagingMaterial = request.toEntity();
         packagingMaterialRepository.save(packagingMaterial);
     }
