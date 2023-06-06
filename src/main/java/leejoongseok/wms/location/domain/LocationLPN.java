@@ -55,6 +55,10 @@ public class LocationLPN {
     }
 
     void addManualInventoryQuantity(final Integer inventoryQuantity) {
+        Assert.notNull(inventoryQuantity, "추가할 재고 수량은 필수입니다.");
+        if (0 > inventoryQuantity)
+            throw new IllegalArgumentException("추가할 재고 수량은 0보다 작을 수 없습니다.");
+
         this.inventoryQuantity += inventoryQuantity;
     }
 }
