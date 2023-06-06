@@ -31,6 +31,7 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("로케이션 ID")
     private Long id;
+    @Getter
     @Column(name = "location_barcode", nullable = false)
     @Comment("로케이션 바코드")
     private String locationBarcode;
@@ -87,5 +88,11 @@ public class Location {
                 .filter(locationLPN -> lpnBarcode.equals(locationLPN.getLpnBarcode()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("해당 LPN이 존재하지 않습니다."));
+    }
+
+    public void addManualInventoryToLocationLPN(
+            final LPN lpn,
+            final Integer inventoryQuantity) {
+
     }
 }

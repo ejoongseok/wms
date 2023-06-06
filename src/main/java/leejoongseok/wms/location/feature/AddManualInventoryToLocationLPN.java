@@ -3,13 +3,36 @@ package leejoongseok.wms.location.feature;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.inbound.domain.LPN;
+import leejoongseok.wms.inbound.domain.LPNRepository;
+import leejoongseok.wms.location.domain.Location;
+import leejoongseok.wms.location.domain.LocationRepository;
+import leejoongseok.wms.location.exception.LPNBarcodeNotFoundException;
+import leejoongseok.wms.location.exception.LocationBarcodeNotFoundException;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 로케이션 LPN에 재고 수량을 직접 추가한다.
  */
+@RequiredArgsConstructor
 public class AddManualInventoryToLocationLPN {
-    public void request(final Request request) {
+    private final LocationRepository locationRepository;
+    private final LPNRepository lpnRepository;
 
+    public void request(final Request request) {
+        final LPN lpn = getLPN(request.lpnBarcode());
+        final Location location = getLocation(request.locationBarcode());
+        location.addManualInventoryToLocationLPN(lpn, request.inventoryQuantity());
+    }
+
+    private LPN getLPN(final String lpnBarcode) {
+        return lpnRepository.findByLPNBarcode(lpnBarcode)
+                .orElseThrow(() -> new LPNBarcodeNotFoundException(lpnBarcode));
+    }
+
+    private Location getLocation(final String locationBarcode) {
+        return locationRepository.findByLocationBarcode(locationBarcode)
+                .orElseThrow(() -> new LocationBarcodeNotFoundException(locationBarcode));
     }
 
     public record Request(
