@@ -27,6 +27,8 @@ public class CreateOutbound {
         for (final OrderItem orderItem : orderItems) {
             // 주문 상품에 맞는 로케이션 LPN을 조회한다.
             final List<LocationLPN> locationLPNList = locationLPNRepository.findByItemIdAndFetchJoinLPN(orderItem.getItemId());
+            // TODO 이름 변경하기 뭔가.. 출고 생성을 위한 재고 검증기같은거?
+            //Inventory Validator for Issue Creation
             outboundLocationLPNList.validateAvailableInventoryQuantity(locationLPNList, orderItem.getOrderQuantity());
             //
         }
