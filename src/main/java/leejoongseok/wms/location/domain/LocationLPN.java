@@ -46,7 +46,7 @@ public class LocationLPN {
         this.lpn = lpn;
     }
 
-    public void increaseInventoryQuantity() {
+    void incrementInventoryQuantity() {
         inventoryQuantity++;
     }
 
@@ -54,7 +54,7 @@ public class LocationLPN {
         return lpn.getLpnBarcode();
     }
 
-    public void addManualInventory(final Integer inventoryQuantity) {
+    void addManualInventory(final Integer inventoryQuantity) {
         this.inventoryQuantity += inventoryQuantity;
     }
 }

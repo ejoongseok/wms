@@ -70,7 +70,7 @@ public class Location {
         Assert.notNull(lpn, "LPN은 필수입니다.");
         findLocationLPN(lpn)
                 .ifPresentOrElse(
-                        LocationLPN::increaseInventoryQuantity,
+                        LocationLPN::incrementInventoryQuantity,
                         () -> locationLPNList.add(
                                 new LocationLPN(this, lpn)));
     }
