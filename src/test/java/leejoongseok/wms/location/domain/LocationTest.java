@@ -1,12 +1,14 @@
 package leejoongseok.wms.location.domain;
 
 import leejoongseok.wms.inbound.domain.LPN;
+import leejoongseok.wms.location.exception.LocationLPNNotFoundException;
 import org.instancio.Instancio;
 import org.instancio.Select;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class LocationTest {
 
@@ -77,6 +79,34 @@ class LocationTest {
 
         final int expectedInventoryQuantity = 11;
         assertLocationLPN(location, lpnBarcode, lpn, 1, expectedInventoryQuantity);
+    }
 
+    @Test
+    @DisplayName("[실패] 직접 입력한 재고 수량을 로케이션 LPN에 추가한다. - locationLPN이 없는 경우")
+    void fail_not_found_location_lpn_addManualInventoryToLocationLPN() {
+        final Location location = createLocation();
+        final String lpnBarcode = "lpnBarcode";
+        final LPN lpn = createLPN(lpnBarcode);
+        final int inventoryQuantity = 10;
+
+        assertThatThrownBy(() -> {
+            location.addManualInventoryToLocationLPN(lpn, inventoryQuantity);
+        }).isInstanceOf(LocationLPNNotFoundException.class)
+                .hasMessageContaining("LocationLPN을 찾을 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("[실패] 직접 입력한 재고 수량을 로케이션 LPN에 추가한다. - 추가하려는 재고 수량이 0보다 작거나 같은경우")
+    void fail_invalid_inventory_quantity_addManualInventoryToLocationLPN() {
+        final Location location = createLocation();
+        final String lpnBarcode = "lpnBarcode";
+        final LPN lpn = createLPN(lpnBarcode);
+        location.assignLPN(lpn);
+        final int inventoryQuantity = 0;
+
+        assertThatThrownBy(() -> {
+            location.addManualInventoryToLocationLPN(lpn, inventoryQuantity);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("추가할 재고 수량은 1이상이어야 합니다.");
     }
 }

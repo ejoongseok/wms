@@ -100,10 +100,10 @@ public class Location {
     }
 
     private void validateManualInventoryParameter(final LPN lpn, final Integer inventoryQuantity) {
-        Assert.notNull(lpn, "LPN은 필수입니다.");
-        Assert.notNull(inventoryQuantity, "재고 수량은 필수입니다.");
-        if (0 > inventoryQuantity) {
-            throw new IllegalArgumentException("재고 수량은 0보다 작을 수 없습니다.");
+        Assert.notNull(lpn, "재고 수량을 추가할 LPN은 필수입니다.");
+        Assert.notNull(inventoryQuantity, "추가할 재고 수량은 필수입니다.");
+        if (0 >= inventoryQuantity) {
+            throw new IllegalArgumentException("추가할 재고 수량은 1이상이어야 합니다.");
         }
     }
 
