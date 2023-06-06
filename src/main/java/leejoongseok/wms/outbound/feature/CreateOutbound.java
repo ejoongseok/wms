@@ -4,11 +4,18 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.outbound.domain.CushioningMaterial;
+import leejoongseok.wms.outbound.domain.Order;
+import leejoongseok.wms.outbound.port.LoadOrderPort;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 
+@RequiredArgsConstructor
 public class CreateOutbound {
+    private final LoadOrderPort loadOrderPort;
+
     public void request(final Request request) {
+        final Order order = loadOrderPort.getBy(request.orderId);
 
     }
 
