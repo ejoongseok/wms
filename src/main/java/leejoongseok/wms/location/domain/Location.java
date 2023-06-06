@@ -96,7 +96,7 @@ public class Location {
             final Integer inventoryQuantity) {
         final LocationLPN locationLPN = findLocationLPN(lpn)
                 .orElseThrow(() -> new LocationLPNNotFoundException("LocationLPN을 찾을 수 없습니다."));
-        locationLPN.addManualInventory(inventoryQuantity);
+        locationLPN.addManualInventoryQuantity(inventoryQuantity);
     }
 
 

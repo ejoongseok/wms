@@ -54,7 +54,7 @@ public class LocationLPN {
         return lpn.getLpnBarcode();
     }
 
-    void addManualInventory(final Integer inventoryQuantity) {
+    void addManualInventoryQuantity(final Integer inventoryQuantity) {
         this.inventoryQuantity += inventoryQuantity;
     }
 }
