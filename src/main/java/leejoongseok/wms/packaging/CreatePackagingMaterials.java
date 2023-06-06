@@ -3,11 +3,12 @@ package leejoongseok.wms.packaging;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.packaging.domain.PackagingMaterial;
 import leejoongseok.wms.packaging.domain.PackagingType;
 
 public class CreatePackagingMaterials {
     public void request(final Request request) {
-
+        request.toEntity();
     }
 
     public record Request(
@@ -33,8 +34,27 @@ public class CreatePackagingMaterials {
             String name,
             String code,
             @Min(value = 1, message = "제한 무게는 1g 이상이어야 합니다.")
-            Integer maxWeightGram,
+            Integer maxWeightInGrams,
             String description
     ) {
+        public PackagingMaterial toEntity() {
+            return new PackagingMaterial(
+                    new Dimension(
+                            innerWidthMillimeter,
+                            innerHeightMillimeter,
+                            innerLengthMillimeter,
+                            outerWidthMillimeter,
+                            outerHeightMillimeter,
+                            outerLengthMillimeter
+                    ),
+                    weightInGrams,
+                    packagingType,
+                    thickness,
+                    name,
+                    code,
+                    maxWeightInGrams,
+                    description
+            );
+        }
     }
 }
