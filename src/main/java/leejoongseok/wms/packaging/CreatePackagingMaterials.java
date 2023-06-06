@@ -5,7 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.packaging.domain.PackagingMaterial;
 import leejoongseok.wms.packaging.domain.PackagingType;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CreatePackagingMaterials {
     public void request(final Request request) {
         request.toEntity();

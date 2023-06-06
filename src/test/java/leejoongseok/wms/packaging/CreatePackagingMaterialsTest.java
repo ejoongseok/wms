@@ -1,18 +1,15 @@
 package leejoongseok.wms.packaging;
 
+import leejoongseok.wms.common.ApiTest;
 import leejoongseok.wms.packaging.domain.PackagingType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-class CreatePackagingMaterialsTest {
+class CreatePackagingMaterialsTest extends ApiTest {
 
+    @Autowired
     private CreatePackagingMaterials createPackagingMaterials;
-
-    @BeforeEach
-    void setUp() {
-        createPackagingMaterials = new CreatePackagingMaterials();
-    }
 
     @Test
     @DisplayName("포장재를 등록한다.")
