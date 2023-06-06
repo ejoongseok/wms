@@ -1,17 +1,54 @@
 package leejoongseok.wms.packaging.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import leejoongseok.wms.packaging.Dimension;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
+@Entity
+@Table(name = "packaging_material")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Comment("포장재")
 public class PackagingMaterial {
-    private final Dimension dimension;
-    private final Integer weightInGrams;
-    private final PackagingType packagingType;
-    private final Integer thickness;
-    private final String name;
-    private final String code;
-    private final Integer maxWeightInGrams;
-    private final String description;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("포장재 ID")
+    private Long id;
+    @Embedded
+    private Dimension dimension;
+    @Column(name = "weight_in_grams", nullable = false)
+    @Comment("무게(g)")
+    private Integer weightInGrams;
+    @Column(name = "packaging_type", nullable = false)
+    @Comment("포장재 종류")
+    @Enumerated(EnumType.STRING)
+    private PackagingType packagingType;
+    @Column(name = "thickness", nullable = false)
+    @Comment("두께")
+    private Integer thickness;
+    @Column(name = "name", nullable = false)
+    @Comment("포장재 이름")
+    private String name;
+    @Column(name = "code", nullable = true)
+    @Comment("포장재 코드")
+    private String code;
+    @Column(name = "max_weight_in_grams", nullable = false)
+    @Comment("최대 무게(g)")
+    private Integer maxWeightInGrams;
+    @Column(name = "description", nullable = true)
+    @Comment("설명")
+    private String description;
+
 
     public PackagingMaterial(
             final Dimension dimension,
@@ -36,6 +73,5 @@ public class PackagingMaterial {
         this.code = code;
         this.maxWeightInGrams = maxWeightInGrams;
         this.description = description;
-
     }
 }

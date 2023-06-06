@@ -1,14 +1,33 @@
 package leejoongseok.wms.packaging;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Dimension {
-    private final Integer innerWidthMillimeter;
-    private final Integer innerHeightMillimeter;
-    private final Integer innerLengthMillimeter;
-    private final Integer outerWidthMillimeter;
-    private final Integer outerHeightMillimeter;
-    private final Integer outerLengthMillimeter;
+    @Column(name = "inner_width_millimeter", nullable = false)
+    @Comment("내부 폭 (mm)")
+    private Integer innerWidthMillimeter;
+    @Column(name = "inner_height_millimeter", nullable = false)
+    @Comment("내부 높이 (mm)")
+    private Integer innerHeightMillimeter;
+    @Column(name = "inner_length_millimeter", nullable = false)
+    @Comment("내부 길이 (mm)")
+    private Integer innerLengthMillimeter;
+    @Column(name = "outer_width_millimeter", nullable = false)
+    @Comment("외부 폭 (mm)")
+    private Integer outerWidthMillimeter;
+    @Column(name = "outer_height_millimeter", nullable = false)
+    @Comment("외부 높이 (mm)")
+    private Integer outerHeightMillimeter;
+    @Column(name = "outer_length_millimeter", nullable = false)
+    @Comment("외부 길이 (mm)")
+    private Integer outerLengthMillimeter;
 
     public Dimension(
             final Integer innerWidthMillimeter,

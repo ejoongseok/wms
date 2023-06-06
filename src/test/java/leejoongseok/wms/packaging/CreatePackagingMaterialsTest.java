@@ -1,15 +1,20 @@
 package leejoongseok.wms.packaging;
 
 import leejoongseok.wms.common.ApiTest;
+import leejoongseok.wms.packaging.domain.PackagingMaterialRepository;
 import leejoongseok.wms.packaging.domain.PackagingType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class CreatePackagingMaterialsTest extends ApiTest {
 
     @Autowired
     private CreatePackagingMaterials createPackagingMaterials;
+    @Autowired
+    private PackagingMaterialRepository packagingMaterialRepository;
 
     @Test
     @DisplayName("포장재를 등록한다.")
@@ -45,5 +50,7 @@ class CreatePackagingMaterialsTest extends ApiTest {
         );
 
         createPackagingMaterials.request(request);
+
+        assertThat(packagingMaterialRepository.findById(1L)).isPresent();
     }
 }

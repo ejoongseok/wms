@@ -4,13 +4,21 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.packaging.domain.PackagingMaterial;
+import leejoongseok.wms.packaging.domain.PackagingMaterialRepository;
 import leejoongseok.wms.packaging.domain.PackagingType;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@RequiredArgsConstructor
 public class CreatePackagingMaterials {
+    private final PackagingMaterialRepository packagingMaterialRepository;
+
+    @Transactional
     public void request(final Request request) {
-        request.toEntity();
+        final PackagingMaterial packagingMaterial = request.toEntity();
+        packagingMaterialRepository.save(packagingMaterial);
     }
 
     public record Request(
