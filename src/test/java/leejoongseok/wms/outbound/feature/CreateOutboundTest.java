@@ -1,5 +1,6 @@
 package leejoongseok.wms.outbound.feature;
 
+import leejoongseok.wms.location.domain.LocationLPNRepository;
 import leejoongseok.wms.outbound.domain.CushioningMaterial;
 import leejoongseok.wms.outbound.port.LoadOrderPort;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,11 +13,13 @@ class CreateOutboundTest {
 
     private CreateOutbound createOutbound;
     private LoadOrderPort loadOrderPort;
+    private LocationLPNRepository locationLPNRepository;
 
     @BeforeEach
     void setUp() {
-        loadOrderPort = null;
-        createOutbound = new CreateOutbound(loadOrderPort);
+        loadOrderPort = new LoadOrderPort();
+        locationLPNRepository = null;
+        createOutbound = new CreateOutbound(loadOrderPort, locationLPNRepository);
     }
 
     @Test
