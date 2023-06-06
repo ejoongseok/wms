@@ -10,15 +10,19 @@ import leejoongseok.wms.location.domain.LocationRepository;
 import leejoongseok.wms.location.exception.LPNBarcodeNotFoundException;
 import leejoongseok.wms.location.exception.LocationBarcodeNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 로케이션 LPN에 재고 수량을 직접 추가한다.
  */
+@Component
 @RequiredArgsConstructor
 public class AddManualInventoryToLocationLPN {
     private final LocationRepository locationRepository;
     private final LPNRepository lpnRepository;
 
+    @Transactional
     public void request(final Request request) {
         final LPN lpn = getLPN(request.lpnBarcode());
         final Location location = getLocation(request.locationBarcode());
