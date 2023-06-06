@@ -63,4 +63,20 @@ class LocationTest {
         assertThat(location.getLocationLPNList()).hasSize(locationLPNListSize);
         assertThat(locationLPN.getInventoryQuantity()).isEqualTo(expectedInventoryQuantity);
     }
+
+    @Test
+    @DisplayName("직접 입력한 재고 수량을 로케이션 LPN에 추가한다.")
+    void addManualInventoryToLocationLPN() {
+        final Location location = createLocation();
+        final String lpnBarcode = "lpnBarcode";
+        final LPN lpn = createLPN(lpnBarcode);
+        location.assignLPN(lpn);
+        final int inventoryQuantity = 10;
+
+        location.addManualInventoryToLocationLPN(lpn, inventoryQuantity);
+
+        final int expectedInventoryQuantity = 11;
+        assertLocationLPN(location, lpnBarcode, lpn, 1, expectedInventoryQuantity);
+
+    }
 }

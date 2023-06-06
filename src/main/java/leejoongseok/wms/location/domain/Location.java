@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import leejoongseok.wms.inbound.domain.LPN;
+import leejoongseok.wms.location.exception.LocationLPNNotFoundException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -93,6 +94,9 @@ public class Location {
     public void addManualInventoryToLocationLPN(
             final LPN lpn,
             final Integer inventoryQuantity) {
+        final LocationLPN locationLPN = findLocationLPN(lpn)
+                .orElseThrow(() -> new LocationLPNNotFoundException("LocationLPN을 찾을 수 없습니다."));
+        locationLPN.addManualInventory(inventoryQuantity);
     }
 
 
