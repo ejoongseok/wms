@@ -16,6 +16,14 @@ class AddManualInventoryToLocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN에 재고 수량을 직접 추가한다.")
     void addManualInventoryToLocationLPN() {
-        sut.request();
+        final String lpnBarcode = "lpnBarcode";
+        final String locationBarcode = "locationBarcode";
+        final Integer inventoryQuantity = 10;
+        final AddManualInventoryToLocationLPN.Request request = new AddManualInventoryToLocationLPN.Request(
+                lpnBarcode,
+                locationBarcode,
+                inventoryQuantity
+        );
+        sut.request(request);
     }
 }
