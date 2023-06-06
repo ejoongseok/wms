@@ -94,9 +94,22 @@ public class Location {
     public void addManualInventoryToLocationLPN(
             final LPN lpn,
             final Integer inventoryQuantity) {
-        final LocationLPN locationLPN = findLocationLPN(lpn)
-                .orElseThrow(() -> new LocationLPNNotFoundException("LocationLPN을 찾을 수 없습니다."));
+        validateManualInventoryParameter(lpn, inventoryQuantity);
+        final LocationLPN locationLPN = getLocationLPN(lpn);
         locationLPN.addManualInventoryQuantity(inventoryQuantity);
+    }
+
+    private void validateManualInventoryParameter(final LPN lpn, final Integer inventoryQuantity) {
+        Assert.notNull(lpn, "LPN은 필수입니다.");
+        Assert.notNull(inventoryQuantity, "재고 수량은 필수입니다.");
+        if (0 > inventoryQuantity) {
+            throw new IllegalArgumentException("재고 수량은 0보다 작을 수 없습니다.");
+        }
+    }
+
+    private LocationLPN getLocationLPN(final LPN lpn) {
+        return findLocationLPN(lpn)
+                .orElseThrow(() -> new LocationLPNNotFoundException("LocationLPN을 찾을 수 없습니다."));
     }
 
 
