@@ -1,4 +1,4 @@
-package leejoongseok.wms.packaging;
+package leejoongseok.wms.packaging.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

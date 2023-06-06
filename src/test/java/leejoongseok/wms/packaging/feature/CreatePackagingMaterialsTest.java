@@ -1,4 +1,4 @@
-package leejoongseok.wms.packaging;
+package leejoongseok.wms.packaging.feature;
 
 import leejoongseok.wms.common.ApiTest;
 import leejoongseok.wms.packaging.domain.PackagingMaterialRepository;

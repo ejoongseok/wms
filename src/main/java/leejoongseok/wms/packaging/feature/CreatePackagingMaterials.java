@@ -1,8 +1,9 @@
-package leejoongseok.wms.packaging;
+package leejoongseok.wms.packaging.feature;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.packaging.domain.Dimension;
 import leejoongseok.wms.packaging.domain.PackagingMaterial;
 import leejoongseok.wms.packaging.domain.PackagingMaterialRepository;
 import leejoongseok.wms.packaging.domain.PackagingType;
