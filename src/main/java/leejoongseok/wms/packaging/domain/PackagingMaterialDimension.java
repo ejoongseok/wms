@@ -9,7 +9,7 @@ import org.springframework.util.Assert;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Dimension {
+public class PackagingMaterialDimension {
     @Column(name = "inner_width_millimeter", nullable = false)
     @Comment("내부 폭 (mm)")
     private Integer innerWidthMillimeter;
@@ -29,7 +29,7 @@ public class Dimension {
     @Comment("외부 길이 (mm)")
     private Integer outerLengthMillimeter;
 
-    public Dimension(
+    public PackagingMaterialDimension(
             final Integer innerWidthMillimeter,
             final Integer innerHeightMillimeter,
             final Integer innerLengthMillimeter,

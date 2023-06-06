@@ -4,8 +4,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import leejoongseok.wms.packaging.domain.Dimension;
 import leejoongseok.wms.packaging.domain.PackagingMaterial;
+import leejoongseok.wms.packaging.domain.PackagingMaterialDimension;
 import leejoongseok.wms.packaging.domain.PackagingMaterialRepository;
 import leejoongseok.wms.packaging.domain.PackagingType;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +57,7 @@ public class CreatePackagingMaterial {
     ) {
         public PackagingMaterial toEntity() {
             return new PackagingMaterial(
-                    new Dimension(
+                    new PackagingMaterialDimension(
                             innerWidthMillimeter,
                             innerHeightMillimeter,
                             innerLengthMillimeter,
