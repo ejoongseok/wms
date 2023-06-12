@@ -6,31 +6,41 @@ import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.LocationLPNRepository;
 import leejoongseok.wms.outbound.domain.CushioningMaterial;
+import leejoongseok.wms.outbound.domain.LocationLPNFilterForOutbound;
+import leejoongseok.wms.outbound.domain.LocationLPNValidatorForOutbound;
 import leejoongseok.wms.outbound.domain.Order;
 import leejoongseok.wms.outbound.domain.OrderItem;
-import leejoongseok.wms.outbound.domain.OutboundLocationLPNList;
 import leejoongseok.wms.outbound.port.LoadOrderPort;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
 public class CreateOutbound {
     private final LoadOrderPort loadOrderPort;
     private final LocationLPNRepository locationLPNRepository;
-    private final OutboundLocationLPNList outboundLocationLPNList = new OutboundLocationLPNList();
+    private final LocationLPNFilterForOutbound locationLPNFilterForOutbound;
+    private final LocationLPNValidatorForOutbound locationLPNValidatorForOutbound;
 
     public void request(final Request request) {
         final Order order = loadOrderPort.getBy(request.orderId);
         final List<OrderItem> orderItems = order.getOrderItems();
+        final LocalDateTime filterAt = LocalDateTime.now();
+
         for (final OrderItem orderItem : orderItems) {
             // 주문 상품에 맞는 로케이션 LPN을 조회한다.
-            final List<LocationLPN> locationLPNList = locationLPNRepository.findByItemIdAndFetchJoinLPN(orderItem.getItemId());
-            // TODO 이름 변경하기 뭔가.. 출고 생성을 위한 재고 검증기같은거?
-            //Inventory Validator for Issue Creation
-            outboundLocationLPNList.validateAvailableInventoryQuantity(locationLPNList, orderItem.getOrderQuantity());
-            //
+            final List<LocationLPN> locationLPNList = locationLPNRepository.findByItemIdAndFetchJoinLPN(
+                    orderItem.getItemId());
+            // 출고 가능한 로케이션 LPN으로 필터링한다.
+            final List<LocationLPN> filteredLocationLPNList = locationLPNFilterForOutbound.filter(
+                    locationLPNList,
+                    filterAt);
+            // 출고 가능한 로케이션 LPN이 충분한지 검증한다.
+            locationLPNValidatorForOutbound.validate(
+                    filteredLocationLPNList,
+                    orderItem.getOrderQuantity());
         }
 
         for (final OrderItem orderItem : orderItems) {
