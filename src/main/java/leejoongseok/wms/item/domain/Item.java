@@ -41,9 +41,11 @@ public class Item {
     @Comment("제조사명")
     private String maker;
     @Embedded
+    @Getter
     private ItemSize itemSize;
     @Column(name = "weight_gram", nullable = false)
     @Comment("무게 (g)")
+    @Getter
     private Integer weightInGrams;
     @Column(name = "temperature_zone", nullable = false)
     @Comment("보관 온도")
@@ -84,4 +86,7 @@ public class Item {
         this.category = category;
     }
 
+    public Long calculateVolume() {
+        return itemSize.calculateVolume();
+    }
 }
