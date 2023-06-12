@@ -5,6 +5,7 @@ import leejoongseok.wms.outbound.domain.CushioningMaterial;
 import leejoongseok.wms.outbound.domain.LocationLPNFilterForOutbound;
 import leejoongseok.wms.outbound.domain.LocationLPNValidatorForOutbound;
 import leejoongseok.wms.outbound.port.LoadOrderPort;
+import leejoongseok.wms.packaging.domain.PackagingMaterialRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ class CreateOutboundTest {
     private LocationLPNRepository locationLPNRepository;
     private LocationLPNFilterForOutbound locationLPNFilterForOutbound;
     private LocationLPNValidatorForOutbound locationLPNValidatorForOutbound;
+    private PackagingMaterialRepository packagingMaterialRepository;
 
     @BeforeEach
     void setUp() {
@@ -25,11 +27,13 @@ class CreateOutboundTest {
         locationLPNRepository = null;
         locationLPNFilterForOutbound = null;
         locationLPNValidatorForOutbound = null;
+        packagingMaterialRepository = null;
         createOutbound = new CreateOutbound(
                 loadOrderPort,
                 locationLPNRepository,
                 locationLPNFilterForOutbound,
-                locationLPNValidatorForOutbound);
+                locationLPNValidatorForOutbound,
+                packagingMaterialRepository);
     }
 
     @Test

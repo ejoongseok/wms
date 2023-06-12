@@ -25,6 +25,7 @@ public class PackagingMaterial {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("포장재 ID")
+    @Getter
     private Long id;
     @Embedded
     @Getter
