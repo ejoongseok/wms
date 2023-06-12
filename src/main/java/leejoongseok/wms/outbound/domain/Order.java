@@ -14,7 +14,6 @@ public class Order {
     private String customerEmail;
     private String customerPhoneNumber;
     private String customerZipCode;
-    private String customerMessage;
     private LocalDate desiredDeliveryDate;
     private boolean isPriorityDelivery;
     private String outboundRequirements;

@@ -1,6 +1,5 @@
 package leejoongseok.wms.outbound.feature;
 
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.location.domain.LocationLPN;
@@ -48,57 +47,6 @@ public class CreateOutbound {
                 request.cushioningMaterialQuantity);
     }
 
-    private Outbound createOutbound(
-            final Order order,
-            final Optional<PackagingMaterial> packagingMaterial,
-            final CushioningMaterial cushioningMaterial,
-            final Integer cushioningMaterialQuantity) {
-        final Long recommendedPackagingMaterialId = packagingMaterial
-                .map(PackagingMaterial::getId)
-                .orElse(null);
-        final Outbound outbound = new Outbound(
-                order.getId(),
-                recommendedPackagingMaterialId,
-                order.getCustomerAddress(),
-                order.getCustomerName(),
-                order.getCustomerEmail(),
-                order.getCustomerPhoneNumber(),
-                order.getCustomerZipCode(),
-                order.getCustomerMessage(),
-                cushioningMaterial,
-                cushioningMaterialQuantity,
-                order.isPriorityDelivery(),
-                order.getDesiredDeliveryDate(),
-                order.getOutboundRequirements(),
-                order.getDeliveryRequirements(),
-                order.getOrderedAt()
-        );
-        for (final OrderItem orderItem : order.getOrderItems()) {
-            final OutboundItem outboundItem = new OutboundItem(
-                    orderItem.getItemId(),
-                    orderItem.getOrderQuantity(),
-                    orderItem.getUnitPrice());
-            outbound.addOutboundItem(outboundItem);
-        }
-        return outbound;
-    }
-
-    private Optional<PackagingMaterial> findPackagingMaterialForOutbound(
-            final List<OrderItem> orderItems,
-            final CushioningMaterial cushioningMaterial,
-            final Integer cushioningMaterialQuantity) {
-        final int cushioningMaterialVolume =
-                cushioningMaterial.getVolume() * cushioningMaterialQuantity;
-        final int cushioningMaterialWeightInGrams =
-                cushioningMaterial.getWeightInGrams() * cushioningMaterialQuantity;
-        final PackagingMaterialSelectorForOutbound packagingMaterialSelectorForOutbound =
-                new PackagingMaterialSelectorForOutbound(packagingMaterialRepository.findAll());
-        return packagingMaterialSelectorForOutbound.select(
-                orderItems,
-                cushioningMaterialVolume,
-                cushioningMaterialWeightInGrams);
-    }
-
     private void validateForOutboundCreation(final List<OrderItem> orderItems) {
         for (final OrderItem orderItem : orderItems) {
             // 주문 상품에 맞는 로케이션 LPN을 조회한다.
@@ -116,6 +64,78 @@ public class CreateOutbound {
         }
     }
 
+    private Optional<PackagingMaterial> findPackagingMaterialForOutbound(
+            final List<OrderItem> orderItems,
+            final CushioningMaterial cushioningMaterial,
+            final Integer cushioningMaterialQuantity) {
+        final int totalCushioningMaterialVolume =
+                cushioningMaterial.calculateTotalVolume(cushioningMaterialQuantity);
+        final int totalCushioningMaterialWeightInGrams =
+                cushioningMaterial.calculateTotalWeightInGrams(cushioningMaterialQuantity);
+        final PackagingMaterialSelectorForOutbound packagingMaterialSelectorForOutbound =
+                new PackagingMaterialSelectorForOutbound(packagingMaterialRepository.findAll());
+        return packagingMaterialSelectorForOutbound.select(
+                orderItems,
+                totalCushioningMaterialVolume,
+                totalCushioningMaterialWeightInGrams);
+    }
+
+    private Outbound createOutbound(
+            final Order order,
+            final Optional<PackagingMaterial> packagingMaterial,
+            final CushioningMaterial cushioningMaterial,
+            final Integer cushioningMaterialQuantity) {
+        final Long recommendedPackagingMaterialId = getRecommendedPackagingMaterialIdOrNull(
+                packagingMaterial);
+        final Outbound outbound = newOutbound(
+                order,
+                cushioningMaterial,
+                cushioningMaterialQuantity,
+                recommendedPackagingMaterialId);
+        final List<OutboundItem> outboundItems = newOutboundItems(order.getOrderItems());
+        outboundItems.forEach(outbound::addOutboundItem);
+        return outbound;
+    }
+
+    private Long getRecommendedPackagingMaterialIdOrNull(
+            final Optional<PackagingMaterial> packagingMaterial) {
+        return packagingMaterial
+                .map(PackagingMaterial::getId)
+                .orElse(null);
+    }
+
+    private Outbound newOutbound(
+            final Order order,
+            final CushioningMaterial cushioningMaterial,
+            final Integer cushioningMaterialQuantity,
+            final Long recommendedPackagingMaterialId) {
+        return new Outbound(
+                order.getId(),
+                recommendedPackagingMaterialId,
+                order.getCustomerAddress(),
+                order.getCustomerName(),
+                order.getCustomerEmail(),
+                order.getCustomerPhoneNumber(),
+                order.getCustomerZipCode(),
+                cushioningMaterial,
+                cushioningMaterialQuantity,
+                order.isPriorityDelivery(),
+                order.getDesiredDeliveryDate(),
+                order.getOutboundRequirements(),
+                order.getDeliveryRequirements(),
+                order.getOrderedAt()
+        );
+    }
+
+    private List<OutboundItem> newOutboundItems(final List<OrderItem> orderItems) {
+        return orderItems.stream()
+                .map(orderItem -> new OutboundItem(
+                        orderItem.getItemId(),
+                        orderItem.getOrderQuantity(),
+                        orderItem.getUnitPrice()))
+                .toList();
+    }
+
     public record Request(
             @NotNull(message = "주문번호는 필수입니다.")
             Long orderId,
@@ -127,7 +147,6 @@ public class CreateOutbound {
             @NotNull(message = "우선배송 여부는 필수 입니다.")
             Boolean isPriorityDelivery,
             @NotNull(message = "희망 배송일은 필수 입니다.")
-            @FutureOrPresent(message = "희망 배송일은 과거일 수 없습니다.")
             LocalDate desiredDeliveryDate) {
 
     }
