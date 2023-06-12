@@ -9,14 +9,13 @@ public class Outbound {
     List<OutboundItem> outboundItems = new ArrayList<>();
 
     public Outbound(
-            final Long id,
+            final Long orderId,
             final Long recommendedPackagingMaterialId,
             final String customerAddress,
             final String customerName,
             final String customerEmail,
             final String customerPhoneNumber,
             final String customerZipCode,
-            final String customerMessage,
             final CushioningMaterial cushioningMaterial,
             final Integer cushioningMaterialQuantity,
             final boolean priorityDelivery,
@@ -24,6 +23,8 @@ public class Outbound {
             final String outboundRequirements,
             final String deliveryRequirements,
             final LocalDateTime orderedAt) {
+        //TODO Assert 적용해야함.
+
         throw new UnsupportedOperationException("Unsupported Outbound");
     }
 
