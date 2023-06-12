@@ -75,14 +75,16 @@ public class InboundItem {
             final LocalDateTime expirationAt) {
         Assert.notNull(lpnBarcode, "LPN 바코드는 필수입니다.");
         Assert.notNull(expirationAt, "유통기한은 필수입니다.");
-        if (expirationAt.isBefore(LocalDateTime.now())) {
+        final LocalDateTime createdAt = LocalDateTime.now();
+        if (expirationAt.isBefore(createdAt)) {
             throw new IllegalArgumentException("유통기한은 현재시간보다 미래여야 합니다.");
         }
         return new LPN(
                 lpnBarcode,
                 item.getId(),
                 expirationAt,
-                id
+                id,
+                createdAt
         );
     }
 }
