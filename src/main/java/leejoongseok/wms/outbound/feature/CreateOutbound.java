@@ -37,8 +37,9 @@ public class CreateOutbound {
         validateForOutboundCreation(orderItems);
 
         final Optional<PackagingMaterial> packagingMaterial = findPackagingMaterialForOutbound(
-                request,
-                orderItems);
+                orderItems,
+                request.cushioningMaterial,
+                request.cushioningMaterialQuantity);
 
         final Outbound outbound = createOutbound(
                 order,
@@ -83,12 +84,13 @@ public class CreateOutbound {
     }
 
     private Optional<PackagingMaterial> findPackagingMaterialForOutbound(
-            final Request request,
-            final List<OrderItem> orderItems) {
+            final List<OrderItem> orderItems,
+            final CushioningMaterial cushioningMaterial,
+            final Integer cushioningMaterialQuantity) {
         final int cushioningMaterialVolume =
-                request.cushioningMaterial.getVolume() * request.cushioningMaterialQuantity;
+                cushioningMaterial.getVolume() * cushioningMaterialQuantity;
         final int cushioningMaterialWeightInGrams =
-                request.cushioningMaterial.getWeightInGrams() * request.cushioningMaterialQuantity;
+                cushioningMaterial.getWeightInGrams() * cushioningMaterialQuantity;
         final PackagingMaterialSelectorForOutbound packagingMaterialSelectorForOutbound =
                 new PackagingMaterialSelectorForOutbound(packagingMaterialRepository.findAll());
         return packagingMaterialSelectorForOutbound.select(
