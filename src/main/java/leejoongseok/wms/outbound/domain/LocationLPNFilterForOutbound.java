@@ -14,9 +14,9 @@ public class LocationLPNFilterForOutbound {
      */
     public List<LocationLPN> filter(
             final List<LocationLPN> locationLPNList,
-            final LocalDateTime filterAt) {
+            final LocalDateTime expirationAtToFilter) {
         return locationLPNList.stream()
-                .filter(locationLPN -> locationLPN.getLpn().getExpirationAt().isAfter(filterAt))
+                .filter(locationLPN -> locationLPN.getLpn().getExpirationAt().isAfter(expirationAtToFilter))
                 .filter(locationLPN -> 0 < locationLPN.getInventoryQuantity())
                 .toList();
     }
