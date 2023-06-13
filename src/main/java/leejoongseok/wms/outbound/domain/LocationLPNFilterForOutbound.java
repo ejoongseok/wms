@@ -13,6 +13,8 @@ import java.util.List;
 public class LocationLPNFilterForOutbound {
     /**
      * 출고에 사용가능하도록 LocationLPN 목록을 필터 후 반환한다.
+     * 유통 기한이 지난 LPN은 필터링한다.
+     * 재고 수량이 0인 Location은 필터링한다.
      */
     public List<LocationLPN> filter(
             final List<LocationLPN> locationLPNList,
