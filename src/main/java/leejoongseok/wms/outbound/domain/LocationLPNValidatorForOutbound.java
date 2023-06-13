@@ -1,6 +1,7 @@
 package leejoongseok.wms.outbound.domain;
 
 import leejoongseok.wms.location.domain.LocationLPN;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 /**
  * LocationLPN 재고 수량이 출고 요청 수량에 충분한지 검증하는 클래스
  */
+@Component
 public class LocationLPNValidatorForOutbound {
     /**
      * LocationLPN 목록 재고 수량이 출고 요청 수량에 충분한지 검증한다.

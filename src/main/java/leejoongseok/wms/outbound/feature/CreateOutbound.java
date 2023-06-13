@@ -4,24 +4,20 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.LocationLPNRepository;
-import leejoongseok.wms.outbound.domain.CushioningMaterial;
-import leejoongseok.wms.outbound.domain.LocationLPNFilterForOutbound;
-import leejoongseok.wms.outbound.domain.LocationLPNValidatorForOutbound;
-import leejoongseok.wms.outbound.domain.Order;
-import leejoongseok.wms.outbound.domain.OrderItem;
-import leejoongseok.wms.outbound.domain.Outbound;
-import leejoongseok.wms.outbound.domain.OutboundItem;
-import leejoongseok.wms.outbound.domain.PackagingMaterialSelectorForOutbound;
+import leejoongseok.wms.outbound.domain.*;
 import leejoongseok.wms.outbound.port.LoadOrderPort;
 import leejoongseok.wms.packaging.domain.PackagingMaterial;
 import leejoongseok.wms.packaging.domain.PackagingMaterialRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 @RequiredArgsConstructor
 public class CreateOutbound {
     private final LoadOrderPort loadOrderPort;
@@ -29,7 +25,9 @@ public class CreateOutbound {
     private final LocationLPNFilterForOutbound locationLPNFilterForOutbound;
     private final LocationLPNValidatorForOutbound locationLPNValidatorForOutbound;
     private final PackagingMaterialRepository packagingMaterialRepository;
+    private final OutboundRepository outboundRepository;
 
+    @Transactional
     public void request(final Request request) {
         final Order order = loadOrderPort.getBy(request.orderId);
         final List<OrderItem> orderItems = order.getOrderItems();
@@ -45,6 +43,8 @@ public class CreateOutbound {
                 packagingMaterial,
                 request.cushioningMaterial,
                 request.cushioningMaterialQuantity);
+
+        outboundRepository.save(outbound);
     }
 
     private void validateForOutboundCreation(final List<OrderItem> orderItems) {
@@ -119,7 +119,7 @@ public class CreateOutbound {
                 order.getCustomerZipCode(),
                 cushioningMaterial,
                 cushioningMaterialQuantity,
-                order.isPriorityDelivery(),
+                order.getIsPriorityDelivery(),
                 order.getDesiredDeliveryDate(),
                 order.getOutboundRequirements(),
                 order.getDeliveryRequirements(),

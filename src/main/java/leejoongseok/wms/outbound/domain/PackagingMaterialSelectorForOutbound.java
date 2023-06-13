@@ -7,6 +7,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 출고에 사용할 포장 자재를 선택하고 없으면 Optional.empty()를 반환한다.
+ */
 public class PackagingMaterialSelectorForOutbound {
     private final List<PackagingMaterial> packagingMaterials;
 
@@ -16,6 +19,9 @@ public class PackagingMaterialSelectorForOutbound {
         this.packagingMaterials = packagingMaterials;
     }
 
+    /**
+     * 출고에 사용할 포장 자재를 선택하고 없으면 Optional.empty()를 반환한다.
+     */
     public Optional<PackagingMaterial> select(
             final List<OrderItem> orderItems,
             final Integer cushioningMaterialVolume,
