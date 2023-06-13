@@ -1,5 +1,6 @@
 package leejoongseok.wms.outbound.feature;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.location.domain.LocationLPN;
@@ -9,15 +10,19 @@ import leejoongseok.wms.outbound.port.LoadOrderPort;
 import leejoongseok.wms.packaging.domain.PackagingMaterial;
 import leejoongseok.wms.packaging.domain.PackagingMaterialRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@RestController
 @RequiredArgsConstructor
 public class CreateOutbound {
     private final LoadOrderPort loadOrderPort;
@@ -28,7 +33,9 @@ public class CreateOutbound {
     private final OutboundRepository outboundRepository;
 
     @Transactional
-    public void request(final Request request) {
+    @PostMapping("/outbounds")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void request(@RequestBody @Valid final Request request) {
         final Order order = loadOrderPort.getBy(request.orderId);
         final List<OrderItem> orderItems = order.getOrderItems();
         validateForOutboundCreation(orderItems);
