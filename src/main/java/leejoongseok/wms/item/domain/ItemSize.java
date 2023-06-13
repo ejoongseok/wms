@@ -36,6 +36,6 @@ public class ItemSize {
     }
 
     public Long calculateVolume() {
-        return (long) ((long) widthMillimeter * lengthMillimeter * heightMillimeter);
+        return (long) widthMillimeter * lengthMillimeter * heightMillimeter;
     }
 }
