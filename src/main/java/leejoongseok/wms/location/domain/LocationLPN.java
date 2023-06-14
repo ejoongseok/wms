@@ -45,10 +45,14 @@ public class LocationLPN {
     @Comment("상품 ID")
     private Long itemId;
 
-    public LocationLPN(final Location location, final LPN lpn, final Long itemId) {
-        this.itemId = itemId;
+    public LocationLPN(
+            final Location location,
+            final LPN lpn,
+            final Long itemId) {
         Assert.notNull(location, "로케이션은 필수입니다.");
         Assert.notNull(lpn, "LPN은 필수입니다.");
+        Assert.notNull(itemId, "상품 ID는 필수입니다.");
+        this.itemId = itemId;
         this.location = location;
         this.lpn = lpn;
     }
