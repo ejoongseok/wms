@@ -50,4 +50,11 @@ public class LPN {
         this.expirationAt = expirationAt;
         this.inboundItemId = inboundItemId;
     }
+
+    /**
+     * LPN의 유통기한이 입력한 날짜보다 남았는지 확인한다.
+     */
+    public boolean isFreshBy(final LocalDateTime thisDateTime) {
+        return expirationAt.isAfter(thisDateTime);
+    }
 }

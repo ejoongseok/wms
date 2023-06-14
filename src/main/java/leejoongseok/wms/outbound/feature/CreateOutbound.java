@@ -60,10 +60,10 @@ public class CreateOutbound {
             final List<LocationLPN> locationLPNList = locationLPNRepository.findByItemIdAndFetchJoinLPN(
                     orderItem.getItemId());
             // 출고 가능한 로케이션 LPN으로 필터링한다.
-            final LocalDateTime expirationAtToFilter = LocalDateTime.now();
+            final LocalDateTime thisDateTime = LocalDateTime.now();
             final List<LocationLPN> filteredLocationLPNList = locationLPNFilterForOutbound.filter(
                     locationLPNList,
-                    expirationAtToFilter);
+                    thisDateTime);
             // 출고 가능한 로케이션 LPN이 충분한지 검증한다.
             locationLPNValidatorForOutbound.validate(
                     filteredLocationLPNList,

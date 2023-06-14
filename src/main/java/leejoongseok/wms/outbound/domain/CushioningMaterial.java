@@ -20,7 +20,8 @@ public enum CushioningMaterial {
     private final int weightInGrams;
     private final String description;
 
-    public int calculateTotalWeightInGrams(final Integer cushioningMaterialQuantity) {
+    public int calculateTotalWeightInGrams(
+            final Integer cushioningMaterialQuantity) {
         Assert.notNull(cushioningMaterialQuantity, "완충재 수량은 필수입니다.");
         if (0 > cushioningMaterialQuantity) {
             throw new IllegalArgumentException("완충재 수량은 0보다 커야합니다.");
@@ -28,7 +29,8 @@ public enum CushioningMaterial {
         return weightInGrams * cushioningMaterialQuantity;
     }
 
-    public int calculateTotalVolume(final Integer cushioningMaterialQuantity) {
+    public int calculateTotalVolume(
+            final Integer cushioningMaterialQuantity) {
         Assert.notNull(cushioningMaterialQuantity, "완충재 수량은 필수입니다.");
         if (0 > cushioningMaterialQuantity) {
             throw new IllegalArgumentException("완충재 수량은 0보다 커야합니다.");

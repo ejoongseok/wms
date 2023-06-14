@@ -1,20 +1,14 @@
 package leejoongseok.wms.location.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import leejoongseok.wms.inbound.domain.LPN;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
+
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -65,5 +59,12 @@ public class LocationLPN {
             throw new IllegalArgumentException("추가할 재고 수량은 1이상이어야 합니다.");
 
         this.inventoryQuantity += inventoryQuantity;
+    }
+
+    /**
+     * LPN의 유통기한이 입력한 날짜보다 남았는지 확인한다.
+     */
+    public boolean isFreshLPNBy(final LocalDateTime thisDateTime) {
+        return lpn.isFreshBy(thisDateTime);
     }
 }

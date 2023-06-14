@@ -18,9 +18,10 @@ public class LocationLPNFilterForOutbound {
      */
     public List<LocationLPN> filter(
             final List<LocationLPN> locationLPNList,
-            final LocalDateTime expirationAtToFilter) {
+            final LocalDateTime thisDateTime) {
+
         return locationLPNList.stream()
-                .filter(locationLPN -> locationLPN.getLpn().getExpirationAt().isAfter(expirationAtToFilter))
+                .filter(locationLPN -> locationLPN.isFreshLPNBy(thisDateTime))
                 .filter(locationLPN -> 0 < locationLPN.getInventoryQuantity())
                 .toList();
     }
