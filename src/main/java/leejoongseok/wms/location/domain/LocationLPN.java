@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
+import java.time.LocalDateTime;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "location_lpn")
@@ -38,10 +40,19 @@ public class LocationLPN {
     @Column(name = "inventory_quantity", nullable = false)
     @Comment("재고 수량")
     private Integer inventoryQuantity = 1;
+    @Getter
+    @Column(name = "item_id", nullable = false)
+    @Comment("상품 ID")
+    private Long itemId;
 
-    public LocationLPN(final Location location, final LPN lpn) {
+    public LocationLPN(
+            final Location location,
+            final LPN lpn,
+            final Long itemId) {
         Assert.notNull(location, "로케이션은 필수입니다.");
         Assert.notNull(lpn, "LPN은 필수입니다.");
+        Assert.notNull(itemId, "상품 ID는 필수입니다.");
+        this.itemId = itemId;
         this.location = location;
         this.lpn = lpn;
     }
@@ -60,5 +71,16 @@ public class LocationLPN {
             throw new IllegalArgumentException("추가할 재고 수량은 1이상이어야 합니다.");
 
         this.inventoryQuantity += inventoryQuantity;
+    }
+
+    /**
+     * LPN의 유통기한이 입력한 날짜보다 남았는지 확인한다.
+     */
+    public boolean isFreshLPNBy(final LocalDateTime thisDateTime) {
+        return lpn.isFreshBy(thisDateTime);
+    }
+
+    public boolean isEmptyInventory() {
+        return 0 >= inventoryQuantity;
     }
 }

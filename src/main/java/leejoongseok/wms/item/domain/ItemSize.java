@@ -34,4 +34,8 @@ public class ItemSize {
         this.lengthMillimeter = lengthMillimeter;
         this.heightMillimeter = heightMillimeter;
     }
+
+    public Long calculateVolume() {
+        return (long) widthMillimeter * lengthMillimeter * heightMillimeter;
+    }
 }

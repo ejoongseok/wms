@@ -72,7 +72,7 @@ public class Location {
                 .ifPresentOrElse(
                         LocationLPN::incrementInventoryQuantity,
                         () -> locationLPNList.add(
-                                new LocationLPN(this, lpn)));
+                                new LocationLPN(this, lpn, lpn.getItemId())));
     }
 
     private Optional<LocationLPN> findLocationLPN(final LPN lpn) {

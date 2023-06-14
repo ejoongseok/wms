@@ -41,17 +41,25 @@ public class LPN {
             final String lpnBarcode,
             final Long itemId,
             final LocalDateTime expirationAt,
-            final Long inboundItemId) {
+            final Long inboundItemId,
+            final LocalDateTime createdAt) {
         Assert.hasText(lpnBarcode, "LPN 바코드는 필수입니다.");
         Assert.notNull(itemId, "아이템 ID는 필수입니다.");
         Assert.notNull(expirationAt, "유통기한은 필수입니다.");
         Assert.notNull(inboundItemId, "입고 아이템 ID는 필수입니다.");
-        if (expirationAt.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("유통기한은 현재 시간보다 나중이어야 합니다.");
+        if (expirationAt.isBefore(createdAt)) {
+            throw new IllegalArgumentException("유통기한은 생성 시간보다 나중이어야 합니다.");
         }
         this.lpnBarcode = lpnBarcode;
         this.itemId = itemId;
         this.expirationAt = expirationAt;
         this.inboundItemId = inboundItemId;
+    }
+
+    /**
+     * LPN의 유통기한이 입력한 날짜보다 남았는지 확인한다.
+     */
+    public boolean isFreshBy(final LocalDateTime thisDateTime) {
+        return expirationAt.isAfter(thisDateTime);
     }
 }

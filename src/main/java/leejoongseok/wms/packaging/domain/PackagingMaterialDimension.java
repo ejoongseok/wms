@@ -3,6 +3,7 @@ package leejoongseok.wms.packaging.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
@@ -12,12 +13,15 @@ import org.springframework.util.Assert;
 public class PackagingMaterialDimension {
     @Column(name = "inner_width_millimeter", nullable = false)
     @Comment("내부 폭 (mm)")
+    @Getter
     private Integer innerWidthMillimeter;
     @Column(name = "inner_height_millimeter", nullable = false)
     @Comment("내부 높이 (mm)")
+    @Getter
     private Integer innerHeightMillimeter;
     @Column(name = "inner_length_millimeter", nullable = false)
     @Comment("내부 길이 (mm)")
+    @Getter
     private Integer innerLengthMillimeter;
     @Column(name = "outer_width_millimeter", nullable = false)
     @Comment("외부 폭 (mm)")
@@ -49,5 +53,9 @@ public class PackagingMaterialDimension {
         this.outerHeightMillimeter = outerHeightMillimeter;
         this.outerLengthMillimeter = outerLengthMillimeter;
 
+    }
+
+    public Long calculatePackageableVolume() {
+        return (long) innerWidthMillimeter * innerHeightMillimeter * innerLengthMillimeter;
     }
 }

@@ -8,6 +8,7 @@ import leejoongseok.wms.item.steps.CreateItemSteps;
 import leejoongseok.wms.location.steps.AddManualInventoryToLocationLPNSteps;
 import leejoongseok.wms.location.steps.AssignLPNToLocationSteps;
 import leejoongseok.wms.location.steps.CreateLocationSteps;
+import leejoongseok.wms.outbound.steps.CreateOutboundSteps;
 import leejoongseok.wms.packaging.steps.CreatePackagingMaterialSteps;
 
 public class Scenario {
@@ -45,5 +46,9 @@ public class Scenario {
 
     public CreatePackagingMaterialSteps.Request createPackagingMaterial() {
         return new CreatePackagingMaterialSteps.Request();
+    }
+
+    public CreateOutboundSteps.Request createOutbound() {
+        return new CreateOutboundSteps.Request();
     }
 }
