@@ -6,7 +6,6 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -62,7 +61,7 @@ public class Outbound {
     @Column(name = "ordered_at", nullable = false)
     @Comment("주문 일시")
     private LocalDateTime orderedAt;
-    @OneToMany(mappedBy = "outbound", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "outbound", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<OutboundItem> outboundItems = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     @Column(name = "outbound_status", nullable = false)

@@ -21,6 +21,7 @@ public class PackagingMaterialSelectorForOutbound {
 
     /**
      * 출고에 사용할 포장 자재를 선택하고 없으면 Optional.empty()를 반환한다.
+     * 포장가능한 포장재 중 부피가 가장 작은것을 추천해줌.
      */
     public Optional<PackagingMaterial> select(
             final List<OrderItem> orderItems,
@@ -38,8 +39,7 @@ public class PackagingMaterialSelectorForOutbound {
                 orderItems,
                 cushioningMaterialWeightInGrams);
         return packagingMaterials.stream()
-                .filter(packagingMaterial -> packagingMaterial.calculatePackageableVolume() >= totalVolume)
-                .filter(packagingMaterial -> packagingMaterial.getMaxWeightInGrams() >= totalWeightInGrams)
+                .filter(packagingMaterial -> packagingMaterial.isPackageable(totalVolume, totalWeightInGrams))
                 .sorted(Comparator.comparingLong(PackagingMaterial::calculatePackageableVolume))
                 .findFirst();
     }

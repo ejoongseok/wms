@@ -81,6 +81,14 @@ public class PackagingMaterial {
         this.description = description;
     }
 
+    public boolean isPackageable(
+            final Long totalVolume,
+            final Long totalWeightInGrams) {
+        final boolean isPackageableVolume = calculatePackageableVolume() >= totalVolume;
+        final boolean isPackageableWeight = maxWeightInGrams >= totalWeightInGrams;
+        return isPackageableVolume && isPackageableWeight;
+    }
+
     public Long calculatePackageableVolume() {
         return packagingMaterialDimension.calculatePackageableVolume() - calculateThicknessVolume();
     }
