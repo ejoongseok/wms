@@ -56,6 +56,6 @@ public class PackagingMaterialDimension {
     }
 
     public Long calculatePackageableVolume() {
-        return (long) ((long) innerWidthMillimeter * innerHeightMillimeter * innerLengthMillimeter);
+        return (long) innerWidthMillimeter * innerHeightMillimeter * innerLengthMillimeter;
     }
 }
