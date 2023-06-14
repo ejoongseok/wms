@@ -22,7 +22,7 @@ public class LocationLPNValidatorForOutbound {
         if (0 >= orderQuantity) {
             throw new IllegalArgumentException("출고 요청 수량이 0보다 작거나 같습니다.");
         }
-        final int availableInventoryQuantityForOutbound = calculateAvailableInventoryQuantity(
+        final int availableInventoryQuantityForOutbound = sumInventoryQuantity(
                 locationLPNList);
         if (availableInventoryQuantityForOutbound < orderQuantity) {
             throw new IllegalArgumentException(
@@ -32,7 +32,7 @@ public class LocationLPNValidatorForOutbound {
         }
     }
 
-    private int calculateAvailableInventoryQuantity(
+    private int sumInventoryQuantity(
             final List<LocationLPN> locationLPNList) {
         return locationLPNList.stream()
                 .mapToInt(LocationLPN::getInventoryQuantity)
