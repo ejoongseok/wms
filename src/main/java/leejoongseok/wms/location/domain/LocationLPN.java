@@ -67,4 +67,8 @@ public class LocationLPN {
     public boolean isFreshLPNBy(final LocalDateTime thisDateTime) {
         return lpn.isFreshBy(thisDateTime);
     }
+
+    public boolean isEmptyInventory() {
+        return 0 >= inventoryQuantity;
+    }
 }

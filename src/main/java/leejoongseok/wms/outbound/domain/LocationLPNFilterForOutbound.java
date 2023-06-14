@@ -22,7 +22,7 @@ public class LocationLPNFilterForOutbound {
 
         return locationLPNList.stream()
                 .filter(locationLPN -> locationLPN.isFreshLPNBy(thisDateTime))
-                .filter(locationLPN -> 0 < locationLPN.getInventoryQuantity())
+                .filter(locationLPN -> !locationLPN.isEmptyInventory())
                 .toList();
     }
 }
