@@ -39,7 +39,7 @@ public class PackagingMaterialSelectorForOutbound {
                 orderItems,
                 cushioningMaterialWeightInGrams);
         return packagingMaterials.stream()
-                .filter(packagingMaterial -> packagingMaterial.isPackageable(totalVolume, totalWeightInGrams))
+                .filter(pm -> pm.isPackageable(totalVolume, totalWeightInGrams))
                 .sorted(Comparator.comparingLong(PackagingMaterial::calculatePackageableVolume))
                 .findFirst();
     }
