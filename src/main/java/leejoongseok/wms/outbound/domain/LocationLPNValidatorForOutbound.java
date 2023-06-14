@@ -33,10 +33,9 @@ public class LocationLPNValidatorForOutbound {
     }
 
     private int calculateAvailableInventoryQuantity(
-            final List<LocationLPN> nonExpiredLocationLPNList) {
-        final int availableInventoryQuantity = nonExpiredLocationLPNList.stream()
+            final List<LocationLPN> locationLPNList) {
+        return locationLPNList.stream()
                 .mapToInt(LocationLPN::getInventoryQuantity)
                 .sum();
-        return availableInventoryQuantity;
     }
 }
