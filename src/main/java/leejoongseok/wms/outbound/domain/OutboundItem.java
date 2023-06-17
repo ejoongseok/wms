@@ -32,6 +32,7 @@ public class OutboundItem {
     private Long id;
     @Column(name = "item_id", nullable = false)
     @Comment("상품 ID")
+    @Getter(AccessLevel.PROTECTED)
     private Long itemId;
     @Column(name = "outbound_quantity", nullable = false)
     @Comment("출고 수량")
@@ -39,6 +40,7 @@ public class OutboundItem {
     private Integer outboundQuantity;
     @Column(name = "unit_price", nullable = false)
     @Comment("출고 단가")
+    @Getter(AccessLevel.PROTECTED)
     private BigDecimal unitPrice;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "outbound_id")
@@ -76,5 +78,21 @@ public class OutboundItem {
     public void assignOutbound(final Outbound outbound) {
         Assert.notNull(outbound, "출고는 필수입니다.");
         this.outbound = outbound;
+    }
+
+    public OutboundItem split(final Integer quantityOfSplit) {
+        validateSplit(quantityOfSplit);
+        outboundQuantity -= quantityOfSplit;
+        return new OutboundItem(
+                itemId,
+                quantityOfSplit,
+                unitPrice);
+    }
+
+    private void validateSplit(final Integer quantityOfSplit) {
+        Assert.notNull(quantityOfSplit, "분할 수량은 필수입니다.");
+        if (quantityOfSplit > outboundQuantity) {
+            throw new IllegalArgumentException("분할 수량은 출고 수량보다 작거나 같아야 합니다." + "출고 수량: " + outboundQuantity + ", 분할 수량: " + quantityOfSplit);
+        }
     }
 }
