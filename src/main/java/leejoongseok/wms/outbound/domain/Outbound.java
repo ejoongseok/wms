@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
@@ -31,10 +32,9 @@ import java.util.List;
 @Comment("출고")
 public class Outbound {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Comment("출고 ID")
-    private Long id;
+    @OneToMany(mappedBy = "outbound", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Getter(AccessLevel.PROTECTED)
+    private final List<OutboundItem> outboundItems = new ArrayList<>();
     @Column(name = "order_id", nullable = false)
     @Comment("주문 ID")
     private Long orderId;
@@ -65,12 +65,16 @@ public class Outbound {
     @Column(name = "ordered_at", nullable = false)
     @Comment("주문 일시")
     private LocalDateTime orderedAt;
-    @OneToMany(mappedBy = "outbound", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<OutboundItem> outboundItems = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     @Column(name = "outbound_status", nullable = false)
     @Comment("출고 상태")
+    @Getter(AccessLevel.PROTECTED)
     private final OutboundStatus outboundStatus = OutboundStatus.READY;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("출고 ID")
+    @Getter(AccessLevel.PROTECTED)
+    private Long id;
 
     public Outbound(
             final Long orderId,
@@ -136,6 +140,31 @@ public class Outbound {
     }
 
     public Outbound split(final List<OutboundItemToSplit> outboundItemToSplits) {
+        validateSplit(outboundItemToSplits);
         return null;
+    }
+
+    /**
+     * 출고를 분할할 수 있는지 검증한다.
+     * 출고를 분할하기 위해서는 출고는 반드시 대기 상태여야 한다.
+     * 분할한 뒤 기존 출고의 상품이 하나도 남아있지 않으면 안된다.
+     */
+    private void validateSplit(final List<OutboundItemToSplit> outboundItemToSplits) {
+        if (outboundStatus != OutboundStatus.READY) {
+            throw new IllegalStateException("출고는 대기 상태에서만 분할할 수 있습니다.");
+        }
+        Assert.notEmpty(outboundItemToSplits, "분할할 상품은 1개 이상이어야 합니다.");
+        if (outboundItemToSplits.size() > outboundItems.size()) {
+            throw new IllegalArgumentException("분할할 상품은 출고 상품의 개수보다 많을 수 없습니다.");
+        }
+        final int totalQuantityOfSplit = outboundItemToSplits.stream()
+                .mapToInt(OutboundItemToSplit::getQuantityOfSplit)
+                .sum();
+        final int totalQuantityOfItem = outboundItems.stream()
+                .mapToInt(OutboundItem::getOutboundQuantity)
+                .sum();
+        if (totalQuantityOfSplit >= totalQuantityOfItem) {
+            throw new IllegalArgumentException("분할할 상품의 총 수량은 출고 상품의 총 수량보다 작아야 합니다.");
+        }
     }
 }
