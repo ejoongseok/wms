@@ -18,6 +18,11 @@ import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 
+/**
+ * 로케이션LPN은 로케이션에 적재되어있는 LPN을 의미한다.
+ * ex)한 바구니에 사과와 배가 1개씩 들어있다.
+ * 바구니(Location) [사과(LPN) 1개, 배(LPN) 1개]
+ */
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "location_lpn")
@@ -49,12 +54,22 @@ public class LocationLPN {
             final Location location,
             final LPN lpn,
             final Long itemId) {
-        Assert.notNull(location, "로케이션은 필수입니다.");
-        Assert.notNull(lpn, "LPN은 필수입니다.");
-        Assert.notNull(itemId, "상품 ID는 필수입니다.");
+        validateConstructor(
+                location,
+                lpn,
+                itemId);
         this.itemId = itemId;
         this.location = location;
         this.lpn = lpn;
+    }
+
+    private void validateConstructor(
+            final Location location,
+            final LPN lpn,
+            final Long itemId) {
+        Assert.notNull(location, "로케이션은 필수입니다.");
+        Assert.notNull(lpn, "LPN은 필수입니다.");
+        Assert.notNull(itemId, "상품 ID는 필수입니다.");
     }
 
     void incrementInventoryQuantity() {

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 로케이션 LPN에 재고 수량을 직접 추가한다.
+ * 로케이션 LPN에 재고 수량을 직접 추가하는 기능을 수행하는 컨트롤러 클래스
  */
 @RestController
 @RequiredArgsConstructor

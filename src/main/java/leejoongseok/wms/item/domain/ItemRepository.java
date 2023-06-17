@@ -7,6 +7,9 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
+    /**
+     * 상품 바코드로 상품을 조회한다.
+     */
     @Query("select i from Item i where i.itemBarcode = :itemBarcode")
     Optional<Item> findByItemBarcode(String itemBarcode);
 

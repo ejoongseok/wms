@@ -1,14 +1,9 @@
-logging:
-  pattern:
-  level:
-    org.hibernate.orm.jdbc.bind: trace
 spring:
   jpa:
     hibernate:
       ddl-auto: create
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        use_sql_comments: true
-        query.in_clause_parameter_padding: true
+  datasource:
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    url: jdbc:p6spy:h2:mem:wms;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;
+    username: sa
+    password:

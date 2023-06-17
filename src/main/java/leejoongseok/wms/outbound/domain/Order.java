@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 오픈마켓에서 주문한 주문 정보
+ */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
@@ -39,15 +42,16 @@ public class Order {
             final String deliveryRequirements,
             final LocalDateTime orderedAt,
             final List<OrderItem> orderItems) {
-        Assert.hasText(customerAddress, "주문자 주소는 필수입니다.");
-        Assert.hasText(customerName, "주문자 이름은 필수입니다.");
-        Assert.hasText(customerEmail, "주문자 이메일은 필수입니다.");
-        Assert.hasText(customerPhoneNumber, "주문자 전화번호는 필수입니다.");
-        Assert.hasText(customerZipCode, "주문자 우편번호는 필수입니다.");
-        Assert.notNull(orderedAt, "주문일은 필수입니다.");
-        Assert.notEmpty(orderItems, "주문 상품은 필수입니다.");
-        Assert.notNull(desiredDeliveryDate, "희망 배송일은 필수입니다.");
-        Assert.notNull(isPriorityDelivery, "우선 배송 여부는 필수입니다.");
+        validateConstructor(
+                customerAddress,
+                customerName,
+                customerEmail,
+                customerPhoneNumber,
+                customerZipCode,
+                desiredDeliveryDate,
+                isPriorityDelivery,
+                orderedAt,
+                orderItems);
         this.id = id;
         this.customerAddress = customerAddress;
         this.customerName = customerName;
@@ -60,6 +64,27 @@ public class Order {
         this.deliveryRequirements = deliveryRequirements;
         this.orderedAt = orderedAt;
         this.orderItems = orderItems;
+    }
+
+    private void validateConstructor(
+            final String customerAddress,
+            final String customerName,
+            final String customerEmail,
+            final String customerPhoneNumber,
+            final String customerZipCode,
+            final LocalDate desiredDeliveryDate,
+            final Boolean isPriorityDelivery,
+            final LocalDateTime orderedAt,
+            final List<OrderItem> orderItems) {
+        Assert.hasText(customerAddress, "주문자 주소는 필수입니다.");
+        Assert.hasText(customerName, "주문자 이름은 필수입니다.");
+        Assert.hasText(customerEmail, "주문자 이메일은 필수입니다.");
+        Assert.hasText(customerPhoneNumber, "주문자 전화번호는 필수입니다.");
+        Assert.hasText(customerZipCode, "주문자 우편번호는 필수입니다.");
+        Assert.notNull(orderedAt, "주문일은 필수입니다.");
+        Assert.notEmpty(orderItems, "주문 상품은 필수입니다.");
+        Assert.notNull(desiredDeliveryDate, "희망 배송일은 필수입니다.");
+        Assert.notNull(isPriorityDelivery, "우선 배송 여부는 필수입니다.");
     }
 
     public List<OrderItem> getOrderItems() {

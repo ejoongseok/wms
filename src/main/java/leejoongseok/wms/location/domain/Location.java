@@ -22,6 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 로케이션은 상품의 LPN을 보관하는 장소이다.
+ * 로케이션은 셀, 렉, 토트, 파레트 등이 될 수 있다.
+ * 셀과 렉은 물리적 이동이 거의 없이 고정되어 있고,
+ * 토트와 파레트는 물리적 이동이 잦다.
+ */
 @Entity
 @Table(name = "location")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -52,18 +58,28 @@ public class Location {
             final String locationBarcode,
             final StorageType storageType,
             final UsagePurpose usagePurpose) {
-        Assert.hasText(locationBarcode, "로케이션 바코드는 필수입니다.");
-        Assert.notNull(storageType, "보관 타입은 필수입니다.");
-        Assert.notNull(usagePurpose, "보관 목적은 필수입니다.");
+        validateConstructor(
+                locationBarcode,
+                storageType,
+                usagePurpose);
         this.locationBarcode = locationBarcode;
         this.storageType = storageType;
         this.usagePurpose = usagePurpose;
     }
 
+    private void validateConstructor(
+            final String locationBarcode,
+            final StorageType storageType,
+            final UsagePurpose usagePurpose) {
+        Assert.hasText(locationBarcode, "로케이션 바코드는 필수입니다.");
+        Assert.notNull(storageType, "보관 타입은 필수입니다.");
+        Assert.notNull(usagePurpose, "보관 목적은 필수입니다.");
+    }
+
     /**
-     * 로케이션에 LPN을 등록한다.
-     * LPN이 이미 존재하는경우 LocationLPN의 inventory quantity만 증가시킨다.
-     * LPN이 존재하지 않으면 LocationLPN을 새로 생성해서 등록한다.
+     * 로케이션에 LPN을 적재시키는 행위를 수행한다.
+     * 로케이션에 LPN이 이미 존재하는경우 LocationLPN의 inventory quantity만 증가시킨다.
+     * 로케이션에 LPN이 존재하지 않으면 LocationLPN을 새로 생성해서 등록한다.
      * 새로 등록한 LocationLPN은 재고수량이 1이고 Location의 locationLPNList에 추가된다.
      */
     public void assignLPN(final LPN lpn) {
@@ -91,6 +107,11 @@ public class Location {
                 .orElseThrow(() -> new IllegalArgumentException("해당 LPN이 존재하지 않습니다."));
     }
 
+    /**
+     * 로케이션에 LPN의 바코드를 하나씩 스캔하면서 재고를 적재하는 행위(assignLPN)가 아닌
+     * 시스템에 재고를 증가시킬 숫자를 직접 입력해서 한번에 재고를 추가하는 기능이다.
+     * 추가해야할 재고가 너무 많아서 하나씩 스캔하는 것이 비효율적인 경우에 사용한다.
+     */
     public void addManualInventoryToLocationLPN(
             final LPN lpn,
             final Integer inventoryQuantity) {
@@ -99,7 +120,9 @@ public class Location {
         locationLPN.addManualInventoryQuantity(inventoryQuantity);
     }
 
-    private void validateManualInventoryParameter(final LPN lpn, final Integer inventoryQuantity) {
+    private void validateManualInventoryParameter(
+            final LPN lpn,
+            final Integer inventoryQuantity) {
         Assert.notNull(lpn, "재고 수량을 추가할 LPN은 필수입니다.");
         Assert.notNull(inventoryQuantity, "추가할 재고 수량은 필수입니다.");
         if (0 >= inventoryQuantity) {

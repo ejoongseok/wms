@@ -11,6 +11,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 주문을 조회하는 포트
+ * 실제로는 주문을 조회하는 API를 호출하거나, DB에서 조회하는 등의 로직이 들어감.
+ */
 @Component
 @RequiredArgsConstructor
 public class LoadOrderPort {

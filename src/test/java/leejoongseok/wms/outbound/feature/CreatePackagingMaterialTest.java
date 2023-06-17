@@ -1,8 +1,8 @@
-package leejoongseok.wms.packaging.feature;
+package leejoongseok.wms.outbound.feature;
 
 import leejoongseok.wms.common.ApiTest;
 import leejoongseok.wms.common.Scenario;
-import leejoongseok.wms.packaging.domain.PackagingMaterialRepository;
+import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

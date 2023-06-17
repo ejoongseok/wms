@@ -25,6 +25,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Inbound는 현실세계에서 발주 요청부터 입고 완료까지의 과정을 전산화로 표현한 것이다.
+ */
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "inbound")
@@ -62,6 +65,19 @@ public class Inbound {
             final LocalDateTime orderRequestAt,
             final LocalDateTime estimatedArrivalAt,
             final BigDecimal totalAmount) {
+        validateConstructor(
+                orderRequestAt,
+                estimatedArrivalAt,
+                totalAmount);
+        this.orderRequestAt = orderRequestAt;
+        this.estimatedArrivalAt = estimatedArrivalAt;
+        this.totalAmount = totalAmount;
+    }
+
+    private void validateConstructor(
+            final LocalDateTime orderRequestAt,
+            final LocalDateTime estimatedArrivalAt,
+            final BigDecimal totalAmount) {
         final LocalDateTime today = LocalDateTime.now();
         if (null == orderRequestAt || today.isBefore(orderRequestAt)) {
             throw new IllegalArgumentException("발주 요청일시는 현재시간보다 과거여야 합니다.");
@@ -69,12 +85,12 @@ public class Inbound {
         if (null == estimatedArrivalAt || today.isAfter(estimatedArrivalAt)) {
             throw new IllegalArgumentException("예상 도착일시는 현재시간보다 미래여야 합니다.");
         }
+        if (estimatedArrivalAt.isBefore(orderRequestAt)) {
+            throw new IllegalArgumentException("예상 도착일시는 발주 요청일시보다 미래여야 합니다.");
+        }
         if (null == totalAmount || 0 > totalAmount.intValue()) {
             throw new IllegalArgumentException("총 주문 금액은 0원원 이상이어야 합니다.");
         }
-        this.orderRequestAt = orderRequestAt;
-        this.estimatedArrivalAt = estimatedArrivalAt;
-        this.totalAmount = totalAmount;
     }
 
     public void addInboundItems(final List<InboundItem> inboundItems) {

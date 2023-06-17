@@ -1,13 +1,13 @@
-package leejoongseok.wms.packaging.feature;
+package leejoongseok.wms.outbound.feature;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import leejoongseok.wms.packaging.domain.PackagingMaterial;
-import leejoongseok.wms.packaging.domain.PackagingMaterialDimension;
-import leejoongseok.wms.packaging.domain.PackagingMaterialRepository;
-import leejoongseok.wms.packaging.domain.PackagingType;
+import leejoongseok.wms.outbound.domain.PackagingMaterial;
+import leejoongseok.wms.outbound.domain.PackagingMaterialDimension;
+import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
+import leejoongseok.wms.outbound.domain.PackagingType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 출고상품의 포장에 사용할 포장재를 생성하는 컨트롤러 클래스.
+ */
 @RestController
 @RequiredArgsConstructor
 public class CreatePackagingMaterial {
@@ -63,11 +66,11 @@ public class CreatePackagingMaterial {
                             innerLengthMillimeter,
                             outerWidthMillimeter,
                             outerHeightMillimeter,
-                            outerLengthMillimeter
+                            outerLengthMillimeter,
+                            thickness
                     ),
                     weightInGrams,
                     packagingType,
-                    thickness,
                     name,
                     code,
                     maxWeightInGrams,

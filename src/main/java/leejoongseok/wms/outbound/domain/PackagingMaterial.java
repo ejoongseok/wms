@@ -1,4 +1,4 @@
-package leejoongseok.wms.packaging.domain;
+package leejoongseok.wms.outbound.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -16,6 +16,10 @@ import lombok.ToString;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
+/**
+ * 출고 상품을 포장할 때 사용하는 포장재를 의미합니다.
+ * 포장재는 박스, 비닐 등이 있습니다.
+ */
 @Entity
 @Table(name = "packaging_material")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -37,10 +41,6 @@ public class PackagingMaterial {
     @Comment("포장재 종류")
     @Enumerated(EnumType.STRING)
     private PackagingType packagingType;
-    @Column(name = "thickness_in_millimeter", nullable = false)
-    @Comment("두께 (mm)")
-    @Getter
-    private Integer thicknessInMillimeter;
     @Column(name = "name", nullable = false)
     @Comment("포장재 이름")
     @Getter
@@ -60,25 +60,36 @@ public class PackagingMaterial {
             final PackagingMaterialDimension packagingMaterialDimension,
             final Integer weightInGrams,
             final PackagingType packagingType,
-            final Integer thicknessInMillimeter,
             final String name,
             final String code,
             final Integer maxWeightInGrams,
             final String description) {
-        Assert.notNull(packagingMaterialDimension, "포장재 치수는 필수입니다.");
-        Assert.isTrue(1 <= weightInGrams, "무게는 1g 이상이어야 합니다.");
-        Assert.isTrue(1 <= thicknessInMillimeter, "두께는 1mm 이상이어야 합니다.");
-        Assert.hasText(name, "포장재 이름은 필수입니다.");
-        Assert.isTrue(1 <= maxWeightInGrams, "최대 무게는 1g 이상이어야 합니다.");
-        Assert.notNull(packagingType, "포장재 종류는 필수입니다.");
+        validateConstructor(
+                packagingMaterialDimension,
+                weightInGrams,
+                packagingType,
+                name,
+                maxWeightInGrams);
         this.packagingMaterialDimension = packagingMaterialDimension;
         this.weightInGrams = weightInGrams;
         this.packagingType = packagingType;
-        this.thicknessInMillimeter = thicknessInMillimeter;
         this.name = name;
         this.code = code;
         this.maxWeightInGrams = maxWeightInGrams;
         this.description = description;
+    }
+
+    private void validateConstructor(
+            final PackagingMaterialDimension packagingMaterialDimension,
+            final Integer weightInGrams,
+            final PackagingType packagingType,
+            final String name,
+            final Integer maxWeightInGrams) {
+        Assert.notNull(packagingMaterialDimension, "포장재 치수는 필수입니다.");
+        Assert.isTrue(1 <= weightInGrams, "무게는 1g 이상이어야 합니다.");
+        Assert.hasText(name, "포장재 이름은 필수입니다.");
+        Assert.isTrue(1 <= maxWeightInGrams, "최대 무게는 1g 이상이어야 합니다.");
+        Assert.notNull(packagingType, "포장재 종류는 필수입니다.");
     }
 
     public boolean isPackageable(
@@ -89,15 +100,11 @@ public class PackagingMaterial {
         return isPackageableVolume && isPackageableWeightInGrams;
     }
 
-    public Long calculatePackageableVolume() {
-        return packagingMaterialDimension.calculatePackageableVolume() - calculateThicknessVolume();
-    }
-
     /**
-     * 두께의 부피를 계산합니다.
-     * 두께의 부피는 부피의 세제곱(가로x세로x높이) 만큼을 차지한다.
+     * 포장재의 포장가능한 부피를 계산합니다.
+     * 포장재의 포장가능한 부피는 포장재의 부피에서 두께의 부피를 뺀 값입니다.
      */
-    private int calculateThicknessVolume() {
-        return thicknessInMillimeter * thicknessInMillimeter * thicknessInMillimeter;
+    public Long calculatePackageableVolume() {
+        return packagingMaterialDimension.calculatePackageableVolume();
     }
 }

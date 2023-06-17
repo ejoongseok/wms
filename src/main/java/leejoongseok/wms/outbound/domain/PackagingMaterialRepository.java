@@ -1,4 +1,4 @@
-package leejoongseok.wms.packaging.domain;
+package leejoongseok.wms.outbound.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

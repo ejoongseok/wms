@@ -1,4 +1,4 @@
-package leejoongseok.wms.packaging.domain;
+package leejoongseok.wms.outbound.domain;
 
 import org.instancio.Instancio;
 import org.instancio.Select;
@@ -16,9 +16,9 @@ class PackagingMaterialTest {
                 createPackagingMaterialDimension(
                         100,
                         100,
-                        100
+                        100,
+                        1
                 ),
-                1,
                 1000,
                 "포장자재1(최대무게 1키로 / 부피 100만)");
 
@@ -34,9 +34,9 @@ class PackagingMaterialTest {
                 createPackagingMaterialDimension(
                         100,
                         100,
-                        100
+                        100,
+                        1
                 ),
-                1,
                 1000,
                 "포장자재1(최대무게 1키로 / 부피 100만)");
 
@@ -52,9 +52,9 @@ class PackagingMaterialTest {
                 createPackagingMaterialDimension(
                         100,
                         100,
-                        100
+                        100,
+                        1
                 ),
-                1,
                 1000,
                 "포장자재1(최대무게 1키로 / 부피 100만)");
 
@@ -65,22 +65,25 @@ class PackagingMaterialTest {
 
     private PackagingMaterial createPackagingMaterial(
             final PackagingMaterialDimension packagingMaterialDimension,
-            final int thicknessInMillimeter,
             final int maxWeightInGrams,
             final String packagingMaterialName) {
         return Instancio.of(PackagingMaterial.class)
                 .supply(Select.field(PackagingMaterial::getPackagingMaterialDimension), () -> packagingMaterialDimension)
                 .supply(Select.field(PackagingMaterial::getMaxWeightInGrams), () -> maxWeightInGrams)
-                .supply(Select.field(PackagingMaterial::getThicknessInMillimeter), () -> thicknessInMillimeter)
                 .supply(Select.field(PackagingMaterial::getName), () -> packagingMaterialName)
                 .create();
     }
 
-    private PackagingMaterialDimension createPackagingMaterialDimension(final int innerWidthMillimeter, final int innerHeightMillimeter, final int innerLengthMillimeter) {
+    private PackagingMaterialDimension createPackagingMaterialDimension(
+            final int innerWidthMillimeter,
+            final int innerHeightMillimeter,
+            final int innerLengthMillimeter,
+            final int thicknessInMillimeter) {
         return Instancio.of(PackagingMaterialDimension.class)
                 .supply(Select.field(PackagingMaterialDimension::getInnerWidthMillimeter), () -> innerWidthMillimeter)
                 .supply(Select.field(PackagingMaterialDimension::getInnerHeightMillimeter), () -> innerHeightMillimeter)
                 .supply(Select.field(PackagingMaterialDimension::getInnerLengthMillimeter), () -> innerLengthMillimeter)
+                .supply(Select.field(PackagingMaterialDimension::getThicknessInMillimeter), () -> thicknessInMillimeter)
                 .create();
     }
 
@@ -91,9 +94,10 @@ class PackagingMaterialTest {
                 createPackagingMaterialDimension(
                         100,
                         100,
-                        100
+                        100,
+                        1
                 ),
-                1,
+
                 1000,
                 "포장자재1(최대무게 1키로 / 부피 100만)");
 

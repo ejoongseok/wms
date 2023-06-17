@@ -21,6 +21,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Outbound는 현실세계에서 출고 요청부터 출고 완료까지의 과정을 전산화로 표현한 것이다.
+ * 출고의 과정은 출고 대기, 집품, 검수, 포장, 출고 완료의 단계로 나뉜다.
+ */
 @Entity
 @Table(name = "outbound")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

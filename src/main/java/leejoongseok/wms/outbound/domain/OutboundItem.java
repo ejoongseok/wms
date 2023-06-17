@@ -16,6 +16,9 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 
+/**
+ * 출고 상품은 출고에 포함되는 상품을 의미합니다.
+ */
 @Entity
 @Table(name = "outbound_item")
 @Comment("출고 상품")

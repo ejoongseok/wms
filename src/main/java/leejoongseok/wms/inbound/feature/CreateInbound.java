@@ -24,6 +24,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 입고 요청을 생성하는 기능을 수행하는 컨트롤러 클래스
+ */
 @RestController
 @RequiredArgsConstructor
 public class CreateInbound {

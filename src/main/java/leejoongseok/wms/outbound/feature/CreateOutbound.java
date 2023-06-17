@@ -13,10 +13,10 @@ import leejoongseok.wms.outbound.domain.OrderItem;
 import leejoongseok.wms.outbound.domain.Outbound;
 import leejoongseok.wms.outbound.domain.OutboundItem;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
+import leejoongseok.wms.outbound.domain.PackagingMaterial;
+import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
 import leejoongseok.wms.outbound.domain.PackagingMaterialSelectorForOutbound;
 import leejoongseok.wms.outbound.port.LoadOrderPort;
-import leejoongseok.wms.packaging.domain.PackagingMaterial;
-import leejoongseok.wms.packaging.domain.PackagingMaterialRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +30,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 주문에 대한 출고를 생성하는 컨트롤러 클래스.
+ */
 @RestController
 @RequiredArgsConstructor
 public class CreateOutbound {

@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 
+/**
+ * 입고 상품의 LPN 생성 기능을 수행하는 컨트롤러 클래스
+ */
 @RestController
 @RequiredArgsConstructor
 public class CreateLPN {

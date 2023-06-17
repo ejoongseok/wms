@@ -15,6 +15,10 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
+/**
+ * 상품은 물류세터의 입고, 출고, 재고 등 모든 곳에서 사용되는 원천 데이터이다.
+ * 추후 오픈마켓용 아이템과 물류용 아이템을 관리하는 아이템 관리 시스템으로 확장될 수 있다.
+ */
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "item")
@@ -66,15 +70,15 @@ public class Item {
             final Integer weightInGrams,
             final TemperatureZone temperatureZone,
             final Category category) {
-        Assert.hasText(itemName, "상품명 필수입니다.");
-        Assert.hasText(itemBarcode, "상품 바코드는 필수입니다.");
-        Assert.hasText(brandName, "상품의 브랜드명은 필수입니다.");
-        Assert.hasText(makerName, "상품의 제조사명은 필수입니다.");
-        Assert.notNull(itemSize, "상품의 크기는 필수입니다.");
-        Assert.isTrue(null != weightInGrams && 0 < weightInGrams,
-                "상품의 무게는 1g 이상이어야 합니다.");
-        Assert.notNull(temperatureZone, "상품의 보관 온도는 필수입니다.");
-        Assert.notNull(category, "상품의 카테고리는 필수입니다.");
+        validateConstructor(
+                itemName,
+                itemBarcode,
+                brandName,
+                makerName,
+                itemSize,
+                weightInGrams,
+                temperatureZone,
+                category);
         this.itemName = itemName;
         this.itemBarcode = itemBarcode;
         this.description = description;
@@ -84,6 +88,26 @@ public class Item {
         this.weightInGrams = weightInGrams;
         this.temperatureZone = temperatureZone;
         this.category = category;
+    }
+
+    private void validateConstructor(
+            final String itemName,
+            final String itemBarcode,
+            final String brandName,
+            final String makerName,
+            final ItemSize itemSize,
+            final Integer weightInGrams,
+            final TemperatureZone temperatureZone,
+            final Category category) {
+        Assert.hasText(itemName, "상품명 필수입니다.");
+        Assert.hasText(itemBarcode, "상품 바코드는 필수입니다.");
+        Assert.hasText(brandName, "상품의 브랜드명은 필수입니다.");
+        Assert.hasText(makerName, "상품의 제조사명은 필수입니다.");
+        Assert.notNull(itemSize, "상품의 크기는 필수입니다.");
+        Assert.isTrue(null != weightInGrams && 0 < weightInGrams,
+                "상품의 무게는 1g 이상이어야 합니다.");
+        Assert.notNull(temperatureZone, "상품의 보관 온도는 필수입니다.");
+        Assert.notNull(category, "상품의 카테고리는 필수입니다.");
     }
 
     public Long calculateVolume() {

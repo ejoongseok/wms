@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 로케이션에 LPN을 등록.
- * LPN이 이미 존재하는경우 LocationLPN의 inventory quantity만 증가.
- * LPN이 존재하지 않으면 LocationLPN을 새로 생성해서 등록.
- * 새로 등록한 LocationLPN은 재고수량이 1이고 Location의 locationLPNList에 추가.
+ * 로케이션에 LPN을 적재시키는 기능을 수행하는 컨트롤러 클래스.
  */
 @RestController
 @RequiredArgsConstructor
@@ -29,19 +26,19 @@ public class AssignLPNToLocation {
     @Transactional
     @PostMapping("/locations/assign-lpn")
     public void request(@RequestBody @Valid final Request request) {
-        final LPN lpn = getLPN(request);
-        final Location location = getLocation(request);
+        final LPN lpn = getLPN(request.lpnBarcode);
+        final Location location = getLocation(request.locationBarcode);
         location.assignLPN(lpn);
     }
 
-    private LPN getLPN(final Request request) {
-        return lpnRepository.findByLPNBarcode(request.lpnBarcode)
-                .orElseThrow(() -> new LPNBarcodeNotFoundException(request.lpnBarcode));
+    private LPN getLPN(final String lpnBarcode) {
+        return lpnRepository.findByLPNBarcode(lpnBarcode)
+                .orElseThrow(() -> new LPNBarcodeNotFoundException(lpnBarcode));
     }
 
-    private Location getLocation(final Request request) {
-        return locationRepository.findByLocationBarcode(request.locationBarcode)
-                .orElseThrow(() -> new LocationBarcodeNotFoundException(request.locationBarcode));
+    private Location getLocation(final String locationBarcode) {
+        return locationRepository.findByLocationBarcode(locationBarcode)
+                .orElseThrow(() -> new LocationBarcodeNotFoundException(locationBarcode));
     }
 
     public record Request(

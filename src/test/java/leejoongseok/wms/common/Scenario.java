@@ -9,7 +9,7 @@ import leejoongseok.wms.location.steps.AddManualInventoryToLocationLPNSteps;
 import leejoongseok.wms.location.steps.AssignLPNToLocationSteps;
 import leejoongseok.wms.location.steps.CreateLocationSteps;
 import leejoongseok.wms.outbound.steps.CreateOutboundSteps;
-import leejoongseok.wms.packaging.steps.CreatePackagingMaterialSteps;
+import leejoongseok.wms.outbound.steps.CreatePackagingMaterialSteps;
 
 public class Scenario {
     public CreateItemSteps.Request createItem() {

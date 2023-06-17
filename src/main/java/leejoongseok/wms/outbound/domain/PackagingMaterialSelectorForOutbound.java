@@ -1,6 +1,5 @@
 package leejoongseok.wms.outbound.domain;
 
-import leejoongseok.wms.packaging.domain.PackagingMaterial;
 import org.springframework.util.Assert;
 
 import java.util.Comparator;
@@ -44,24 +43,6 @@ public class PackagingMaterialSelectorForOutbound {
                 .findFirst();
     }
 
-    private Long calculateTotalVolume(
-            final List<OrderItem> orderItems,
-            final Integer cushioningMaterialVolume) {
-        final Long totalVolume = orderItems.stream()
-                .mapToLong(orderItem -> orderItem.calculateVolume())
-                .sum();
-        return totalVolume + cushioningMaterialVolume;
-    }
-
-    private Long calculateTotalWeightInGrams(
-            final List<OrderItem> orderItems,
-            final Integer cushioningMaterialWeightInGrams) {
-        final Long totalWeightInGrams = orderItems.stream()
-                .mapToLong(orderItem -> orderItem.calculateWeightInGrams())
-                .sum();
-        return totalWeightInGrams + cushioningMaterialWeightInGrams;
-    }
-
     private void validateParameter(
             final List<OrderItem> orderItems,
             final Integer cushioningMaterialVolume,
@@ -76,5 +57,23 @@ public class PackagingMaterialSelectorForOutbound {
         if (0 > cushioningMaterialWeightInGrams) {
             throw new IllegalArgumentException("완충재 무게가 0보다 작을 수 없습니다.");
         }
+    }
+
+    private Long calculateTotalVolume(
+            final List<OrderItem> orderItems,
+            final Integer cushioningMaterialVolume) {
+        final Long totalVolume = orderItems.stream()
+                .mapToLong(orderItem -> orderItem.calculateTotalVolume())
+                .sum();
+        return totalVolume + cushioningMaterialVolume;
+    }
+
+    private Long calculateTotalWeightInGrams(
+            final List<OrderItem> orderItems,
+            final Integer cushioningMaterialWeightInGrams) {
+        final Long totalWeightInGrams = orderItems.stream()
+                .mapToLong(orderItem -> orderItem.calculateTotalWeightInGrams())
+                .sum();
+        return totalWeightInGrams + cushioningMaterialWeightInGrams;
     }
 }

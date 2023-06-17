@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 상품 등록 기능을 수행하는 컨트롤러 클래스
+ */
 @RestController
 @RequiredArgsConstructor
 public class CreateItem {
@@ -31,7 +34,8 @@ public class CreateItem {
         itemRepository.save(item);
     }
 
-    private void validateItemBarcodeAlreadyExists(final String itemBarcode) {
+    private void validateItemBarcodeAlreadyExists(
+            final String itemBarcode) {
         itemRepository.findByItemBarcode(itemBarcode).ifPresent(item -> {
             throw new ItemBarcodeAlreadyExistsException(itemBarcode);
         });

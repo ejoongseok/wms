@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.util.Assert;
 
 /**
- * 포장 완충재
+ * 포장에서 사용하는 완충재
  */
 @RequiredArgsConstructor
 public enum CushioningMaterial {
@@ -20,6 +20,9 @@ public enum CushioningMaterial {
     private final int weightInGrams;
     private final String description;
 
+    /**
+     * 완충재 수량에 따른 총 무게를 계산합니다.
+     */
     public int calculateTotalWeightInGrams(
             final Integer cushioningMaterialQuantity) {
         Assert.notNull(cushioningMaterialQuantity, "완충재 수량은 필수입니다.");
@@ -29,6 +32,9 @@ public enum CushioningMaterial {
         return weightInGrams * cushioningMaterialQuantity;
     }
 
+    /**
+     * 완충재 수량에 따른 총 부피를 계산합니다.
+     */
     public int calculateTotalVolume(
             final Integer cushioningMaterialQuantity) {
         Assert.notNull(cushioningMaterialQuantity, "완충재 수량은 필수입니다.");

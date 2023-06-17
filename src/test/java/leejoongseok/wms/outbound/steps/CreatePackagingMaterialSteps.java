@@ -1,10 +1,10 @@
-package leejoongseok.wms.packaging.steps;
+package leejoongseok.wms.outbound.steps;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import leejoongseok.wms.common.Scenario;
-import leejoongseok.wms.packaging.domain.PackagingType;
-import leejoongseok.wms.packaging.feature.CreatePackagingMaterial;
+import leejoongseok.wms.outbound.domain.PackagingType;
+import leejoongseok.wms.outbound.feature.CreatePackagingMaterial;
 import org.springframework.http.HttpStatus;
 
 public class CreatePackagingMaterialSteps {

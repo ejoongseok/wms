@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 로케이션을 생성하는 기능을 수행하는 컨트롤러 클래스.
+ */
 @RestController
 @RequiredArgsConstructor
 public class CreateLocation {

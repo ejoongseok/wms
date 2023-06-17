@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 입고 검수 확정 기능을 수행하는 컨트롤러 클래스
+ */
 @RestController
 @RequiredArgsConstructor
 public class ConfirmInspectedInbound {
