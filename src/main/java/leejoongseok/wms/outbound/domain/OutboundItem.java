@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
@@ -27,12 +28,14 @@ public class OutboundItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("출고 상품 ID")
+    @Getter(AccessLevel.PROTECTED)
     private Long id;
     @Column(name = "item_id", nullable = false)
     @Comment("상품 ID")
     private Long itemId;
     @Column(name = "outbound_quantity", nullable = false)
     @Comment("출고 수량")
+    @Getter(AccessLevel.PROTECTED)
     private Integer outboundQuantity;
     @Column(name = "unit_price", nullable = false)
     @Comment("출고 단가")
