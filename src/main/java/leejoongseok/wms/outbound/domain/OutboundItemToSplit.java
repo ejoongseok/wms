@@ -1,7 +1,9 @@
 package leejoongseok.wms.outbound.domain;
 
+import lombok.Getter;
 import org.springframework.util.Assert;
 
+@Getter
 public class OutboundItemToSplit {
     private final Long outboundItemIdToSplit;
     private final Integer quantityOfSplit;
