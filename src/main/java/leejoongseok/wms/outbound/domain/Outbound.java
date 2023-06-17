@@ -134,4 +134,8 @@ public class Outbound {
         outboundItems.add(outboundItem);
         outboundItem.assignOutbound(this);
     }
+
+    public Outbound split(final List<OutboundItemToSplit> outboundItemToSplits) {
+        return null;
+    }
 }
