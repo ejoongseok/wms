@@ -19,7 +19,9 @@ public class SplitToOutbound {
         final Outbound outbound = outboundRepository.findById(request.outBoundIdToSplit)
                 .orElseThrow(() -> new OutboundIdNotFoundException(request.outBoundIdToSplit));
 
-        final Outbound splittedOutbound = outbound.split(request.listOfOutboundItemToSplit());
+        final Outbound splittedOutbound = outbound.split(
+                request.cushioningMaterialQuantity,
+                request.listOfOutboundItemToSplit());
     }
 
     public record Request(

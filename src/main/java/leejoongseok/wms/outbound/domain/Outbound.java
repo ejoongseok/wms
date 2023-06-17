@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import leejoongseok.wms.outbound.exception.OutboundItemIdNotFoundException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -139,8 +140,11 @@ public class Outbound {
         outboundItem.assignOutbound(this);
     }
 
-    public Outbound split(final List<OutboundItemToSplit> outboundItemToSplits) {
-        validateSplit(outboundItemToSplits);
+    public Outbound split(
+            final Integer cushioningMaterialQuantity,
+            final List<OutboundItemToSplit> outboundItemToSplits) {
+        validateSplit(cushioningMaterialQuantity, outboundItemToSplits);
+        splitOutboundItems(outboundItemToSplits);
         return null;
     }
 
@@ -149,7 +153,15 @@ public class Outbound {
      * 출고를 분할하기 위해서는 출고는 반드시 대기 상태여야 한다.
      * 분할한 뒤 기존 출고의 상품이 하나도 남아있지 않으면 안된다.
      */
-    private void validateSplit(final List<OutboundItemToSplit> outboundItemToSplits) {
+    private void validateSplit(
+            final Integer cushioningMaterialQuantity,
+            final List<OutboundItemToSplit> outboundItemToSplits) {
+        if (0 > cushioningMaterialQuantity) {
+            throw new IllegalArgumentException("완충재 수량은 0 이상이어야 합니다.");
+        }
+        if (cushioningMaterialQuantity > this.cushioningMaterialQuantity) {
+            throw new IllegalArgumentException("분할할 완충재 수량은 출고의 완충재 수량보다 클 수 없습니다.");
+        }
         if (outboundStatus != OutboundStatus.READY) {
             throw new IllegalStateException("출고는 대기 상태에서만 분할할 수 있습니다.");
         }
@@ -166,5 +178,21 @@ public class Outbound {
         if (totalQuantityOfSplit >= totalQuantityOfItem) {
             throw new IllegalArgumentException("분할할 상품의 총 수량은 출고 상품의 총 수량보다 작아야 합니다.");
         }
+    }
+
+    private List<OutboundItem> splitOutboundItems(final List<OutboundItemToSplit> outboundItemToSplits) {
+        return outboundItemToSplits.stream()
+                .map(outboundItemToSplit -> {
+                    final OutboundItem outboundItem = getOutboundItem(outboundItemToSplit.getOutboundItemIdToSplit());
+                    return outboundItem.split(outboundItemToSplit.getQuantityOfSplit());
+                })
+                .toList();
+    }
+
+    private OutboundItem getOutboundItem(final Long outboundItemId) {
+        return outboundItems.stream()
+                .filter(item -> item.getId().equals(outboundItemId))
+                .findFirst()
+                .orElseThrow(() -> new OutboundItemIdNotFoundException(outboundItemId));
     }
 }

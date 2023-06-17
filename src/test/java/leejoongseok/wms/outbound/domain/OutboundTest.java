@@ -24,13 +24,16 @@ class OutboundTest {
                 outboundId);
         outbound.addOutboundItem(outboundItem);
 
-        final long outboundItemIdToSplit = 1L;
-        final int quantityOfSplit = 1;
+        final Integer cushioningMaterialQuantity = 1;
+        final Long outboundItemIdToSplit = 1L;
+        final Integer quantityOfSplit = 1;
         final OutboundItemToSplit outboundItemToSplit = new OutboundItemToSplit(
                 outboundItemIdToSplit,
                 quantityOfSplit);
 
-        final Outbound splittedOutbound = outbound.split(List.of(outboundItemToSplit));
+        final Outbound splittedOutbound = outbound.split(
+                cushioningMaterialQuantity,
+                List.of(outboundItemToSplit));
     }
 
     private Outbound createOutbound(
