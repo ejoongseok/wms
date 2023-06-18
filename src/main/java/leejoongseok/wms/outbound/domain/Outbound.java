@@ -47,9 +47,11 @@ public class Outbound {
     @Enumerated(EnumType.STRING)
     @Column(name = "cushioning_material", nullable = false)
     @Comment("완충재")
+    @Getter(AccessLevel.PROTECTED)
     private CushioningMaterial cushioningMaterial;
     @Column(name = "cushioning_material_quantity", nullable = false)
     @Comment("완충재 수량")
+    @Getter(AccessLevel.PROTECTED)
     private Integer cushioningMaterialQuantity;
     @Column(name = "is_priority_delivery", nullable = false)
     @Comment("우선 배송 여부")
@@ -140,12 +142,19 @@ public class Outbound {
         outboundItem.assignOutbound(this);
     }
 
+    /**
+     * 출고를 분할한다.
+     * 출고를 분할하기 위해서는 출고는 반드시 대기 상태여야 한다.
+     * 분할한 뒤 기존 출고의 상품은 하나 이상 남아 있어야 한다. (기존의 출고가 삭제되면 안됨.)
+     * 출고를 분할한 뒤 기존의 출고 목록 중 출고해야할 상품의 수량이 0인 경우 해당 상품을 목록에서 제거한다.
+     */
     public Outbound split(
-            final Integer cushioningMaterialQuantity,
             final List<OutboundItemToSplit> outboundItemToSplits) {
-        validateSplit(cushioningMaterialQuantity, outboundItemToSplits);
-        splitOutboundItems(outboundItemToSplits);
-        return null;
+        validateSplit(outboundItemToSplits);
+        final List<OutboundItem> splitOutboundItems = splitOutboundItems(outboundItemToSplits);
+        final Outbound outbound = cloneNewOutbound(splitOutboundItems);
+        afterSplitClearEmptyOutboundItems();
+        return outbound;
     }
 
     /**
@@ -154,14 +163,7 @@ public class Outbound {
      * 분할한 뒤 기존 출고의 상품이 하나도 남아있지 않으면 안된다.
      */
     private void validateSplit(
-            final Integer cushioningMaterialQuantity,
             final List<OutboundItemToSplit> outboundItemToSplits) {
-        if (0 > cushioningMaterialQuantity) {
-            throw new IllegalArgumentException("완충재 수량은 0 이상이어야 합니다.");
-        }
-        if (cushioningMaterialQuantity > this.cushioningMaterialQuantity) {
-            throw new IllegalArgumentException("분할할 완충재 수량은 출고의 완충재 수량보다 클 수 없습니다.");
-        }
         if (outboundStatus != OutboundStatus.READY) {
             throw new IllegalStateException("출고는 대기 상태에서만 분할할 수 있습니다.");
         }
@@ -176,7 +178,8 @@ public class Outbound {
                 .mapToInt(OutboundItem::getOutboundQuantity)
                 .sum();
         if (totalQuantityOfSplit >= totalQuantityOfItem) {
-            throw new IllegalArgumentException("분할할 상품의 총 수량은 출고 상품의 총 수량보다 작아야 합니다.");
+            throw new IllegalArgumentException("분할하려는 상품의 총 수량은 출고 상품의 총 수량보다 작아야 합니다."
+                    + " 분할하려는 상품의 총 수량: " + totalQuantityOfSplit + ", 출고 상품의 총 수량: " + totalQuantityOfItem);
         }
     }
 
@@ -194,5 +197,44 @@ public class Outbound {
                 .filter(item -> item.getId().equals(outboundItemId))
                 .findFirst()
                 .orElseThrow(() -> new OutboundItemIdNotFoundException(outboundItemId));
+    }
+
+    private Outbound cloneNewOutbound(
+            final List<OutboundItem> splitOutboundItems) {
+        final Outbound outbound = new Outbound(
+                orderId,
+                recommendedPackagingMaterialId,
+                outboundCustomer.getCustomerAddress(),
+                outboundCustomer.getCustomerName(),
+                outboundCustomer.getCustomerEmail(),
+                outboundCustomer.getCustomerPhoneNumber(),
+                outboundCustomer.getCustomerZipCode(),
+                cushioningMaterial,
+                cushioningMaterialQuantity,
+                priorityDelivery,
+                desiredDeliveryDate,
+                outboundRequirements,
+                deliveryRequirements,
+                orderedAt);
+        splitOutboundItems.forEach(outbound::addOutboundItem);
+        return outbound;
+    }
+
+    private void afterSplitClearEmptyOutboundItems() {
+        final List<OutboundItem> emptyOutboundItems = outboundItems.stream()
+                .filter(OutboundItem::isZeroQuantity)
+                .toList();
+        outboundItems.removeAll(emptyOutboundItems);
+    }
+
+    public void assignRecommendedPackagingMaterial(final PackagingMaterial packagingMaterial) {
+        recommendedPackagingMaterialId = packagingMaterial.getId();
+    }
+
+    public Long calculateTotalVolume() {
+//        return outboundItems.stream()
+//                .mapToLong(OutboundItem::calculateVolume)
+//                .sum();
+        return 0L;
     }
 }
