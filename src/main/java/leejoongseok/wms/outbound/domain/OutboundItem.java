@@ -29,7 +29,7 @@ public class OutboundItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("출고 상품 ID")
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
@@ -38,7 +38,7 @@ public class OutboundItem {
     private Item item;
     @Column(name = "outbound_quantity", nullable = false)
     @Comment("출고 수량")
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     private Integer outboundQuantity;
     @Column(name = "unit_price", nullable = false)
     @Comment("출고 단가")
@@ -110,6 +110,6 @@ public class OutboundItem {
     }
 
     public Long calculateWeightInGrams() {
-        return (long) ((long) item.getWeightInGrams() * outboundQuantity);
+        return (long) item.getWeightInGrams() * outboundQuantity;
     }
 }

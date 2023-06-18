@@ -10,6 +10,7 @@ import leejoongseok.wms.location.steps.AssignLPNToLocationSteps;
 import leejoongseok.wms.location.steps.CreateLocationSteps;
 import leejoongseok.wms.outbound.steps.CreateOutboundSteps;
 import leejoongseok.wms.outbound.steps.CreatePackagingMaterialSteps;
+import leejoongseok.wms.outbound.steps.SplitToOutboundSteps;
 
 public class Scenario {
     public CreateItemSteps.Request createItem() {
@@ -50,5 +51,9 @@ public class Scenario {
 
     public CreateOutboundSteps.Request createOutbound() {
         return new CreateOutboundSteps.Request();
+    }
+
+    public SplitToOutboundSteps.Request splitToOutbound() {
+        return new SplitToOutboundSteps.Request();
     }
 }

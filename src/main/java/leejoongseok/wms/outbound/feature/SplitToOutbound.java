@@ -1,5 +1,6 @@
 package leejoongseok.wms.outbound.feature;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -10,15 +11,22 @@ import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
 import leejoongseok.wms.outbound.domain.PackagingMaterialSelectorForOutbound;
 import leejoongseok.wms.outbound.exception.OutboundIdNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@RestController
 @RequiredArgsConstructor
 public class SplitToOutbound {
     private final OutboundRepository outboundRepository;
     private final PackagingMaterialRepository packagingMaterialRepository;
 
-    public void request(final Request request) {
+    @Transactional
+    @PostMapping("/outbounds/split")
+    public void request(@RequestBody @Valid final Request request) {
         final Outbound outbound = getOutbound(request.outBoundIdToSplit);
 
         final Outbound splittedOutbound = outbound.split(

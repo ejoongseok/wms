@@ -37,7 +37,7 @@ import java.util.List;
 public class Outbound {
 
     @OneToMany(mappedBy = "outbound", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     private final List<OutboundItem> outboundItems = new ArrayList<>();
     @Column(name = "order_id", nullable = false)
     @Comment("주문 ID")
@@ -161,9 +161,9 @@ public class Outbound {
             final List<OutboundItemToSplit> outboundItemToSplits) {
         validateSplit(outboundItemToSplits);
         final List<OutboundItem> splitOutboundItems = splitOutboundItems(outboundItemToSplits);
-        final Outbound outbound = cloneNewOutbound(splitOutboundItems);
+        final Outbound cloneNewOutbound = cloneNewOutbound(splitOutboundItems);
         afterSplitClearEmptyOutboundItems();
-        return outbound;
+        return cloneNewOutbound;
     }
 
     /**
