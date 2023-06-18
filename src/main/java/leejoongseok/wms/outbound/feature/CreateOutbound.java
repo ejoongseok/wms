@@ -107,33 +107,31 @@ public class CreateOutbound {
             final Optional<PackagingMaterial> packagingMaterial,
             final CushioningMaterial cushioningMaterial,
             final Integer cushioningMaterialQuantity) {
-        final Long recommendedPackagingMaterialId = getRecommendedPackagingMaterialIdOrNull(
+        final PackagingMaterial recommendedPackagingMaterial = getRecommendedPackagingMaterialOrNull(
                 packagingMaterial);
         final Outbound outbound = newOutbound(
                 order,
                 cushioningMaterial,
                 cushioningMaterialQuantity,
-                recommendedPackagingMaterialId);
+                recommendedPackagingMaterial);
         final List<OutboundItem> outboundItems = newOutboundItems(order.getOrderItems());
         outboundItems.forEach(outbound::addOutboundItem);
         return outbound;
     }
 
-    private Long getRecommendedPackagingMaterialIdOrNull(
+    private PackagingMaterial getRecommendedPackagingMaterialOrNull(
             final Optional<PackagingMaterial> packagingMaterial) {
-        return packagingMaterial
-                .map(PackagingMaterial::getId)
-                .orElse(null);
+        return packagingMaterial.orElse(null);
     }
 
     private Outbound newOutbound(
             final Order order,
             final CushioningMaterial cushioningMaterial,
             final Integer cushioningMaterialQuantity,
-            final Long recommendedPackagingMaterialId) {
+            final PackagingMaterial recommendedPackagingMaterial) {
         return new Outbound(
                 order.getId(),
-                recommendedPackagingMaterialId,
+                recommendedPackagingMaterial,
                 order.getCustomerAddress(),
                 order.getCustomerName(),
                 order.getCustomerEmail(),

@@ -3,6 +3,7 @@ package leejoongseok.wms.item.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
@@ -13,6 +14,7 @@ import org.springframework.util.Assert;
  */
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class ItemSize {
     @Column(name = "width_millimeter", nullable = false)
     @Comment("상품의 가로 길이 (mm)")

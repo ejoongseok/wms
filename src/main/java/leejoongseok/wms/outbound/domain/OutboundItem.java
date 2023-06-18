@@ -104,4 +104,12 @@ public class OutboundItem {
     public boolean isZeroQuantity() {
         return 0 == outboundQuantity;
     }
+
+    public Long calculateVolume() {
+        return item.calculateVolume() * outboundQuantity;
+    }
+
+    public Long calculateWeightInGrams() {
+        return (long) ((long) item.getWeightInGrams() * outboundQuantity);
+    }
 }

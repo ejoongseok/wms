@@ -36,6 +36,7 @@ public class PackagingMaterial {
     private PackagingMaterialDimension packagingMaterialDimension;
     @Column(name = "weight_in_grams", nullable = false)
     @Comment("무게(g)")
+    @Getter
     private Integer weightInGrams;
     @Column(name = "packaging_type", nullable = false)
     @Comment("포장재 종류")

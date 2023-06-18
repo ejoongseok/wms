@@ -76,4 +76,15 @@ public class PackagingMaterialSelectorForOutbound {
                 .sum();
         return totalWeightInGrams + cushioningMaterialWeightInGrams;
     }
+
+    public PackagingMaterial select(final Outbound outbound) {
+        Assert.notNull(outbound, "포장재를 추천할 출고는 필수입니다.");
+        final Long totalVolume = outbound.calculateTotalVolume();
+        final Long totalWeightInGrams = outbound.calculateTotalWeightInGrams();
+        return packagingMaterials.stream()
+                .filter(pm -> pm.isPackageable(totalVolume, totalWeightInGrams))
+                .sorted(Comparator.comparingLong(PackagingMaterial::calculatePackageableVolume))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("포장 가능한 포장재가 없습니다."));
+    }
 }

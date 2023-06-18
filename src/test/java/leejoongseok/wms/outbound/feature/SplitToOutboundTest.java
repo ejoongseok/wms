@@ -1,6 +1,7 @@
 package leejoongseok.wms.outbound.feature;
 
 import leejoongseok.wms.outbound.domain.OutboundRepository;
+import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,11 +12,13 @@ class SplitToOutboundTest {
 
     private SplitToOutbound splitToOutbound;
     private OutboundRepository outboundRepository;
+    private PackagingMaterialRepository packagingMaterialRepository;
 
     @BeforeEach
     void setUp() {
         outboundRepository = null;
-        splitToOutbound = new SplitToOutbound(outboundRepository);
+        packagingMaterialRepository = null;
+        splitToOutbound = new SplitToOutbound(outboundRepository, packagingMaterialRepository);
     }
 
     @Test

@@ -6,9 +6,12 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import leejoongseok.wms.outbound.exception.OutboundItemIdNotFoundException;
@@ -39,9 +42,11 @@ public class Outbound {
     @Column(name = "order_id", nullable = false)
     @Comment("주문 ID")
     private Long orderId;
-    @Column(name = "recommended_packaging_material_id", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recommended_packaging_material_id", nullable = true)
     @Comment("추천 포장재 ID")
-    private Long recommendedPackagingMaterialId;
+    @Getter
+    private PackagingMaterial recommendedPackagingMaterial;
     @Embedded
     private OutboundCustomer outboundCustomer;
     @Enumerated(EnumType.STRING)
@@ -81,7 +86,7 @@ public class Outbound {
 
     public Outbound(
             final Long orderId,
-            final Long recommendedPackagingMaterialId,
+            final PackagingMaterial recommendedPackagingMaterial,
             final String customerAddress,
             final String customerName,
             final String customerEmail,
@@ -102,7 +107,7 @@ public class Outbound {
                 desiredDeliveryDate,
                 orderedAt);
         this.orderId = orderId;
-        this.recommendedPackagingMaterialId = recommendedPackagingMaterialId;
+        this.recommendedPackagingMaterial = recommendedPackagingMaterial;
         outboundCustomer = new OutboundCustomer(
                 customerAddress,
                 customerName,
@@ -131,6 +136,10 @@ public class Outbound {
         Assert.notNull(cushioningMaterialQuantity, "완충재 수량은 필수입니다.");
         if (0 > cushioningMaterialQuantity) {
             throw new IllegalArgumentException("완충재 수량은 0 이상이어야 합니다.");
+        }
+        if (CushioningMaterial.NONE == cushioningMaterial
+                && 0 < cushioningMaterialQuantity) {
+            throw new IllegalArgumentException("완충재가 없는 경우 완충재 수량은 0이어야 합니다.");
         }
         Assert.notNull(priorityDelivery, "우선 배송 여부는 필수입니다.");
         Assert.notNull(desiredDeliveryDate, "희망 배송일은 필수입니다.");
@@ -203,7 +212,7 @@ public class Outbound {
             final List<OutboundItem> splitOutboundItems) {
         final Outbound outbound = new Outbound(
                 orderId,
-                recommendedPackagingMaterialId,
+                recommendedPackagingMaterial,
                 outboundCustomer.getCustomerAddress(),
                 outboundCustomer.getCustomerName(),
                 outboundCustomer.getCustomerEmail(),
@@ -227,14 +236,29 @@ public class Outbound {
         outboundItems.removeAll(emptyOutboundItems);
     }
 
-    public void assignRecommendedPackagingMaterial(final PackagingMaterial packagingMaterial) {
-        recommendedPackagingMaterialId = packagingMaterial.getId();
+    public void assignRecommendedPackagingMaterial(
+            final PackagingMaterial packagingMaterial) {
+        recommendedPackagingMaterial = packagingMaterial;
     }
 
     public Long calculateTotalVolume() {
-//        return outboundItems.stream()
-//                .mapToLong(OutboundItem::calculateVolume)
-//                .sum();
-        return 0L;
+        final Long itemTotalVolume = outboundItems.stream()
+                .mapToLong(OutboundItem::calculateVolume)
+                .sum();
+        final Integer cushioningMaterialTotalVolume = cushioningMaterial.calculateTotalVolume(
+                cushioningMaterialQuantity);
+        return itemTotalVolume + cushioningMaterialTotalVolume;
+    }
+
+    public Long calculateTotalWeightInGrams() {
+        final long itemTotalWeightInGrams = outboundItems.stream()
+                .mapToLong(OutboundItem::calculateWeightInGrams)
+                .sum();
+        final int cushioningMaterialTotalWeightInGrams = cushioningMaterial.calculateTotalWeightInGrams(
+                cushioningMaterialQuantity);
+        final Integer packagingMaterialWeightInGrams = null == recommendedPackagingMaterial
+                ? 0
+                : recommendedPackagingMaterial.getWeightInGrams();
+        return itemTotalWeightInGrams + cushioningMaterialTotalWeightInGrams + packagingMaterialWeightInGrams;
     }
 }

@@ -1,5 +1,7 @@
 package leejoongseok.wms.outbound.domain;
 
+import leejoongseok.wms.item.domain.Item;
+import leejoongseok.wms.item.domain.ItemSize;
 import leejoongseok.wms.outbound.exception.OutboundItemIdNotFoundException;
 import org.instancio.Instancio;
 import org.instancio.Select;
@@ -62,6 +64,8 @@ class OutboundTest {
         return Instancio.of(Outbound.class)
                 .supply(Select.field(Outbound::getOutboundStatus), () -> status)
                 .supply(Select.field(Outbound::getId), () -> outboundId)
+                .supply(Select.field(Outbound::getCushioningMaterial), () -> CushioningMaterial.NONE)
+                .supply(Select.field(Outbound::getCushioningMaterialQuantity), () -> 0)
                 .ignore(Select.field(Outbound::getOutboundItems))
                 .create();
     }
@@ -225,14 +229,102 @@ class OutboundTest {
     }
 
     @Test
+    @DisplayName("출고의 총 부피를 계산한다. (출고의 부피 = 상품의 부피 * 상품의 수량 + 완충재의 부피 * 완충재의 수량)")
     void calculateTotalVolume() {
-//        Instancio.of(OutboundItem.class)
-//                        .supply(Select.field(OutboundItem::getOutboundQuantity), () -> 1)
-//                                .supply(Select.field(OutboundItem::))
-//        Instancio.of(Outbound.class)
-//                .supply(Select.field(Outbound::getCushioningMaterial), () -> CushioningMaterial.BUBBLE_WRAP)
-//                .supply(Select.field(Outbound::getCushioningMaterialQuantity), () -> 1)
-//                .
+        final Integer itemLengthMillimeter = 100;
+        final Integer itemWidthMillimeter = 100;
+        final Integer itemHeightMillimeter = 100;
+        final Item item = createItemWithItemSize(
+                itemLengthMillimeter,
+                itemWidthMillimeter,
+                itemHeightMillimeter);
+        final Integer outboundQuantity = 1;
+        final OutboundItem outboundItem = createOutboundWithItemOrQuantity(
+                item,
+                outboundQuantity);
+        final CushioningMaterial cushioningMaterial = CushioningMaterial.BUBBLE_WRAP;
+        final Integer cushioningMaterialQuantity = 1;
+        final Outbound outbound = createOutboundWithCushioningMaterial(
+                cushioningMaterial,
+                cushioningMaterialQuantity,
+                outboundItem);
 
+        final Long totalVolume = outbound.calculateTotalVolume();
+
+        final int cushioningMaterialVolume = 1000;
+        final int itemTotalVolume = 1000000;
+        final int outboundTotalVolume = itemTotalVolume + cushioningMaterialVolume;
+        assertThat(totalVolume).isEqualTo(outboundTotalVolume);
+
+    }
+
+    private Item createItemWithItemSize(
+            final Integer itemLengthMillimeter,
+            final Integer itemWidthMillimeter,
+            final Integer itemHeightMillimeter) {
+        final ItemSize itemSize = Instancio.of(ItemSize.class)
+                .supply(Select.field(ItemSize::getLengthMillimeter), () -> itemLengthMillimeter)
+                .supply(Select.field(ItemSize::getWidthMillimeter), () -> itemWidthMillimeter)
+                .supply(Select.field(ItemSize::getHeightMillimeter), () -> itemHeightMillimeter)
+                .create();
+        return Instancio.of(Item.class)
+                .supply(Select.field(Item::getItemSize), () -> itemSize)
+                .create();
+    }
+
+    private OutboundItem createOutboundWithItemOrQuantity(
+            final Item item,
+            final Integer outboundQuantity) {
+        return Instancio.of(OutboundItem.class)
+                .supply(Select.field(OutboundItem::getOutboundQuantity), () -> outboundQuantity)
+                .supply(Select.field(OutboundItem::getItem), () -> item)
+                .create();
+    }
+
+    private Outbound createOutboundWithCushioningMaterial(
+            final CushioningMaterial cushioningMaterial,
+            final Integer cushioningMaterialQuantity,
+            final OutboundItem outboundItem) {
+        return Instancio.of(Outbound.class)
+                .supply(Select.field(Outbound::getCushioningMaterial),
+                        () -> cushioningMaterial)
+                .supply(Select.field(Outbound::getCushioningMaterialQuantity),
+                        () -> cushioningMaterialQuantity)
+                .supply(Select.field(Outbound::getOutboundItems),
+                        () -> List.of(outboundItem))
+                .ignore(Select.field(Outbound::getRecommendedPackagingMaterial))
+                .create();
+    }
+
+    @Test
+    @DisplayName("출고의 총 무게를 계산한다. (출고의 무게 = 상품의 무게 * 상품의 수량 + 완충재의 무게 * 완충재의 수량)")
+    void calculateTotalWeightInGrams() {
+        final Integer itemWeightGram = 100;
+        final Item item = createItemWithItemWeight(itemWeightGram);
+        final Integer outboundQuantity = 1;
+        final OutboundItem outboundItem = createOutboundWithItemOrQuantity(
+                item,
+                outboundQuantity);
+        final CushioningMaterial cushioningMaterial = CushioningMaterial.BUBBLE_WRAP;
+        final Integer cushioningMaterialQuantity = 1;
+        final Outbound outbound = createOutboundWithCushioningMaterial(
+                cushioningMaterial,
+                cushioningMaterialQuantity,
+                outboundItem);
+
+        final Long totalWeightInGrams = outbound.calculateTotalWeightInGrams();
+
+        final int cushioningMaterialWeightInGrams = 10;
+        final int itemTotalWeightInGrams = 100;
+        final int outboundTotalWeightInGrams =
+                itemTotalWeightInGrams + cushioningMaterialWeightInGrams;
+        assertThat(totalWeightInGrams).isEqualTo(outboundTotalWeightInGrams);
+    }
+
+    private Item createItemWithItemWeight(
+            final Integer itemWeightGram) {
+        return Instancio.of(Item.class)
+                .supply(Select.field(Item::getWeightInGrams), () -> itemWeightGram)
+                .create();
     }
 }
