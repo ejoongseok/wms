@@ -20,7 +20,7 @@ class OutboundItemTest {
         final OutboundItem splittedOutboundItem = outboundItem.split(quantityOfSplit);
         assertThat(outboundItem.getOutboundQuantity()).isZero();
         assertThat(splittedOutboundItem.getOutboundQuantity()).isEqualTo(1);
-        assertThat(outboundItem.getItemId()).isEqualTo(splittedOutboundItem.getItemId());
+        assertThat(outboundItem.getItem()).isEqualTo(splittedOutboundItem.getItem());
         assertThat(outboundItem.getUnitPrice()).isEqualTo(splittedOutboundItem.getUnitPrice());
     }
 

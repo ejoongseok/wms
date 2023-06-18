@@ -3,6 +3,8 @@ package leejoongseok.wms.outbound.feature;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.item.domain.Item;
+import leejoongseok.wms.item.domain.ItemRepository;
 import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.LocationLPNRepository;
 import leejoongseok.wms.outbound.domain.CushioningMaterial;
@@ -16,6 +18,7 @@ import leejoongseok.wms.outbound.domain.OutboundRepository;
 import leejoongseok.wms.outbound.domain.PackagingMaterial;
 import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
 import leejoongseok.wms.outbound.domain.PackagingMaterialSelectorForOutbound;
+import leejoongseok.wms.outbound.exception.ItemIdNotFoundException;
 import leejoongseok.wms.outbound.port.LoadOrderPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,6 +45,7 @@ public class CreateOutbound {
     private final LocationLPNValidatorForOutbound locationLPNValidatorForOutbound;
     private final PackagingMaterialRepository packagingMaterialRepository;
     private final OutboundRepository outboundRepository;
+    private final ItemRepository itemRepository;
 
     @Transactional
     @PostMapping("/outbounds")
@@ -148,10 +152,15 @@ public class CreateOutbound {
     private List<OutboundItem> newOutboundItems(final List<OrderItem> orderItems) {
         return orderItems.stream()
                 .map(orderItem -> new OutboundItem(
-                        orderItem.getItemId(),
+                        getItem(orderItem.getItemId()),
                         orderItem.getOrderQuantity(),
                         orderItem.getUnitPrice()))
                 .toList();
+    }
+
+    private Item getItem(final Long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new ItemIdNotFoundException(itemId));
     }
 
     public record Request(
