@@ -13,7 +13,7 @@ public class SplitToOutboundSteps {
         private Integer cushioningMaterialQuantity = 1;
         private Long outBoundIdToSplit = 1L;
         private List<SplitToOutbound.Request.Item> itemsToSplit = List.of(
-                new SplitToOutbound.Request.Item(1L, 2)
+                new SplitToOutbound.Request.Item(1L, 1)
         );
 
         public Request cushioningMaterialQuantity(final Integer cushioningMaterialQuantity) {

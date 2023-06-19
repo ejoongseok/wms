@@ -36,7 +36,7 @@ public class LoadOrderPort {
                 List.of(
                         new OrderItem(
                                 itemRepository.findById(1L).get(),
-                                1,
+                                2,
                                 BigDecimal.valueOf(1000)
                         ))
 
