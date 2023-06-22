@@ -42,7 +42,7 @@ class OutboundItemTest {
         assertThatThrownBy(() -> {
             outboundItem.split(overQuantityOfSplit);
         }).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("분할 수량은 출고 수량보다 작거나 같아야 합니다.출고 수량: 1, 분할 수량: 2");
+                .hasMessageContaining("분할 수량은 출고 수량보다 작거나 같아야 합니다. 출고 수량: 1, 분할 수량: 2");
     }
 
     @Test
