@@ -3,6 +3,8 @@ package leejoongseok.wms.outbound.feature;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.item.domain.Item;
+import leejoongseok.wms.item.domain.ItemRepository;
 import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.LocationLPNRepository;
 import leejoongseok.wms.outbound.domain.CushioningMaterial;
@@ -16,6 +18,7 @@ import leejoongseok.wms.outbound.domain.OutboundRepository;
 import leejoongseok.wms.outbound.domain.PackagingMaterial;
 import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
 import leejoongseok.wms.outbound.domain.PackagingMaterialSelectorForOutbound;
+import leejoongseok.wms.outbound.exception.ItemIdNotFoundException;
 import leejoongseok.wms.outbound.port.LoadOrderPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,6 +45,7 @@ public class CreateOutbound {
     private final LocationLPNValidatorForOutbound locationLPNValidatorForOutbound;
     private final PackagingMaterialRepository packagingMaterialRepository;
     private final OutboundRepository outboundRepository;
+    private final ItemRepository itemRepository;
 
     @Transactional
     @PostMapping("/outbounds")
@@ -103,33 +107,31 @@ public class CreateOutbound {
             final Optional<PackagingMaterial> packagingMaterial,
             final CushioningMaterial cushioningMaterial,
             final Integer cushioningMaterialQuantity) {
-        final Long recommendedPackagingMaterialId = getRecommendedPackagingMaterialIdOrNull(
+        final PackagingMaterial recommendedPackagingMaterial = getRecommendedPackagingMaterialOrNull(
                 packagingMaterial);
         final Outbound outbound = newOutbound(
                 order,
                 cushioningMaterial,
                 cushioningMaterialQuantity,
-                recommendedPackagingMaterialId);
+                recommendedPackagingMaterial);
         final List<OutboundItem> outboundItems = newOutboundItems(order.getOrderItems());
         outboundItems.forEach(outbound::addOutboundItem);
         return outbound;
     }
 
-    private Long getRecommendedPackagingMaterialIdOrNull(
+    private PackagingMaterial getRecommendedPackagingMaterialOrNull(
             final Optional<PackagingMaterial> packagingMaterial) {
-        return packagingMaterial
-                .map(PackagingMaterial::getId)
-                .orElse(null);
+        return packagingMaterial.orElse(null);
     }
 
     private Outbound newOutbound(
             final Order order,
             final CushioningMaterial cushioningMaterial,
             final Integer cushioningMaterialQuantity,
-            final Long recommendedPackagingMaterialId) {
+            final PackagingMaterial recommendedPackagingMaterial) {
         return new Outbound(
                 order.getId(),
-                recommendedPackagingMaterialId,
+                recommendedPackagingMaterial,
                 order.getCustomerAddress(),
                 order.getCustomerName(),
                 order.getCustomerEmail(),
@@ -148,10 +150,15 @@ public class CreateOutbound {
     private List<OutboundItem> newOutboundItems(final List<OrderItem> orderItems) {
         return orderItems.stream()
                 .map(orderItem -> new OutboundItem(
-                        orderItem.getItemId(),
+                        getItem(orderItem.getItemId()),
                         orderItem.getOrderQuantity(),
                         orderItem.getUnitPrice()))
                 .toList();
+    }
+
+    private Item getItem(final Long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new ItemIdNotFoundException(itemId));
     }
 
     public record Request(

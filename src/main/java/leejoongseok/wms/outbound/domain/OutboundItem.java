@@ -9,7 +9,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import leejoongseok.wms.item.domain.Item;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
@@ -27,15 +29,20 @@ public class OutboundItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("출고 상품 ID")
+    @Getter
     private Long id;
-    @Column(name = "item_id", nullable = false)
-    @Comment("상품 ID")
-    private Long itemId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
+    @Comment("입고 ID")
+    @Getter(AccessLevel.PROTECTED)
+    private Item item;
     @Column(name = "outbound_quantity", nullable = false)
     @Comment("출고 수량")
+    @Getter
     private Integer outboundQuantity;
     @Column(name = "unit_price", nullable = false)
     @Comment("출고 단가")
+    @Getter(AccessLevel.PROTECTED)
     private BigDecimal unitPrice;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "outbound_id")
@@ -43,23 +50,23 @@ public class OutboundItem {
     private Outbound outbound;
 
     public OutboundItem(
-            final Long itemId,
+            final Item item,
             final Integer outboundQuantity,
             final BigDecimal unitPrice) {
         validateConstructor(
-                itemId,
+                item,
                 outboundQuantity,
                 unitPrice);
-        this.itemId = itemId;
+        this.item = item;
         this.outboundQuantity = outboundQuantity;
         this.unitPrice = unitPrice;
     }
 
     private void validateConstructor(
-            final Long itemId,
+            final Item item,
             final Integer outboundQuantity,
             final BigDecimal unitPrice) {
-        Assert.notNull(itemId, "상품 ID는 필수입니다.");
+        Assert.notNull(item, "상품은 필수입니다.");
         Assert.notNull(outboundQuantity, "출고 수량은 필수입니다.");
         Assert.notNull(unitPrice, "출고 단가는 필수입니다.");
         if (0 >= outboundQuantity) {
@@ -73,5 +80,38 @@ public class OutboundItem {
     public void assignOutbound(final Outbound outbound) {
         Assert.notNull(outbound, "출고는 필수입니다.");
         this.outbound = outbound;
+    }
+
+    /**
+     * 출고 상품을 분할합니다.
+     */
+    public OutboundItem split(final Integer quantityOfSplit) {
+        validateSplit(quantityOfSplit);
+        outboundQuantity -= quantityOfSplit;
+        return new OutboundItem(
+                item,
+                quantityOfSplit,
+                unitPrice);
+    }
+
+    private void validateSplit(final Integer quantityOfSplit) {
+        Assert.notNull(quantityOfSplit, "분할 수량은 필수입니다.");
+        if (quantityOfSplit > outboundQuantity) {
+            throw new IllegalArgumentException(
+                    "분할 수량은 출고 수량보다 작거나 같아야 합니다. 출고 수량: %d, 분할 수량: %d"
+                            .formatted(outboundQuantity, quantityOfSplit));
+        }
+    }
+
+    public boolean isZeroQuantity() {
+        return 0 == outboundQuantity;
+    }
+
+    public Long calculateVolume() {
+        return item.calculateVolume() * outboundQuantity;
+    }
+
+    public Long calculateWeightInGrams() {
+        return (long) item.getWeightInGrams() * outboundQuantity;
     }
 }

@@ -36,5 +36,12 @@ public class AssignLPNToLocationSteps {
                     .statusCode(HttpStatus.OK.value());
             return new Scenario();
         }
+
+        public Scenario request(final Integer requestCount) {
+            for (int i = 0; i < requestCount; i++) {
+                request();
+            }
+            return new Scenario();
+        }
     }
 }

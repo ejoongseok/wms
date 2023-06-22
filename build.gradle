@@ -26,6 +26,8 @@ dependencies {
     implementation 'org.flywaydb:flyway-mysql'
     // SQL Logger
     implementation 'p6spy:p6spy:3.9.1'
+    // @VisibleForTesting용
+    implementation 'com.google.guava:guava:32.0.1-jre'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'

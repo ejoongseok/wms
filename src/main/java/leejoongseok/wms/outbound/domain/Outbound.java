@@ -6,12 +6,17 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import leejoongseok.wms.outbound.exception.OutboundItemIdNotFoundException;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
@@ -31,24 +36,27 @@ import java.util.List;
 @Comment("출고")
 public class Outbound {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Comment("출고 ID")
-    private Long id;
+    @OneToMany(mappedBy = "outbound", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Getter
+    private final List<OutboundItem> outboundItems = new ArrayList<>();
     @Column(name = "order_id", nullable = false)
     @Comment("주문 ID")
     private Long orderId;
-    @Column(name = "recommended_packaging_material_id", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recommended_packaging_material_id", nullable = true)
     @Comment("추천 포장재 ID")
-    private Long recommendedPackagingMaterialId;
+    @Getter
+    private PackagingMaterial recommendedPackagingMaterial;
     @Embedded
     private OutboundCustomer outboundCustomer;
     @Enumerated(EnumType.STRING)
     @Column(name = "cushioning_material", nullable = false)
     @Comment("완충재")
+    @Getter(AccessLevel.PROTECTED)
     private CushioningMaterial cushioningMaterial;
     @Column(name = "cushioning_material_quantity", nullable = false)
     @Comment("완충재 수량")
+    @Getter(AccessLevel.PROTECTED)
     private Integer cushioningMaterialQuantity;
     @Column(name = "is_priority_delivery", nullable = false)
     @Comment("우선 배송 여부")
@@ -65,16 +73,20 @@ public class Outbound {
     @Column(name = "ordered_at", nullable = false)
     @Comment("주문 일시")
     private LocalDateTime orderedAt;
-    @OneToMany(mappedBy = "outbound", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<OutboundItem> outboundItems = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     @Column(name = "outbound_status", nullable = false)
     @Comment("출고 상태")
+    @Getter(AccessLevel.PROTECTED)
     private final OutboundStatus outboundStatus = OutboundStatus.READY;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("출고 ID")
+    @Getter(AccessLevel.PROTECTED)
+    private Long id;
 
     public Outbound(
             final Long orderId,
-            final Long recommendedPackagingMaterialId,
+            final PackagingMaterial recommendedPackagingMaterial,
             final String customerAddress,
             final String customerName,
             final String customerEmail,
@@ -95,7 +107,7 @@ public class Outbound {
                 desiredDeliveryDate,
                 orderedAt);
         this.orderId = orderId;
-        this.recommendedPackagingMaterialId = recommendedPackagingMaterialId;
+        this.recommendedPackagingMaterial = recommendedPackagingMaterial;
         outboundCustomer = new OutboundCustomer(
                 customerAddress,
                 customerName,
@@ -125,6 +137,10 @@ public class Outbound {
         if (0 > cushioningMaterialQuantity) {
             throw new IllegalArgumentException("완충재 수량은 0 이상이어야 합니다.");
         }
+        if (CushioningMaterial.NONE == cushioningMaterial
+                && 0 < cushioningMaterialQuantity) {
+            throw new IllegalArgumentException("완충재가 없는 경우 완충재 수량은 0이어야 합니다.");
+        }
         Assert.notNull(priorityDelivery, "우선 배송 여부는 필수입니다.");
         Assert.notNull(desiredDeliveryDate, "희망 배송일은 필수입니다.");
         Assert.notNull(orderedAt, "주문 일시는 필수입니다.");
@@ -133,5 +149,143 @@ public class Outbound {
     public void addOutboundItem(final OutboundItem outboundItem) {
         outboundItems.add(outboundItem);
         outboundItem.assignOutbound(this);
+    }
+
+    /**
+     * 출고를 분할한다.
+     * 출고를 분할하기 위해서는 출고는 반드시 대기 상태여야 한다.
+     * 분할한 뒤 기존 출고의 상품은 하나 이상 남아 있어야 한다. (기존의 출고가 삭제되면 안됨.)
+     * 출고를 분할한 뒤 기존의 출고 목록 중 출고해야할 상품의 수량이 0인 경우 해당 출고 상품을 목록에서 제거한다.
+     */
+    public Outbound split(
+            final List<OutboundItemToSplit> outboundItemToSplits) {
+        validateSplit(outboundItemToSplits);
+        final List<OutboundItem> splitOutboundItems = splitOutboundItems(outboundItemToSplits);
+        final Outbound cloneNewOutbound = cloneNewOutbound(splitOutboundItems);
+        afterSplitClearEmptyOutboundItems();
+        return cloneNewOutbound;
+    }
+
+    /**
+     * 출고를 분할할 수 있는지 검증한다.
+     * 출고를 분할하기 위해서는 출고는 반드시 대기 상태여야 한다.
+     * 분할한 뒤 기존 출고의 상품이 하나도 남아있지 않으면 안된다.
+     */
+    private void validateSplit(
+            final List<OutboundItemToSplit> outboundItemToSplits) {
+        if (outboundStatus != OutboundStatus.READY) {
+            throw new IllegalStateException(
+                    "출고는 대기 상태에서만 분할할 수 있습니다.");
+        }
+        Assert.notEmpty(outboundItemToSplits,
+                "분할할 출고 상품은 1개 이상이어야 합니다.");
+        if (outboundItemToSplits.size() > outboundItems.size()) {
+            throw new IllegalArgumentException(
+                    "분할할 출고 상품은 출고 상품의 개수보다 많을 수 없습니다.");
+        }
+        final int totalQuantityOfSplit = outboundItemToSplits.stream()
+                .mapToInt(OutboundItemToSplit::getQuantityOfSplit)
+                .sum();
+        final int totalQuantityOfOutboundItem = outboundItems.stream()
+                .mapToInt(OutboundItem::getOutboundQuantity)
+                .sum();
+        if (totalQuantityOfSplit >= totalQuantityOfOutboundItem) {
+            throw new IllegalArgumentException(
+                    """
+                            분할하려는 상품의 총 수량은 출고 상품의 총 수량보다 작아야 합니다.
+                            분할하려는 상품의 총 수량: %d, 출고 상품의 총 수량: %d
+                            """
+                            .formatted(
+                                    totalQuantityOfSplit,
+                                    totalQuantityOfOutboundItem));
+        }
+    }
+
+    private List<OutboundItem> splitOutboundItems(
+            final List<OutboundItemToSplit> outboundItemToSplits) {
+        return outboundItemToSplits.stream()
+                .map(outboundItemToSplit -> {
+                    final OutboundItem outboundItem =
+                            getOutboundItem(outboundItemToSplit.getOutboundItemId());
+                    return outboundItem.split(outboundItemToSplit.getQuantityOfSplit());
+                })
+                .toList();
+    }
+
+    private OutboundItem getOutboundItem(
+            final Long outboundItemId) {
+        return outboundItems.stream()
+                .filter(item -> item.getId().equals(outboundItemId))
+                .findFirst()
+                .orElseThrow(() -> new OutboundItemIdNotFoundException(outboundItemId));
+    }
+
+    /**
+     * 출고의 정보는 똑같이 생성하고
+     * 분할한 출고 상품 목록을 새로운 출고에 추가한다.
+     */
+    private Outbound cloneNewOutbound(
+            final List<OutboundItem> splitOutboundItems) {
+        final Outbound outbound = new Outbound(
+                orderId,
+                recommendedPackagingMaterial,
+                outboundCustomer.getCustomerAddress(),
+                outboundCustomer.getCustomerName(),
+                outboundCustomer.getCustomerEmail(),
+                outboundCustomer.getCustomerPhoneNumber(),
+                outboundCustomer.getCustomerZipCode(),
+                cushioningMaterial,
+                cushioningMaterialQuantity,
+                priorityDelivery,
+                desiredDeliveryDate,
+                outboundRequirements,
+                deliveryRequirements,
+                orderedAt);
+        splitOutboundItems.forEach(outbound::addOutboundItem);
+        return outbound;
+    }
+
+    /**
+     * 출고를 분할한 뒤 기존 출고 목록 중
+     * 출고해야할 상품의 수량이 0인 경우 해당
+     * 출고 상품을 목록에서 제거한다.
+     */
+    private void afterSplitClearEmptyOutboundItems() {
+        final List<OutboundItem> emptyOutboundItems = outboundItems.stream()
+                .filter(OutboundItem::isZeroQuantity)
+                .toList();
+        outboundItems.removeAll(emptyOutboundItems);
+    }
+
+    public void assignRecommendedPackagingMaterial(
+            final PackagingMaterial packagingMaterial) {
+        recommendedPackagingMaterial = packagingMaterial;
+    }
+
+    /**
+     * 출고의 총 부피는 출고 상품의 총 부피와 완충재의 총 부피의 합이다.
+     */
+    public Long calculateTotalVolume() {
+        final Long itemTotalVolume = outboundItems.stream()
+                .mapToLong(OutboundItem::calculateVolume)
+                .sum();
+        final Integer cushioningMaterialTotalVolume =
+                cushioningMaterial.calculateTotalVolume(cushioningMaterialQuantity);
+        return itemTotalVolume + cushioningMaterialTotalVolume;
+    }
+
+    /**
+     * 출고의 총 무게는 출고 상품의 총 무게와 완충재의 총 무게와 포장재 무게의 합이다.
+     */
+    public Long calculateTotalWeightInGrams() {
+        final long itemTotalWeightInGrams = outboundItems.stream()
+                .mapToLong(OutboundItem::calculateWeightInGrams)
+                .sum();
+        final int cushioningMaterialTotalWeightInGrams =
+                cushioningMaterial.calculateTotalWeightInGrams(cushioningMaterialQuantity);
+        final Integer packagingMaterialWeightInGrams = null == recommendedPackagingMaterial
+                ? 0
+                : recommendedPackagingMaterial.getWeightInGrams();
+        return itemTotalWeightInGrams + cushioningMaterialTotalWeightInGrams + packagingMaterialWeightInGrams;
     }
 }

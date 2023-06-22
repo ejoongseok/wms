@@ -23,12 +23,16 @@ class PackagingMaterialSelectorForOutboundTest {
             final int itemWeightInGrams) {
         final Item item = Instancio
                 .of(Item.class)
-                .supply(Select.field(Item::getItemSize), () -> itemSize)
-                .supply(Select.field(Item::getWeightInGrams), () -> itemWeightInGrams)
+                .supply(Select.field(Item::getItemSize),
+                        () -> itemSize)
+                .supply(Select.field(Item::getWeightInGrams),
+                        () -> itemWeightInGrams)
                 .create();
         return Instancio.of(OrderItem.class)
-                .supply(Select.field(OrderItem::getItem), () -> item)
-                .supply(Select.field(OrderItem::getOrderQuantity), () -> orderQuantity)
+                .supply(Select.field(OrderItem::getItem),
+                        () -> item)
+                .supply(Select.field(OrderItem::getOrderQuantity),
+                        () -> orderQuantity)
                 .create();
     }
 
@@ -54,7 +58,8 @@ class PackagingMaterialSelectorForOutboundTest {
                         5000,
                         "포장자재2(최대무게 5키로)")
         );
-        packagingMaterialSelectorForOutbound = new PackagingMaterialSelectorForOutbound(packagingMaterials);
+        packagingMaterialSelectorForOutbound =
+                new PackagingMaterialSelectorForOutbound(packagingMaterials);
     }
 
     private PackagingMaterial createPackagingMaterial(
@@ -62,9 +67,12 @@ class PackagingMaterialSelectorForOutboundTest {
             final int maxWeightInGrams,
             final String packagingMaterialName) {
         return Instancio.of(PackagingMaterial.class)
-                .supply(Select.field(PackagingMaterial::getPackagingMaterialDimension), () -> packagingMaterialDimension)
-                .supply(Select.field(PackagingMaterial::getMaxWeightInGrams), () -> maxWeightInGrams)
-                .supply(Select.field(PackagingMaterial::getName), () -> packagingMaterialName)
+                .supply(Select.field(PackagingMaterial::getPackagingMaterialDimension),
+                        () -> packagingMaterialDimension)
+                .supply(Select.field(PackagingMaterial::getMaxWeightInGrams),
+                        () -> maxWeightInGrams)
+                .supply(Select.field(PackagingMaterial::getName),
+                        () -> packagingMaterialName)
                 .create();
     }
 
@@ -74,10 +82,14 @@ class PackagingMaterialSelectorForOutboundTest {
             final int innerLengthMillimeter,
             final int thicknessInMillimeter) {
         return Instancio.of(PackagingMaterialDimension.class)
-                .supply(Select.field(PackagingMaterialDimension::getInnerWidthMillimeter), () -> innerWidthMillimeter)
-                .supply(Select.field(PackagingMaterialDimension::getInnerHeightMillimeter), () -> innerHeightMillimeter)
-                .supply(Select.field(PackagingMaterialDimension::getInnerLengthMillimeter), () -> innerLengthMillimeter)
-                .supply(Select.field(PackagingMaterialDimension::getThicknessInMillimeter), () -> thicknessInMillimeter)
+                .supply(Select.field(PackagingMaterialDimension::getInnerWidthMillimeter),
+                        () -> innerWidthMillimeter)
+                .supply(Select.field(PackagingMaterialDimension::getInnerHeightMillimeter),
+                        () -> innerHeightMillimeter)
+                .supply(Select.field(PackagingMaterialDimension::getInnerLengthMillimeter),
+                        () -> innerLengthMillimeter)
+                .supply(Select.field(PackagingMaterialDimension::getThicknessInMillimeter),
+                        () -> thicknessInMillimeter)
                 .create();
     }
 
@@ -103,11 +115,12 @@ class PackagingMaterialSelectorForOutboundTest {
         final Integer cushioningMaterialVolume = 0;
         final Integer cushioningMaterialWeightInGrams = 0;
 
-        final Optional<PackagingMaterial> packagingMaterial = packagingMaterialSelectorForOutbound.select(
-                orderItems,
-                cushioningMaterialVolume,
-                cushioningMaterialWeightInGrams
-        );
+        final Optional<PackagingMaterial> packagingMaterial =
+                packagingMaterialSelectorForOutbound.select(
+                        orderItems,
+                        cushioningMaterialVolume,
+                        cushioningMaterialWeightInGrams
+                );
 
         assertThat(packagingMaterial).isPresent();
         assertThat(packagingMaterial.get().getName()).isEqualTo("포장자재1(최대무게 1키로)");
@@ -146,11 +159,12 @@ class PackagingMaterialSelectorForOutboundTest {
         final Integer cushioningMaterialVolume = 0;
         final Integer cushioningMaterialWeightInGrams = 0;
 
-        final Optional<PackagingMaterial> packagingMaterial = packagingMaterialSelectorForOutbound.select(
-                orderItems,
-                cushioningMaterialVolume,
-                cushioningMaterialWeightInGrams
-        );
+        final Optional<PackagingMaterial> packagingMaterial =
+                packagingMaterialSelectorForOutbound.select(
+                        orderItems,
+                        cushioningMaterialVolume,
+                        cushioningMaterialWeightInGrams
+                );
 
         assertThat(packagingMaterial).isPresent();
         assertThat(packagingMaterial.get().getName()).isEqualTo("포장자재2(최대무게 5키로)");
@@ -178,11 +192,12 @@ class PackagingMaterialSelectorForOutboundTest {
         final Integer cushioningMaterialVolume = 0;
         final Integer cushioningMaterialWeightInGrams = 0;
 
-        final Optional<PackagingMaterial> packagingMaterial = packagingMaterialSelectorForOutbound.select(
-                orderItems,
-                cushioningMaterialVolume,
-                cushioningMaterialWeightInGrams
-        );
+        final Optional<PackagingMaterial> packagingMaterial =
+                packagingMaterialSelectorForOutbound.select(
+                        orderItems,
+                        cushioningMaterialVolume,
+                        cushioningMaterialWeightInGrams
+                );
 
         assertThat(packagingMaterial).isPresent();
         assertThat(packagingMaterial.get().getName()).isEqualTo("포장자재2(최대무게 5키로)");
@@ -210,11 +225,12 @@ class PackagingMaterialSelectorForOutboundTest {
         final Integer cushioningMaterialVolume = 0;
         final Integer cushioningMaterialWeightInGrams = 0;
 
-        final Optional<PackagingMaterial> packagingMaterial = packagingMaterialSelectorForOutbound.select(
-                orderItems,
-                cushioningMaterialVolume,
-                cushioningMaterialWeightInGrams
-        );
+        final Optional<PackagingMaterial> packagingMaterial =
+                packagingMaterialSelectorForOutbound.select(
+                        orderItems,
+                        cushioningMaterialVolume,
+                        cushioningMaterialWeightInGrams
+                );
 
         assertThat(packagingMaterial).isEmpty();
     }
@@ -241,13 +257,116 @@ class PackagingMaterialSelectorForOutboundTest {
         final Integer cushioningMaterialVolume = 0;
         final Integer cushioningMaterialWeightInGrams = 0;
 
-        final Optional<PackagingMaterial> packagingMaterial = packagingMaterialSelectorForOutbound.select(
-                orderItems,
-                cushioningMaterialVolume,
-                cushioningMaterialWeightInGrams
-        );
+        final Optional<PackagingMaterial> packagingMaterial =
+                packagingMaterialSelectorForOutbound.select(
+                        orderItems,
+                        cushioningMaterialVolume,
+                        cushioningMaterialWeightInGrams
+                );
 
         assertThat(packagingMaterial).isEmpty();
     }
 
+    @Test
+    @DisplayName("출고에 사용할 포장재를 선택한다. ")
+    void select_outbound() {
+        final Integer itemLengthMillimeter = 10;
+        final Integer itemWidthMillimeter = 10;
+        final Integer itemHeightMillimeter = 10;
+        final Integer itemWeightInGrams = 100;
+        final Item item = createItemWithItemSize(
+                itemLengthMillimeter,
+                itemWidthMillimeter,
+                itemHeightMillimeter,
+                itemWeightInGrams);
+        final Integer outboundQuantity = 1;
+        final OutboundItem outboundItem = createOutboundWithItemOrQuantity(
+                item,
+                outboundQuantity);
+        final Outbound outbound = createOutboundWithCushioningMaterial(
+                CushioningMaterial.AIR_PILLOW,
+                1,
+                outboundItem
+        );
+
+        final PackagingMaterial packagingMaterial =
+                packagingMaterialSelectorForOutbound.select(outbound);
+
+        assertThat(packagingMaterial.getName()).isEqualTo("포장자재1(최대무게 1키로)");
+    }
+
+    private Item createItemWithItemSize(
+            final Integer itemLengthMillimeter,
+            final Integer itemWidthMillimeter,
+            final Integer itemHeightMillimeter,
+            final Integer itemWeightInGrams) {
+        final ItemSize itemSize = Instancio.of(ItemSize.class)
+                .supply(Select.field(ItemSize::getLengthMillimeter),
+                        () -> itemLengthMillimeter)
+                .supply(Select.field(ItemSize::getWidthMillimeter),
+                        () -> itemWidthMillimeter)
+                .supply(Select.field(ItemSize::getHeightMillimeter),
+                        () -> itemHeightMillimeter)
+                .create();
+        return Instancio.of(Item.class)
+                .supply(Select.field(Item::getItemSize),
+                        () -> itemSize)
+                .supply(Select.field(Item::getWeightInGrams),
+                        () -> itemWeightInGrams)
+                .create();
+    }
+
+    private OutboundItem createOutboundWithItemOrQuantity(
+            final Item item,
+            final Integer outboundQuantity) {
+        return Instancio.of(OutboundItem.class)
+                .supply(Select.field(OutboundItem::getOutboundQuantity),
+                        () -> outboundQuantity)
+                .supply(Select.field(OutboundItem::getItem),
+                        () -> item)
+                .create();
+    }
+
+    private Outbound createOutboundWithCushioningMaterial(
+            final CushioningMaterial cushioningMaterial,
+            final Integer cushioningMaterialQuantity,
+            final OutboundItem outboundItem) {
+        return Instancio.of(Outbound.class)
+                .supply(Select.field(Outbound::getCushioningMaterial),
+                        () -> cushioningMaterial)
+                .supply(Select.field(Outbound::getCushioningMaterialQuantity),
+                        () -> cushioningMaterialQuantity)
+                .supply(Select.field(Outbound::getOutboundItems),
+                        () -> List.of(outboundItem))
+                .ignore(Select.field(Outbound::getRecommendedPackagingMaterial))
+                .create();
+    }
+
+    @Test
+    @DisplayName("출고에 사용할 포장재를 선택한다. 포장자재 2선택 (무게 1.1kg)")
+    void select_outbound2() {
+        final Integer itemLengthMillimeter = 10;
+        final Integer itemWidthMillimeter = 10;
+        final Integer itemHeightMillimeter = 10;
+        final Integer itemWeightInGrams = 100;
+        final Item item = createItemWithItemSize(
+                itemLengthMillimeter,
+                itemWidthMillimeter,
+                itemHeightMillimeter,
+                itemWeightInGrams);
+        final Integer outboundQuantity = 11;
+        final OutboundItem outboundItem = createOutboundWithItemOrQuantity(
+                item,
+                outboundQuantity);
+        final Outbound outbound = createOutboundWithCushioningMaterial(
+                CushioningMaterial.NONE,
+                0,
+                outboundItem
+        );
+
+        final PackagingMaterial packagingMaterial =
+                packagingMaterialSelectorForOutbound.select(outbound);
+
+        assertThat(packagingMaterial.getName()).isEqualTo("포장자재2(최대무게 5키로)");
+    }
 }

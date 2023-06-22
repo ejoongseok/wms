@@ -2,6 +2,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+    open-in-view: false
   datasource:
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
     url: jdbc:p6spy:h2:mem:wms;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;
