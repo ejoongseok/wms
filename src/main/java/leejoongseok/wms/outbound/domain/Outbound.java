@@ -174,11 +174,14 @@ public class Outbound {
     private void validateSplit(
             final List<OutboundItemToSplit> outboundItemToSplits) {
         if (outboundStatus != OutboundStatus.READY) {
-            throw new IllegalStateException("출고는 대기 상태에서만 분할할 수 있습니다.");
+            throw new IllegalStateException(
+                    "출고는 대기 상태에서만 분할할 수 있습니다.");
         }
-        Assert.notEmpty(outboundItemToSplits, "분할할 출고 상품은 1개 이상이어야 합니다.");
+        Assert.notEmpty(outboundItemToSplits,
+                "분할할 출고 상품은 1개 이상이어야 합니다.");
         if (outboundItemToSplits.size() > outboundItems.size()) {
-            throw new IllegalArgumentException("분할할 출고 상품은 출고 상품의 개수보다 많을 수 없습니다.");
+            throw new IllegalArgumentException(
+                    "분할할 출고 상품은 출고 상품의 개수보다 많을 수 없습니다.");
         }
         final int totalQuantityOfSplit = outboundItemToSplits.stream()
                 .mapToInt(OutboundItemToSplit::getQuantityOfSplit)
@@ -191,7 +194,10 @@ public class Outbound {
                     """
                             분할하려는 상품의 총 수량은 출고 상품의 총 수량보다 작아야 합니다.
                             분할하려는 상품의 총 수량: %d, 출고 상품의 총 수량: %d
-                            """.formatted(totalQuantityOfSplit, totalQuantityOfOutboundItem));
+                            """
+                            .formatted(
+                                    totalQuantityOfSplit,
+                                    totalQuantityOfOutboundItem));
         }
     }
 
@@ -199,13 +205,15 @@ public class Outbound {
             final List<OutboundItemToSplit> outboundItemToSplits) {
         return outboundItemToSplits.stream()
                 .map(outboundItemToSplit -> {
-                    final OutboundItem outboundItem = getOutboundItem(outboundItemToSplit.getOutboundItemId());
+                    final OutboundItem outboundItem =
+                            getOutboundItem(outboundItemToSplit.getOutboundItemId());
                     return outboundItem.split(outboundItemToSplit.getQuantityOfSplit());
                 })
                 .toList();
     }
 
-    private OutboundItem getOutboundItem(final Long outboundItemId) {
+    private OutboundItem getOutboundItem(
+            final Long outboundItemId) {
         return outboundItems.stream()
                 .filter(item -> item.getId().equals(outboundItemId))
                 .findFirst()
@@ -249,8 +257,8 @@ public class Outbound {
         final Long itemTotalVolume = outboundItems.stream()
                 .mapToLong(OutboundItem::calculateVolume)
                 .sum();
-        final Integer cushioningMaterialTotalVolume = cushioningMaterial.calculateTotalVolume(
-                cushioningMaterialQuantity);
+        final Integer cushioningMaterialTotalVolume =
+                cushioningMaterial.calculateTotalVolume(cushioningMaterialQuantity);
         return itemTotalVolume + cushioningMaterialTotalVolume;
     }
 
@@ -258,8 +266,8 @@ public class Outbound {
         final long itemTotalWeightInGrams = outboundItems.stream()
                 .mapToLong(OutboundItem::calculateWeightInGrams)
                 .sum();
-        final int cushioningMaterialTotalWeightInGrams = cushioningMaterial.calculateTotalWeightInGrams(
-                cushioningMaterialQuantity);
+        final int cushioningMaterialTotalWeightInGrams =
+                cushioningMaterial.calculateTotalWeightInGrams(cushioningMaterialQuantity);
         final Integer packagingMaterialWeightInGrams = null == recommendedPackagingMaterial
                 ? 0
                 : recommendedPackagingMaterial.getWeightInGrams();
