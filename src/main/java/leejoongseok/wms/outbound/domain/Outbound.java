@@ -155,7 +155,7 @@ public class Outbound {
      * 출고를 분할한다.
      * 출고를 분할하기 위해서는 출고는 반드시 대기 상태여야 한다.
      * 분할한 뒤 기존 출고의 상품은 하나 이상 남아 있어야 한다. (기존의 출고가 삭제되면 안됨.)
-     * 출고를 분할한 뒤 기존의 출고 목록 중 출고해야할 상품의 수량이 0인 경우 해당 상품을 목록에서 제거한다.
+     * 출고를 분할한 뒤 기존의 출고 목록 중 출고해야할 상품의 수량이 0인 경우 해당 출고 상품을 목록에서 제거한다.
      */
     public Outbound split(
             final List<OutboundItemToSplit> outboundItemToSplits) {
@@ -176,26 +176,30 @@ public class Outbound {
         if (outboundStatus != OutboundStatus.READY) {
             throw new IllegalStateException("출고는 대기 상태에서만 분할할 수 있습니다.");
         }
-        Assert.notEmpty(outboundItemToSplits, "분할할 상품은 1개 이상이어야 합니다.");
+        Assert.notEmpty(outboundItemToSplits, "분할할 출고 상품은 1개 이상이어야 합니다.");
         if (outboundItemToSplits.size() > outboundItems.size()) {
-            throw new IllegalArgumentException("분할할 상품은 출고 상품의 개수보다 많을 수 없습니다.");
+            throw new IllegalArgumentException("분할할 출고 상품은 출고 상품의 개수보다 많을 수 없습니다.");
         }
         final int totalQuantityOfSplit = outboundItemToSplits.stream()
                 .mapToInt(OutboundItemToSplit::getQuantityOfSplit)
                 .sum();
-        final int totalQuantityOfItem = outboundItems.stream()
+        final int totalQuantityOfOutboundItem = outboundItems.stream()
                 .mapToInt(OutboundItem::getOutboundQuantity)
                 .sum();
-        if (totalQuantityOfSplit >= totalQuantityOfItem) {
-            throw new IllegalArgumentException("분할하려는 상품의 총 수량은 출고 상품의 총 수량보다 작아야 합니다."
-                    + " 분할하려는 상품의 총 수량: " + totalQuantityOfSplit + ", 출고 상품의 총 수량: " + totalQuantityOfItem);
+        if (totalQuantityOfSplit >= totalQuantityOfOutboundItem) {
+            throw new IllegalArgumentException(
+                    """
+                                    분할하려는 상품의 총 수량은 출고 상품의 총 수량보다 작아야 합니다.
+                                    분할하려는 상품의 총 수량: %d, 출고 상품의 총 수량: %d
+                            """.formatted(totalQuantityOfSplit, totalQuantityOfOutboundItem));
         }
     }
 
-    private List<OutboundItem> splitOutboundItems(final List<OutboundItemToSplit> outboundItemToSplits) {
+    private List<OutboundItem> splitOutboundItems(
+            final List<OutboundItemToSplit> outboundItemToSplits) {
         return outboundItemToSplits.stream()
                 .map(outboundItemToSplit -> {
-                    final OutboundItem outboundItem = getOutboundItem(outboundItemToSplit.getOutboundItemIdToSplit());
+                    final OutboundItem outboundItem = getOutboundItem(outboundItemToSplit.getOutboundItemId());
                     return outboundItem.split(outboundItemToSplit.getQuantityOfSplit());
                 })
                 .toList();

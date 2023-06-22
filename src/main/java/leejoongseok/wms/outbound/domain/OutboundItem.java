@@ -97,7 +97,9 @@ public class OutboundItem {
     private void validateSplit(final Integer quantityOfSplit) {
         Assert.notNull(quantityOfSplit, "분할 수량은 필수입니다.");
         if (quantityOfSplit > outboundQuantity) {
-            throw new IllegalArgumentException("분할 수량은 출고 수량보다 작거나 같아야 합니다." + "출고 수량: " + outboundQuantity + ", 분할 수량: " + quantityOfSplit);
+            throw new IllegalArgumentException(
+                    "분할 수량은 출고 수량보다 작거나 같아야 합니다. 출고 수량: %d, 분할 수량: %d"
+                            .formatted(outboundQuantity, quantityOfSplit));
         }
     }
 

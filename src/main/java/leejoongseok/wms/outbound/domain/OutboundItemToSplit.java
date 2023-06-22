@@ -5,16 +5,16 @@ import org.springframework.util.Assert;
 
 @Getter
 public class OutboundItemToSplit {
-    private final Long outboundItemIdToSplit;
+    private final Long outboundItemId;
     private final Integer quantityOfSplit;
 
     public OutboundItemToSplit(
-            final Long outboundItemIdToSplit,
+            final Long outboundItemId,
             final Integer quantityOfSplit) {
         validateConstructor(
-                outboundItemIdToSplit,
+                outboundItemId,
                 quantityOfSplit);
-        this.outboundItemIdToSplit = outboundItemIdToSplit;
+        this.outboundItemId = outboundItemId;
         this.quantityOfSplit = quantityOfSplit;
     }
 

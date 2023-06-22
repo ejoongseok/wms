@@ -94,7 +94,9 @@ class OutboundItemTest {
                 .create();
     }
 
-    private OutboundItem createOutboundWithItemOrQuantity(final Item item, final Integer outboundQuantity) {
+    private OutboundItem createOutboundWithItemOrQuantity(
+            final Item item,
+            final Integer outboundQuantity) {
         return Instancio.of(OutboundItem.class)
                 .supply(Select.field(OutboundItem::getOutboundQuantity), () -> outboundQuantity)
                 .supply(Select.field(OutboundItem::getItem), () -> item)
@@ -120,7 +122,9 @@ class OutboundItemTest {
                 .create();
     }
 
-    private OutboundItem createOutboundItem(final Integer outboundQuantity, final Item item) {
+    private OutboundItem createOutboundItem(
+            final Integer outboundQuantity,
+            final Item item) {
         return Instancio.of(OutboundItem.class)
                 .supply(Select.field(OutboundItem::getOutboundQuantity), () -> outboundQuantity)
                 .supply(Select.field(OutboundItem::getItem), () -> item)
