@@ -189,8 +189,8 @@ public class Outbound {
         if (totalQuantityOfSplit >= totalQuantityOfOutboundItem) {
             throw new IllegalArgumentException(
                     """
-                                    분할하려는 상품의 총 수량은 출고 상품의 총 수량보다 작아야 합니다.
-                                    분할하려는 상품의 총 수량: %d, 출고 상품의 총 수량: %d
+                            분할하려는 상품의 총 수량은 출고 상품의 총 수량보다 작아야 합니다.
+                            분할하려는 상품의 총 수량: %d, 출고 상품의 총 수량: %d
                             """.formatted(totalQuantityOfSplit, totalQuantityOfOutboundItem));
         }
     }
