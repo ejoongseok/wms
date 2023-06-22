@@ -23,8 +23,7 @@ class CreateOutboundTest extends ApiTest {
                 .confirmInspectedInbound().request()
                 .createLPN().request()
                 .createLocation().request()
-                .assignLPNToLocation().request()
-                .assignLPNToLocation().request()
+                .assignLPNToLocation().request(2)
                 .createPackagingMaterial().request()
                 .createOutbound().request();
 
