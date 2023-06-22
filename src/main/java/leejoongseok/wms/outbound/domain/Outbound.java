@@ -245,6 +245,11 @@ public class Outbound {
         return outbound;
     }
 
+    /**
+     * 출고를 분할한 뒤 기존 출고 목록 중
+     * 출고해야할 상품의 수량이 0인 경우 해당
+     * 출고 상품을 목록에서 제거한다.
+     */
     private void afterSplitClearEmptyOutboundItems() {
         final List<OutboundItem> emptyOutboundItems = outboundItems.stream()
                 .filter(OutboundItem::isZeroQuantity)
