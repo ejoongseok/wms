@@ -220,6 +220,10 @@ public class Outbound {
                 .orElseThrow(() -> new OutboundItemIdNotFoundException(outboundItemId));
     }
 
+    /**
+     * 출고의 정보는 똑같이 생성하고
+     * 분할한 출고 상품 목록을 새로운 출고에 추가한다.
+     */
     private Outbound cloneNewOutbound(
             final List<OutboundItem> splitOutboundItems) {
         final Outbound outbound = new Outbound(
@@ -253,6 +257,9 @@ public class Outbound {
         recommendedPackagingMaterial = packagingMaterial;
     }
 
+    /**
+     * 출고의 총 부피는 출고 상품의 총 부피와 완충재의 총 부피의 합이다.
+     */
     public Long calculateTotalVolume() {
         final Long itemTotalVolume = outboundItems.stream()
                 .mapToLong(OutboundItem::calculateVolume)
@@ -262,6 +269,9 @@ public class Outbound {
         return itemTotalVolume + cushioningMaterialTotalVolume;
     }
 
+    /**
+     * 출고의 총 무게는 출고 상품의 총 무게와 완충재의 총 무게와 포장재 무게의 합이다.
+     */
     public Long calculateTotalWeightInGrams() {
         final long itemTotalWeightInGrams = outboundItems.stream()
                 .mapToLong(OutboundItem::calculateWeightInGrams)
