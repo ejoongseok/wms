@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 등록한 입고의 거부 기능을 수행하는 컨트롤러 클래스
+ * 등록한 입고를 어떠한 이유로 거부하는 기능을 수행하는 컨트롤러 클래스
  */
 @RestController
 @RequiredArgsConstructor

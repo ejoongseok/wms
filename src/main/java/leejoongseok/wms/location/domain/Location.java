@@ -1,5 +1,6 @@
 package leejoongseok.wms.location.domain;
 
+import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -84,27 +85,33 @@ public class Location {
      */
     public void assignLPN(final LPN lpn) {
         Assert.notNull(lpn, "LPN은 필수입니다.");
-        findLocationLPN(lpn)
+        findLocationLPNBy(lpn)
                 .ifPresentOrElse(
                         LocationLPN::incrementInventoryQuantity,
-                        () -> locationLPNList.add(
-                                new LocationLPN(this, lpn, lpn.getItemId())));
+                        () -> assignNewLocationLPN(lpn));
     }
 
-    private Optional<LocationLPN> findLocationLPN(final LPN lpn) {
+    private Optional<LocationLPN> findLocationLPNBy(final LPN lpn) {
         return locationLPNList.stream()
                 .filter(locationLPN -> lpn.equals(locationLPN.getLpn()))
                 .findFirst();
     }
 
-    /**
-     * 테스트 코드 검증용 메소드입니다.
-     */
+    private void assignNewLocationLPN(final LPN lpn) {
+        locationLPNList.add(new LocationLPN(
+                this,
+                lpn,
+                lpn.getItemId()));
+    }
+
+    @VisibleForTesting
     LocationLPN testingGetLocationLPN(final String lpnBarcode) {
         return locationLPNList.stream()
-                .filter(locationLPN -> lpnBarcode.equals(locationLPN.getLpnBarcode()))
+                .filter(locationLPN -> lpnBarcode.equals(
+                        locationLPN.getLpnBarcode()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("해당 LPN이 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "해당 LPN이 존재하지 않습니다."));
     }
 
     /**
@@ -131,8 +138,9 @@ public class Location {
     }
 
     private LocationLPN getLocationLPN(final LPN lpn) {
-        return findLocationLPN(lpn)
-                .orElseThrow(() -> new LocationLPNNotFoundException("LocationLPN을 찾을 수 없습니다."));
+        return findLocationLPNBy(lpn)
+                .orElseThrow(() -> new LocationLPNNotFoundException(
+                        "LocationLPN을 찾을 수 없습니다."));
     }
 
 

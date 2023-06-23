@@ -87,7 +87,6 @@ public class OutboundItem {
      */
     public OutboundItem split(final Integer quantityOfSplit) {
         validateSplit(quantityOfSplit);
-        outboundQuantity -= quantityOfSplit;
         return new OutboundItem(
                 item,
                 quantityOfSplit,
@@ -98,7 +97,8 @@ public class OutboundItem {
         Assert.notNull(quantityOfSplit, "분할 수량은 필수입니다.");
         if (quantityOfSplit > outboundQuantity) {
             throw new IllegalArgumentException(
-                    "분할 수량은 출고 수량보다 작거나 같아야 합니다. 출고 수량: %d, 분할 수량: %d"
+                    ("분할 수량은 출고 수량보다 작거나 같아야 합니다. " +
+                            "출고 수량: %d, 분할 수량: %d")
                             .formatted(outboundQuantity, quantityOfSplit));
         }
     }
@@ -113,5 +113,24 @@ public class OutboundItem {
 
     public Long calculateWeightInGrams() {
         return (long) item.getWeightInGrams() * outboundQuantity;
+    }
+
+    void decreaseQuantity(final Integer quantity) {
+        validateDecreaseQuantity(quantity);
+        outboundQuantity -= quantity;
+    }
+
+    private void validateDecreaseQuantity(final Integer quantity) {
+        Assert.notNull(quantity, "감소 수량은 필수입니다.");
+        if (0 >= quantity) {
+            throw new IllegalArgumentException(
+                    "감소 수량은 0보다 커야합니다.");
+        }
+        if (quantity > outboundQuantity) {
+            throw new IllegalArgumentException(
+                    ("감소할 수량은 출고 수량보다 작거나 같아야 합니다. " +
+                            "출고 수량: %d, 감소 수량: %d")
+                            .formatted(outboundQuantity, quantity));
+        }
     }
 }

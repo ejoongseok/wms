@@ -49,13 +49,20 @@ public class PackagingMaterialDimension {
             final Integer outerHeightMillimeter,
             final Integer outerLengthMillimeter,
             final Integer thicknessInMillimeter) {
-        Assert.isTrue(1 <= innerWidthMillimeter, "내부 폭은 1mm 이상이어야 합니다.");
-        Assert.isTrue(1 <= innerHeightMillimeter, "내부 높이는 1mm 이상이어야 합니다.");
-        Assert.isTrue(1 <= innerLengthMillimeter, "내부 길이는 1mm 이상이어야 합니다.");
-        Assert.isTrue(1 <= outerWidthMillimeter, "외부 폭은 1mm 이상이어야 합니다.");
-        Assert.isTrue(1 <= outerHeightMillimeter, "외부 높이는 1mm 이상이어야 합니다.");
-        Assert.isTrue(1 <= outerLengthMillimeter, "외부 길이는 1mm 이상이어야 합니다.");
-        Assert.isTrue(1 <= thicknessInMillimeter, "두께는 1mm 이상이어야 합니다.");
+        Assert.isTrue(1 <= innerWidthMillimeter,
+                "내부 폭은 1mm 이상이어야 합니다.");
+        Assert.isTrue(1 <= innerHeightMillimeter,
+                "내부 높이는 1mm 이상이어야 합니다.");
+        Assert.isTrue(1 <= innerLengthMillimeter,
+                "내부 길이는 1mm 이상이어야 합니다.");
+        Assert.isTrue(1 <= outerWidthMillimeter,
+                "외부 폭은 1mm 이상이어야 합니다.");
+        Assert.isTrue(1 <= outerHeightMillimeter,
+                "외부 높이는 1mm 이상이어야 합니다.");
+        Assert.isTrue(1 <= outerLengthMillimeter,
+                "외부 길이는 1mm 이상이어야 합니다.");
+        Assert.isTrue(1 <= thicknessInMillimeter,
+                "두께는 1mm 이상이어야 합니다.");
         this.innerWidthMillimeter = innerWidthMillimeter;
         this.innerHeightMillimeter = innerHeightMillimeter;
         this.innerLengthMillimeter = innerLengthMillimeter;

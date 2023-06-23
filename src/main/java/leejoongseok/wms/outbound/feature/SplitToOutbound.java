@@ -7,8 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.outbound.domain.Outbound;
 import leejoongseok.wms.outbound.domain.OutboundItemToSplit;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
+import leejoongseok.wms.outbound.domain.PackagingMaterialRecommender;
 import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
-import leejoongseok.wms.outbound.domain.PackagingMaterialSelectorForOutbound;
 import leejoongseok.wms.outbound.exception.OutboundIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,19 +38,21 @@ public class SplitToOutbound {
 
     private Outbound getOutbound(final Long outBoundIdToSplit) {
         return outboundRepository.findById(outBoundIdToSplit)
-                .orElseThrow(() -> new OutboundIdNotFoundException(outBoundIdToSplit));
+                .orElseThrow(() -> new OutboundIdNotFoundException(
+                        outBoundIdToSplit));
     }
 
     private void assignRecommendedPackagingMaterial(
             final Outbound outbound,
             final Outbound splittedOutbound) {
-        final var materialSelector = new PackagingMaterialSelectorForOutbound(
-                packagingMaterialRepository.findAll());
+        final var packagingMaterialRecommender =
+                new PackagingMaterialRecommender(
+                        packagingMaterialRepository.findAll());
 
         outbound.assignRecommendedPackagingMaterial(
-                materialSelector.select(outbound));
+                packagingMaterialRecommender.recommend(outbound));
         splittedOutbound.assignRecommendedPackagingMaterial(
-                materialSelector.select(splittedOutbound));
+                packagingMaterialRecommender.recommend(splittedOutbound));
     }
 
     public record Request(

@@ -13,9 +13,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PackagingMaterialSelectorForOutboundTest {
+class PackagingMaterialRecommenderTest {
 
-    private PackagingMaterialSelectorForOutbound packagingMaterialSelectorForOutbound;
+    private PackagingMaterialRecommender packagingMaterialRecommender;
 
     private static OrderItem createOrderItem(
             final ItemSize itemSize,
@@ -58,8 +58,8 @@ class PackagingMaterialSelectorForOutboundTest {
                         5000,
                         "포장자재2(최대무게 5키로)")
         );
-        packagingMaterialSelectorForOutbound =
-                new PackagingMaterialSelectorForOutbound(packagingMaterials);
+        packagingMaterialRecommender =
+                new PackagingMaterialRecommender(packagingMaterials);
     }
 
     private PackagingMaterial createPackagingMaterial(
@@ -116,7 +116,7 @@ class PackagingMaterialSelectorForOutboundTest {
         final Integer cushioningMaterialWeightInGrams = 0;
 
         final Optional<PackagingMaterial> packagingMaterial =
-                packagingMaterialSelectorForOutbound.select(
+                packagingMaterialRecommender.recommend(
                         orderItems,
                         cushioningMaterialVolume,
                         cushioningMaterialWeightInGrams
@@ -160,7 +160,7 @@ class PackagingMaterialSelectorForOutboundTest {
         final Integer cushioningMaterialWeightInGrams = 0;
 
         final Optional<PackagingMaterial> packagingMaterial =
-                packagingMaterialSelectorForOutbound.select(
+                packagingMaterialRecommender.recommend(
                         orderItems,
                         cushioningMaterialVolume,
                         cushioningMaterialWeightInGrams
@@ -193,7 +193,7 @@ class PackagingMaterialSelectorForOutboundTest {
         final Integer cushioningMaterialWeightInGrams = 0;
 
         final Optional<PackagingMaterial> packagingMaterial =
-                packagingMaterialSelectorForOutbound.select(
+                packagingMaterialRecommender.recommend(
                         orderItems,
                         cushioningMaterialVolume,
                         cushioningMaterialWeightInGrams
@@ -226,7 +226,7 @@ class PackagingMaterialSelectorForOutboundTest {
         final Integer cushioningMaterialWeightInGrams = 0;
 
         final Optional<PackagingMaterial> packagingMaterial =
-                packagingMaterialSelectorForOutbound.select(
+                packagingMaterialRecommender.recommend(
                         orderItems,
                         cushioningMaterialVolume,
                         cushioningMaterialWeightInGrams
@@ -258,7 +258,7 @@ class PackagingMaterialSelectorForOutboundTest {
         final Integer cushioningMaterialWeightInGrams = 0;
 
         final Optional<PackagingMaterial> packagingMaterial =
-                packagingMaterialSelectorForOutbound.select(
+                packagingMaterialRecommender.recommend(
                         orderItems,
                         cushioningMaterialVolume,
                         cushioningMaterialWeightInGrams
@@ -290,7 +290,7 @@ class PackagingMaterialSelectorForOutboundTest {
         );
 
         final PackagingMaterial packagingMaterial =
-                packagingMaterialSelectorForOutbound.select(outbound);
+                packagingMaterialRecommender.recommend(outbound);
 
         assertThat(packagingMaterial.getName()).isEqualTo("포장자재1(최대무게 1키로)");
     }
@@ -365,7 +365,7 @@ class PackagingMaterialSelectorForOutboundTest {
         );
 
         final PackagingMaterial packagingMaterial =
-                packagingMaterialSelectorForOutbound.select(outbound);
+                packagingMaterialRecommender.recommend(outbound);
 
         assertThat(packagingMaterial.getName()).isEqualTo("포장자재2(최대무게 5키로)");
     }

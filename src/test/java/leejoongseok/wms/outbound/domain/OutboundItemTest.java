@@ -20,7 +20,6 @@ class OutboundItemTest {
 
         final int quantityOfSplit = 1;
         final OutboundItem splittedOutboundItem = outboundItem.split(quantityOfSplit);
-        assertThat(outboundItem.getOutboundQuantity()).isZero();
         assertThat(splittedOutboundItem.getOutboundQuantity()).isEqualTo(1);
         assertThat(outboundItem.getItem()).isEqualTo(splittedOutboundItem.getItem());
         assertThat(outboundItem.getUnitPrice()).isEqualTo(splittedOutboundItem.getUnitPrice());
@@ -129,5 +128,46 @@ class OutboundItemTest {
                 .supply(Select.field(OutboundItem::getOutboundQuantity), () -> outboundQuantity)
                 .supply(Select.field(OutboundItem::getItem), () -> item)
                 .create();
+    }
+
+    @Test
+    @DisplayName("입력한 수량만큼 출고수량이 감소한다.")
+    void decreaseQuantity() {
+        final Integer outboundQuantity = 2;
+        final OutboundItem outboundItem = createOutboundItem(outboundQuantity);
+        final Integer decreaseQuantity = 1;
+
+        outboundItem.decreaseQuantity(decreaseQuantity);
+
+        assertThat(outboundItem.getOutboundQuantity()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("입력한 수량만큼 출고수량이 감소한다. 감소할 수량이 현재 수량보다 많을 경우 예외가 발생한다.")
+    void decreaseQuantity_fail_over_decrease_quantity() {
+        final Integer outboundQuantity = 2;
+        final OutboundItem outboundItem = createOutboundItem(outboundQuantity);
+        final Integer decreaseQuantity = 3;
+
+        assertThatThrownBy(() -> {
+            outboundItem.decreaseQuantity(decreaseQuantity);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(
+                        "감소할 수량은 출고 수량보다 작거나 같아야 합니다. " +
+                                "출고 수량: 2, 감소 수량: 3");
+    }
+
+    @Test
+    @DisplayName("입력한 수량만큼 출고수량이 감소한다. 감소할 수량이 0보다 작을경우 예외가 발생한다.")
+    void decreaseQuantity_fail_min_decrease_quantity() {
+        final Integer outboundQuantity = 2;
+        final OutboundItem outboundItem = createOutboundItem(outboundQuantity);
+        final Integer decreaseQuantity = 0;
+
+        assertThatThrownBy(() -> {
+            outboundItem.decreaseQuantity(decreaseQuantity);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(
+                        "감소 수량은 0보다 커야합니다.");
     }
 }

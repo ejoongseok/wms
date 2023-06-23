@@ -68,10 +68,12 @@ public class InboundItem {
             final BigDecimal unitPurchasePrice) {
         Assert.notNull(item, "상품은 필수입니다.");
         if (null == receivedQuantity || 0 >= receivedQuantity) {
-            throw new IllegalArgumentException("입고 수량은 1개 이상이어야 합니다.");
+            throw new IllegalArgumentException(
+                    "입고 수량은 1개 이상이어야 합니다.");
         }
         if (null == unitPurchasePrice || 0 > unitPurchasePrice.intValue()) {
-            throw new IllegalArgumentException("구매 가격은 0원 이상이어야 합니다.");
+            throw new IllegalArgumentException(
+                    "구매 가격은 0원 이상이어야 합니다.");
         }
     }
 
@@ -104,7 +106,8 @@ public class InboundItem {
         Assert.notNull(lpnBarcode, "LPN 바코드는 필수입니다.");
         Assert.notNull(expirationAt, "유통기한은 필수입니다.");
         if (expirationAt.isBefore(createdAt)) {
-            throw new IllegalArgumentException("유통기한은 현재시간보다 미래여야 합니다.");
+            throw new IllegalArgumentException(
+                    "유통기한은 현재시간보다 미래여야 합니다.");
         }
     }
 }

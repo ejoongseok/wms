@@ -75,7 +75,8 @@ public class LPN {
         Assert.notNull(expirationAt, "유통기한은 필수입니다.");
         Assert.notNull(inboundItemId, "입고 아이템 ID는 필수입니다.");
         if (expirationAt.isBefore(createdAt)) {
-            throw new IllegalArgumentException("유통기한은 생성 시간보다 나중이어야 합니다.");
+            throw new IllegalArgumentException(
+                    "유통기한은 생성 시간보다 나중이어야 합니다.");
         }
     }
 

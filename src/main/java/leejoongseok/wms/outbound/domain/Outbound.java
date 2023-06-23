@@ -160,14 +160,27 @@ public class Outbound {
     public Outbound split(
             final List<OutboundItemToSplit> outboundItemToSplits) {
         validateSplit(outboundItemToSplits);
-        final List<OutboundItem> splitOutboundItems = splitOutboundItems(outboundItemToSplits);
+        final List<OutboundItem> splitOutboundItems = splitOutboundItems(
+                outboundItemToSplits);
         final Outbound cloneNewOutbound = cloneNewOutbound(splitOutboundItems);
+        decreaseQuantityBySplitQuantity(outboundItemToSplits);
         afterSplitClearEmptyOutboundItems();
         return cloneNewOutbound;
     }
 
     /**
-     * 출고를 분할할 수 있는지 검증한다.
+     * 분할한 만큼 현재 출고 상품의 수량을 감소시킨다.
+     */
+    private void decreaseQuantityBySplitQuantity(
+            final List<OutboundItemToSplit> outboundItemToSplits) {
+        for (final OutboundItemToSplit outboundItemToSplit : outboundItemToSplits) {
+            final OutboundItem outboundItem = getOutboundItem(outboundItemToSplit.getOutboundItemId());
+            outboundItem.decreaseQuantity(outboundItemToSplit.getQuantityOfSplit());
+        }
+    }
+
+    /**
+     * 출고를 분할 할 수 있는지 검증한다.
      * 출고를 분할하기 위해서는 출고는 반드시 대기 상태여야 한다.
      * 분할한 뒤 기존 출고의 상품이 하나도 남아있지 않으면 안된다.
      */
@@ -175,13 +188,13 @@ public class Outbound {
             final List<OutboundItemToSplit> outboundItemToSplits) {
         if (outboundStatus != OutboundStatus.READY) {
             throw new IllegalStateException(
-                    "출고는 대기 상태에서만 분할할 수 있습니다.");
+                    "출고는 대기 상태에서만 분할 할 수 있습니다.");
         }
         Assert.notEmpty(outboundItemToSplits,
-                "분할할 출고 상품은 1개 이상이어야 합니다.");
+                "분할 대상 출고 상품은 1개 이상이어야 합니다.");
         if (outboundItemToSplits.size() > outboundItems.size()) {
             throw new IllegalArgumentException(
-                    "분할할 출고 상품은 출고 상품의 개수보다 많을 수 없습니다.");
+                    "분할 대상 출고 상품은 출고 상품의 개수보다 많을 수 없습니다.");
         }
         final int totalQuantityOfSplit = outboundItemToSplits.stream()
                 .mapToInt(OutboundItemToSplit::getQuantityOfSplit)
@@ -204,18 +217,16 @@ public class Outbound {
     private List<OutboundItem> splitOutboundItems(
             final List<OutboundItemToSplit> outboundItemToSplits) {
         return outboundItemToSplits.stream()
-                .map(outboundItemToSplit -> {
-                    final OutboundItem outboundItem =
-                            getOutboundItem(outboundItemToSplit.getOutboundItemId());
-                    return outboundItem.split(outboundItemToSplit.getQuantityOfSplit());
-                })
+                .map(outboundItemToSplit ->
+                        getOutboundItem(outboundItemToSplit.getOutboundItemId())
+                                .split(outboundItemToSplit.getQuantityOfSplit()))
                 .toList();
     }
 
     private OutboundItem getOutboundItem(
             final Long outboundItemId) {
         return outboundItems.stream()
-                .filter(item -> item.getId().equals(outboundItemId))
+                .filter(outboundItem -> outboundItem.getId().equals(outboundItemId))
                 .findFirst()
                 .orElseThrow(() -> new OutboundItemIdNotFoundException(outboundItemId));
     }

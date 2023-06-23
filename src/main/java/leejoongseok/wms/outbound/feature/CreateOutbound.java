@@ -16,8 +16,8 @@ import leejoongseok.wms.outbound.domain.Outbound;
 import leejoongseok.wms.outbound.domain.OutboundItem;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
 import leejoongseok.wms.outbound.domain.PackagingMaterial;
+import leejoongseok.wms.outbound.domain.PackagingMaterialRecommender;
 import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
-import leejoongseok.wms.outbound.domain.PackagingMaterialSelectorForOutbound;
 import leejoongseok.wms.outbound.exception.ItemIdNotFoundException;
 import leejoongseok.wms.outbound.port.LoadOrderPort;
 import lombok.RequiredArgsConstructor;
@@ -55,10 +55,11 @@ public class CreateOutbound {
         final List<OrderItem> orderItems = order.getOrderItems();
         validateForOutboundCreation(orderItems);
 
-        final Optional<PackagingMaterial> packagingMaterial = findPackagingMaterialForOutbound(
-                orderItems,
-                request.cushioningMaterial,
-                request.cushioningMaterialQuantity);
+        final Optional<PackagingMaterial> packagingMaterial =
+                findPackagingMaterialForOutbound(
+                        orderItems,
+                        request.cushioningMaterial,
+                        request.cushioningMaterialQuantity);
 
         final Outbound outbound = createOutbound(
                 order,
@@ -69,16 +70,19 @@ public class CreateOutbound {
         outboundRepository.save(outbound);
     }
 
-    private void validateForOutboundCreation(final List<OrderItem> orderItems) {
+    private void validateForOutboundCreation(
+            final List<OrderItem> orderItems) {
         for (final OrderItem orderItem : orderItems) {
             // 주문 상품에 맞는 로케이션 LPN을 조회한다.
-            final List<LocationLPN> locationLPNList = locationLPNRepository.findByItemIdAndFetchJoinLPN(
-                    orderItem.getItemId());
+            final List<LocationLPN> locationLPNList =
+                    locationLPNRepository.findByItemIdAndFetchJoinLPN(
+                            orderItem.getItemId());
             // 출고 가능한 로케이션 LPN으로 필터링한다.
             final LocalDateTime thisDateTime = LocalDateTime.now();
-            final List<LocationLPN> filteredLocationLPNList = locationLPNFilterForOutbound.filter(
-                    locationLPNList,
-                    thisDateTime);
+            final List<LocationLPN> filteredLocationLPNList =
+                    locationLPNFilterForOutbound.filter(
+                            locationLPNList,
+                            thisDateTime);
             // 출고 가능한 로케이션 LPN이 충분한지 검증한다.
             locationLPNValidatorForOutbound.validate(
                     filteredLocationLPNList,
@@ -91,15 +95,20 @@ public class CreateOutbound {
             final CushioningMaterial cushioningMaterial,
             final Integer cushioningMaterialQuantity) {
         final int totalCushioningMaterialVolume =
-                cushioningMaterial.calculateTotalVolume(cushioningMaterialQuantity);
+                cushioningMaterial.calculateTotalVolume(
+                        cushioningMaterialQuantity);
         final int totalCushioningMaterialWeightInGrams =
-                cushioningMaterial.calculateTotalWeightInGrams(cushioningMaterialQuantity);
-        final PackagingMaterialSelectorForOutbound packagingMaterialSelectorForOutbound =
-                new PackagingMaterialSelectorForOutbound(packagingMaterialRepository.findAll());
-        return packagingMaterialSelectorForOutbound.select(
-                orderItems,
-                totalCushioningMaterialVolume,
-                totalCushioningMaterialWeightInGrams);
+                cushioningMaterial.calculateTotalWeightInGrams(
+                        cushioningMaterialQuantity);
+        final var packagingMaterialRecommenderForOutbound =
+                new PackagingMaterialRecommender(
+                        packagingMaterialRepository.findAll());
+        final Optional<PackagingMaterial> recommendedPackagingMaterial =
+                packagingMaterialRecommenderForOutbound.recommend(
+                        orderItems,
+                        totalCushioningMaterialVolume,
+                        totalCushioningMaterialWeightInGrams);
+        return recommendedPackagingMaterial;
     }
 
     private Outbound createOutbound(
@@ -107,14 +116,15 @@ public class CreateOutbound {
             final Optional<PackagingMaterial> packagingMaterial,
             final CushioningMaterial cushioningMaterial,
             final Integer cushioningMaterialQuantity) {
-        final PackagingMaterial recommendedPackagingMaterial = getRecommendedPackagingMaterialOrNull(
-                packagingMaterial);
+        final PackagingMaterial recommendedPackagingMaterial =
+                getRecommendedPackagingMaterialOrNull(packagingMaterial);
         final Outbound outbound = newOutbound(
                 order,
                 cushioningMaterial,
                 cushioningMaterialQuantity,
                 recommendedPackagingMaterial);
-        final List<OutboundItem> outboundItems = newOutboundItems(order.getOrderItems());
+        final List<OutboundItem> outboundItems = newOutboundItems(
+                order.getOrderItems());
         outboundItems.forEach(outbound::addOutboundItem);
         return outbound;
     }
@@ -147,7 +157,8 @@ public class CreateOutbound {
         );
     }
 
-    private List<OutboundItem> newOutboundItems(final List<OrderItem> orderItems) {
+    private List<OutboundItem> newOutboundItems(
+            final List<OrderItem> orderItems) {
         return orderItems.stream()
                 .map(orderItem -> new OutboundItem(
                         getItem(orderItem.getItemId()),

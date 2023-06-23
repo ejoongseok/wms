@@ -9,20 +9,21 @@ import java.util.Optional;
 /**
  * 출고에 사용할 포장 자재를 선택하고 없으면 Optional.empty()를 반환한다.
  */
-public class PackagingMaterialSelectorForOutbound {
+public class PackagingMaterialRecommender {
     private final List<PackagingMaterial> packagingMaterials;
 
-    public PackagingMaterialSelectorForOutbound(
+    public PackagingMaterialRecommender(
             final List<PackagingMaterial> packagingMaterials) {
         Assert.notEmpty(packagingMaterials, "포장 자재 목록이 비어있습니다.");
         this.packagingMaterials = packagingMaterials;
     }
 
     /**
-     * 출고에 사용할 포장 자재를 선택하고 없으면 Optional.empty()를 반환한다.
+     * 완충재를 포함한 주문상품 목록을 출고할 수 있는
+     * 포장 자재를 선택하고 없으면 Optional.empty()를 반환한다.
      * 포장가능한 포장재 중 부피가 가장 작은것을 추천해줌.
      */
-    public Optional<PackagingMaterial> select(
+    public Optional<PackagingMaterial> recommend(
             final List<OrderItem> orderItems,
             final Integer cushioningMaterialVolume,
             final Integer cushioningMaterialWeightInGrams) {
@@ -37,10 +38,9 @@ public class PackagingMaterialSelectorForOutbound {
         final Long totalWeightInGrams = calculateTotalWeightInGrams(
                 orderItems,
                 cushioningMaterialWeightInGrams);
-        return packagingMaterials.stream()
-                .filter(pm -> pm.isPackageable(totalVolume, totalWeightInGrams))
-                .sorted(Comparator.comparingLong(PackagingMaterial::calculatePackageableVolume))
-                .findFirst();
+        return findPerfectPackagingMaterial(
+                totalVolume,
+                totalWeightInGrams);
     }
 
     private void validateParameter(
@@ -62,29 +62,44 @@ public class PackagingMaterialSelectorForOutbound {
     private Long calculateTotalVolume(
             final List<OrderItem> orderItems,
             final Integer cushioningMaterialVolume) {
-        final Long totalVolume = orderItems.stream()
+        final Long itemTotalVolume = orderItems.stream()
                 .mapToLong(orderItem -> orderItem.calculateTotalVolume())
                 .sum();
-        return totalVolume + cushioningMaterialVolume;
+        return itemTotalVolume + cushioningMaterialVolume;
     }
 
     private Long calculateTotalWeightInGrams(
             final List<OrderItem> orderItems,
             final Integer cushioningMaterialWeightInGrams) {
-        final Long totalWeightInGrams = orderItems.stream()
-                .mapToLong(orderItem -> orderItem.calculateTotalWeightInGrams())
+        final Long itemTotalWeightInGrams = orderItems.stream()
+                .mapToLong(OrderItem::calculateTotalWeightInGrams)
                 .sum();
-        return totalWeightInGrams + cushioningMaterialWeightInGrams;
+        return itemTotalWeightInGrams + cushioningMaterialWeightInGrams;
     }
 
-    public PackagingMaterial select(final Outbound outbound) {
+    /**
+     * 포장 가능한 포장재 중 부피가 가장 작은것을 추천해줌.
+     */
+    private Optional<PackagingMaterial> findPerfectPackagingMaterial(
+            final Long totalVolume,
+            final Long totalWeightInGrams) {
+        return packagingMaterials.stream()
+                .filter(pm -> pm.isPackageable(totalVolume, totalWeightInGrams))
+                .min(Comparator.comparingLong(
+                        PackagingMaterial::calculatePackageableVolume));
+    }
+
+    /**
+     * 출고에 사용할 포장 자재를 선택하고 없으면
+     * IllegalArgumentException을 발생시킨다.
+     * 포장가능한 포장재 중 부피가 가장 작은것을 추천해줌.
+     */
+    public PackagingMaterial recommend(final Outbound outbound) {
         Assert.notNull(outbound, "포장재를 추천할 출고는 필수입니다.");
         final Long totalVolume = outbound.calculateTotalVolume();
         final Long totalWeightInGrams = outbound.calculateTotalWeightInGrams();
-        return packagingMaterials.stream()
-                .filter(pm -> pm.isPackageable(totalVolume, totalWeightInGrams))
-                .sorted(Comparator.comparingLong(PackagingMaterial::calculatePackageableVolume))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("포장 가능한 포장재가 없습니다."));
+        return findPerfectPackagingMaterial(totalVolume, totalWeightInGrams)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "포장 가능한 포장재가 없습니다."));
     }
 }

@@ -38,7 +38,8 @@ public class CreateInbound {
     @ResponseStatus(HttpStatus.CREATED)
     public void request(@RequestBody @Valid final Request request) {
         final Inbound inbound = request.toEntity();
-        final List<InboundItem> inboundItems = toInboundItems(request.itemRequests);
+        final List<InboundItem> inboundItems = toInboundItems(
+                request.itemRequests);
         inbound.addInboundItems(inboundItems);
         inboundRepository.save(inbound);
     }
@@ -57,7 +58,8 @@ public class CreateInbound {
 
     private Item getItemBy(final Long itemId) {
         return itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "존재하지 않는 상품입니다."));
     }
 
     public record Request(

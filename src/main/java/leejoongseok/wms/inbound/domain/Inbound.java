@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Inbound는 현실세계에서 발주 요청부터 입고 완료까지의 과정을 전산화로 표현한 것이다.
+ * Inbound는 발주 요청부터 입고 완료까지의 과정을 가진다.
  */
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -80,16 +80,20 @@ public class Inbound {
             final BigDecimal totalAmount) {
         final LocalDateTime today = LocalDateTime.now();
         if (null == orderRequestAt || today.isBefore(orderRequestAt)) {
-            throw new IllegalArgumentException("발주 요청일시는 현재시간보다 과거여야 합니다.");
+            throw new IllegalArgumentException(
+                    "발주 요청일시는 현재시간보다 과거여야 합니다.");
         }
         if (null == estimatedArrivalAt || today.isAfter(estimatedArrivalAt)) {
-            throw new IllegalArgumentException("예상 도착일시는 현재시간보다 미래여야 합니다.");
+            throw new IllegalArgumentException(
+                    "예상 도착일시는 현재시간보다 미래여야 합니다.");
         }
         if (estimatedArrivalAt.isBefore(orderRequestAt)) {
-            throw new IllegalArgumentException("예상 도착일시는 발주 요청일시보다 미래여야 합니다.");
+            throw new IllegalArgumentException(
+                    "예상 도착일시는 발주 요청일시보다 미래여야 합니다.");
         }
         if (null == totalAmount || 0 > totalAmount.intValue()) {
-            throw new IllegalArgumentException("총 주문 금액은 0원원 이상이어야 합니다.");
+            throw new IllegalArgumentException(
+                    "총 주문 금액은 0원원 이상이어야 합니다.");
         }
     }
 
@@ -107,7 +111,8 @@ public class Inbound {
         final BigDecimal totalPurchasePrice = calculateTotalPurchasePrice(inboundItems);
         if (0 != totalAmount.compareTo(totalPurchasePrice)) {
             throw new IllegalStateException(
-                    String.format("입고 상품의 총 금액이 주문 금액과 일치하지 않습니다. " +
+                    String.format(
+                            "입고 상품의 총 금액이 주문 금액과 일치하지 않습니다. " +
                                     "입고총액: %s, 단품 합산액: %s",
                             totalAmount, totalPurchasePrice));
         }
@@ -117,24 +122,28 @@ public class Inbound {
             final List<InboundItem> inboundItems) {
         return inboundItems.stream()
                 .map(item -> item.getUnitPurchasePrice()
-                        .multiply(BigDecimal.valueOf(item.getReceivedQuantity())))
+                        .multiply(BigDecimal.valueOf(
+                                item.getReceivedQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public void confirmInspected() {
         if (InboundStatus.ORDER_REQUESTED != status) {
             throw new IllegalStateException(
-                    String.format("입고 확정 할 수 있는 상태가 아닙니다. 현재 상태:[%s]",
+                    String.format(
+                            "입고 확정 할 수 있는 상태가 아닙니다. 현재 상태:[%s]",
                             status.getDescription()));
         }
         status = InboundStatus.CONFIRM_INSPECTED;
     }
 
     public void reject(final String rejectionReasons) {
-        Assert.hasText(rejectionReasons, "입고 거부 사유는 필수입니다.");
+        Assert.hasText(rejectionReasons,
+                "입고 거부 사유는 필수입니다.");
         if (InboundStatus.ORDER_REQUESTED != status) {
             throw new IllegalStateException(
-                    String.format("입고 거부 할 수 있는 상태가 아닙니다. 현재 상태:[%s]",
+                    String.format(
+                            "입고 거부 할 수 있는 상태가 아닙니다. 현재 상태:[%s]",
                             status.getDescription()));
         }
         status = InboundStatus.REJECTED;
@@ -145,9 +154,15 @@ public class Inbound {
             final Long inboundItemId,
             final String lpnBarcode,
             final LocalDateTime expirationAt) {
-        validateLPNCreation(inboundItemId, lpnBarcode, expirationAt);
-        final InboundItem lpnAssignTargetInboundItem = getInboundItemBy(inboundItemId);
-        return lpnAssignTargetInboundItem.createLPN(lpnBarcode, expirationAt);
+        validateLPNCreation(
+                inboundItemId,
+                lpnBarcode,
+                expirationAt);
+        final InboundItem lpnAssignTargetInboundItem =
+                getInboundItemBy(inboundItemId);
+        return lpnAssignTargetInboundItem.createLPN(
+                lpnBarcode,
+                expirationAt);
     }
 
     private void validateLPNCreation(
@@ -158,7 +173,8 @@ public class Inbound {
         Assert.hasText(lpnBarcode, "LPN 바코드는 필수입니다.");
         Assert.notNull(expirationAt, "유통기한은 필수입니다.");
         if (expirationAt.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("유통기한은 현재시간보다 미래여야 합니다.");
+            throw new IllegalArgumentException(
+                    "유통기한은 현재시간보다 미래여야 합니다.");
         }
         if (InboundStatus.CONFIRM_INSPECTED != status) {
             throw new UnconfirmedInboundException(

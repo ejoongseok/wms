@@ -96,8 +96,10 @@ public class PackagingMaterial {
     public boolean isPackageable(
             final Long totalVolume,
             final Long totalWeightInGrams) {
-        final boolean isPackageableVolume = calculatePackageableVolume() >= totalVolume;
-        final boolean isPackageableWeightInGrams = maxWeightInGrams >= totalWeightInGrams;
+        final boolean isPackageableVolume =
+                calculatePackageableVolume() >= totalVolume;
+        final boolean isPackageableWeightInGrams =
+                maxWeightInGrams >= totalWeightInGrams;
         return isPackageableVolume && isPackageableWeightInGrams;
     }
 
