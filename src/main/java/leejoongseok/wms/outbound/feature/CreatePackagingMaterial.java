@@ -34,17 +34,17 @@ public class CreatePackagingMaterial {
 
     public record Request(
             @Min(value = 1, message = "내부 폭은 1mm 이상이어야 합니다.")
-            Integer innerWidthMillimeter,
+            Integer innerWidthInMillimeters,
             @Min(value = 1, message = "내부 높이는 1mm 이상이어야 합니다.")
-            Integer innerHeightMillimeter,
+            Integer innerHeightInMillimeters,
             @Min(value = 1, message = "내부 길이는 1mm 이상이어야 합니다.")
-            Integer innerLengthMillimeter,
+            Integer innerLengthInMillimeters,
             @Min(value = 1, message = "외부 폭은 1mm 이상이어야 합니다.")
-            Integer outerWidthMillimeter,
+            Integer outerWidthInMillimeters,
             @Min(value = 1, message = "외부 높이는 1mm 이상이어야 합니다.")
-            Integer outerHeightMillimeter,
+            Integer outerHeightInMillimeters,
             @Min(value = 1, message = "외부 길이는 1mm 이상이어야 합니다.")
-            Integer outerLengthMillimeter,
+            Integer outerLengthInMillimeters,
             @Min(value = 1, message = "무게는 1g 이상이어야 합니다.")
             Integer weightInGrams,
             @NotNull(message = "포장재 종류는 필수입니다.")
@@ -61,12 +61,12 @@ public class CreatePackagingMaterial {
         public PackagingMaterial toEntity() {
             return new PackagingMaterial(
                     new PackagingMaterialDimension(
-                            innerWidthMillimeter,
-                            innerHeightMillimeter,
-                            innerLengthMillimeter,
-                            outerWidthMillimeter,
-                            outerHeightMillimeter,
-                            outerLengthMillimeter,
+                            innerWidthInMillimeters,
+                            innerHeightInMillimeters,
+                            innerLengthInMillimeters,
+                            outerWidthInMillimeters,
+                            outerHeightInMillimeters,
+                            outerLengthInMillimeters,
                             thickness
                     ),
                     weightInGrams,

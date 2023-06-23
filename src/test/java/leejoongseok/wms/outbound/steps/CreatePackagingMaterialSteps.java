@@ -9,47 +9,47 @@ import org.springframework.http.HttpStatus;
 
 public class CreatePackagingMaterialSteps {
     public static class Request {
-        private Integer innerWidthMillimeter = 1;
-        private Integer innerHeightMillimeter = 1;
-        private Integer innerLengthMillimeter = 1;
-        private Integer outerWidthMillimeter = 1;
-        private Integer outerHeightMillimeter = 1;
-        private Integer outerLengthMillimeter = 1;
+        private Integer innerWidthInMillimeters = 1;
+        private Integer innerHeightInMillimeters = 1;
+        private Integer innerLengthInMillimeters = 1;
+        private Integer outerWidthInMillimeters = 1;
+        private Integer outerHeightInMillimeters = 1;
+        private Integer outerLengthInMillimeters = 1;
         private Integer weightInGrams = 1;
         private PackagingType packagingType = PackagingType.BOX;
         private Integer thickness = 1;
         private String name = "name";
         private String code = "code";
-        private Integer maxWeightGram = 1;
+        private Integer maxWeightInGrams = 1;
         private String description = "description";
 
-        public Request innerWidthMillimeter(final Integer innerWidthMillimeter) {
-            this.innerWidthMillimeter = innerWidthMillimeter;
+        public Request innerWidthInMillimeters(final Integer innerWidthInMillimeters) {
+            this.innerWidthInMillimeters = innerWidthInMillimeters;
             return this;
         }
 
-        public Request innerHeightMillimeter(final Integer innerHeightMillimeter) {
-            this.innerHeightMillimeter = innerHeightMillimeter;
+        public Request innerHeightInMillimeters(final Integer innerHeightInMillimeters) {
+            this.innerHeightInMillimeters = innerHeightInMillimeters;
             return this;
         }
 
-        public Request innerLengthMillimeter(final Integer innerLengthMillimeter) {
-            this.innerLengthMillimeter = innerLengthMillimeter;
+        public Request innerLengthInMillimeters(final Integer innerLengthInMillimeters) {
+            this.innerLengthInMillimeters = innerLengthInMillimeters;
             return this;
         }
 
-        public Request outerWidthMillimeter(final Integer outerWidthMillimeter) {
-            this.outerWidthMillimeter = outerWidthMillimeter;
+        public Request outerWidthInMillimeters(final Integer outerWidthInMillimeters) {
+            this.outerWidthInMillimeters = outerWidthInMillimeters;
             return this;
         }
 
-        public Request outerHeightMillimeter(final Integer outerHeightMillimeter) {
-            this.outerHeightMillimeter = outerHeightMillimeter;
+        public Request outerHeightInMillimeters(final Integer outerHeightInMillimeters) {
+            this.outerHeightInMillimeters = outerHeightInMillimeters;
             return this;
         }
 
-        public Request outerLengthMillimeter(final Integer outerLengthMillimeter) {
-            this.outerLengthMillimeter = outerLengthMillimeter;
+        public Request outerLengthInMillimeters(final Integer outerLengthInMillimeters) {
+            this.outerLengthInMillimeters = outerLengthInMillimeters;
             return this;
         }
 
@@ -78,8 +78,8 @@ public class CreatePackagingMaterialSteps {
             return this;
         }
 
-        public Request maxWeightGram(final Integer maxWeightGram) {
-            this.maxWeightGram = maxWeightGram;
+        public Request maxWeightInGrams(final Integer maxWeightInGrams) {
+            this.maxWeightInGrams = maxWeightInGrams;
             return this;
         }
 
@@ -90,18 +90,18 @@ public class CreatePackagingMaterialSteps {
 
         public Scenario request() {
             final CreatePackagingMaterial.Request request = new CreatePackagingMaterial.Request(
-                    innerWidthMillimeter,
-                    innerHeightMillimeter,
-                    innerLengthMillimeter,
-                    outerWidthMillimeter,
-                    outerHeightMillimeter,
-                    outerLengthMillimeter,
+                    innerWidthInMillimeters,
+                    innerHeightInMillimeters,
+                    innerLengthInMillimeters,
+                    outerWidthInMillimeters,
+                    outerHeightInMillimeters,
+                    outerLengthInMillimeters,
                     weightInGrams,
                     packagingType,
                     thickness,
                     name,
                     code,
-                    maxWeightGram,
+                    maxWeightInGrams,
                     description
             );
 

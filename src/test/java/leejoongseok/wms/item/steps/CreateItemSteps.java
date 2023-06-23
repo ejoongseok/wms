@@ -15,9 +15,9 @@ public class CreateItemSteps {
         private String description = "description";
         private String brandName = "brandName";
         private String makerName = "maker";
-        private Integer widthMillimeter = 10;
-        private Integer lengthMillimeter = 10;
-        private Integer heightMillimeter = 10;
+        private Integer widthInMillimeters = 10;
+        private Integer lengthInMillimeters = 10;
+        private Integer heightInMillimeters = 10;
         private Integer weightInGrams = 10;
         private TemperatureZone temperatureZone = TemperatureZone.ROOM_TEMPERATURE;
         private Category category = Category.ELECTRONICS;
@@ -47,18 +47,18 @@ public class CreateItemSteps {
             return this;
         }
 
-        public Request widthMillimeter(final Integer widthMillimeter) {
-            this.widthMillimeter = widthMillimeter;
+        public Request widthInMillimeters(final Integer widthInMillimeters) {
+            this.widthInMillimeters = widthInMillimeters;
             return this;
         }
 
-        public Request lengthMillimeter(final Integer lengthMillimeter) {
-            this.lengthMillimeter = lengthMillimeter;
+        public Request lengthInMillimeters(final Integer lengthInMillimeters) {
+            this.lengthInMillimeters = lengthInMillimeters;
             return this;
         }
 
-        public Request heightMillimeter(final Integer heightMillimeter) {
-            this.heightMillimeter = heightMillimeter;
+        public Request heightInMillimeters(final Integer heightInMillimeters) {
+            this.heightInMillimeters = heightInMillimeters;
             return this;
         }
 
@@ -84,9 +84,9 @@ public class CreateItemSteps {
                     description,
                     brandName,
                     makerName,
-                    widthMillimeter,
-                    lengthMillimeter,
-                    heightMillimeter,
+                    widthInMillimeters,
+                    lengthInMillimeters,
+                    heightInMillimeters,
                     weightInGrams,
                     temperatureZone,
                     category

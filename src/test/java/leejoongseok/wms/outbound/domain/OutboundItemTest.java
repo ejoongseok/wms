@@ -60,13 +60,13 @@ class OutboundItemTest {
     @Test
     @DisplayName("출고 상품의 부피를 계산한다. (출고 상품의 부피 = 상품의 부피 * 출고 수량)")
     void calculateVolume() {
-        final Integer itemLengthMillimeter = 100;
-        final Integer itemWidthMillimeter = 100;
-        final Integer itemHeightMillimeter = 100;
+        final Integer itemLengthInMillimeters = 100;
+        final Integer itemWidthInMillimeters = 100;
+        final Integer itemHeightInMillimeters = 100;
         final Item item = createItemWithItemSize(
-                itemLengthMillimeter,
-                itemWidthMillimeter,
-                itemHeightMillimeter);
+                itemLengthInMillimeters,
+                itemWidthInMillimeters,
+                itemHeightInMillimeters);
         final Integer outboundQuantity = 1;
         final OutboundItem outboundItem = createOutboundWithItemOrQuantity(
                 item,
@@ -80,13 +80,13 @@ class OutboundItemTest {
     }
 
     private Item createItemWithItemSize(
-            final Integer itemLengthMillimeter,
-            final Integer itemWidthMillimeter,
-            final Integer itemHeightMillimeter) {
+            final Integer itemLengthInMillimeter,
+            final Integer itemWidthInMillimeter,
+            final Integer itemHeightInMillimeter) {
         final ItemSize itemSize = Instancio.of(ItemSize.class)
-                .supply(Select.field(ItemSize::getLengthMillimeter), () -> itemLengthMillimeter)
-                .supply(Select.field(ItemSize::getWidthMillimeter), () -> itemWidthMillimeter)
-                .supply(Select.field(ItemSize::getHeightMillimeter), () -> itemHeightMillimeter)
+                .supply(Select.field(ItemSize::getLengthInMillimeters), () -> itemLengthInMillimeter)
+                .supply(Select.field(ItemSize::getWidthInMillimeters), () -> itemWidthInMillimeter)
+                .supply(Select.field(ItemSize::getHeightInMillimeters), () -> itemHeightInMillimeter)
                 .create();
         return Instancio.of(Item.class)
                 .supply(Select.field(Item::getItemSize), () -> itemSize)

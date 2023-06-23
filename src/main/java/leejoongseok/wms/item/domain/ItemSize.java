@@ -16,42 +16,42 @@ import org.springframework.util.Assert;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class ItemSize {
-    @Column(name = "width_millimeter", nullable = false)
+    @Column(name = "width_in_millimeters", nullable = false)
     @Comment("상품의 가로 길이 (mm)")
-    private Integer widthMillimeter;
-    @Column(name = "length_millimeter", nullable = false)
+    private Integer widthInMillimeters;
+    @Column(name = "length_in_millimeters", nullable = false)
     @Comment("상품의 세로 길이 (mm)")
-    private Integer lengthMillimeter;
-    @Column(name = "height_millimeter", nullable = false)
+    private Integer lengthInMillimeters;
+    @Column(name = "height_in_millimeters", nullable = false)
     @Comment("상품의 높이 (mm)")
-    private Integer heightMillimeter;
+    private Integer heightInMillimeters;
 
     public ItemSize(
-            final Integer widthMillimeter,
-            final Integer lengthMillimeter,
-            final Integer heightMillimeter) {
+            final Integer widthInMillimeters,
+            final Integer lengthInMillimeters,
+            final Integer heightInMillimeters) {
         validateConstructor(
-                widthMillimeter,
-                lengthMillimeter,
-                heightMillimeter);
-        this.widthMillimeter = widthMillimeter;
-        this.lengthMillimeter = lengthMillimeter;
-        this.heightMillimeter = heightMillimeter;
+                widthInMillimeters,
+                lengthInMillimeters,
+                heightInMillimeters);
+        this.widthInMillimeters = widthInMillimeters;
+        this.lengthInMillimeters = lengthInMillimeters;
+        this.heightInMillimeters = heightInMillimeters;
     }
 
     private void validateConstructor(
-            final Integer widthMillimeter,
-            final Integer lengthMillimeter,
-            final Integer heightMillimeter) {
-        Assert.isTrue(null != widthMillimeter && 0 < widthMillimeter,
+            final Integer widthInMillimeter,
+            final Integer lengthInMillimeter,
+            final Integer heightInMillimeter) {
+        Assert.isTrue(null != widthInMillimeter && 0 < widthInMillimeter,
                 "상품의 가로 길이는 1mm 이상이어야 합니다.");
-        Assert.isTrue(null != lengthMillimeter && 0 < lengthMillimeter,
+        Assert.isTrue(null != lengthInMillimeter && 0 < lengthInMillimeter,
                 "상품의 세로 길이는 1mm 이상이어야 합니다.");
-        Assert.isTrue(null != heightMillimeter && 0 < heightMillimeter,
+        Assert.isTrue(null != heightInMillimeter && 0 < heightInMillimeter,
                 "상품의 높이는 1mm 이상이어야 합니다.");
     }
 
     public Long calculateVolume() {
-        return (long) widthMillimeter * lengthMillimeter * heightMillimeter;
+        return (long) widthInMillimeters * lengthInMillimeters * heightInMillimeters;
     }
 }

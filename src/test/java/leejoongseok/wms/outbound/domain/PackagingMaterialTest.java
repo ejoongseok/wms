@@ -75,15 +75,15 @@ class PackagingMaterialTest {
     }
 
     private PackagingMaterialDimension createPackagingMaterialDimension(
-            final int innerWidthMillimeter,
-            final int innerHeightMillimeter,
-            final int innerLengthMillimeter,
-            final int thicknessInMillimeter) {
+            final int innerWidthInMillimeters,
+            final int innerHeightInMillimeters,
+            final int innerLengthInMillimeters,
+            final int thicknessInMillimeters) {
         return Instancio.of(PackagingMaterialDimension.class)
-                .supply(Select.field(PackagingMaterialDimension::getInnerWidthMillimeter), () -> innerWidthMillimeter)
-                .supply(Select.field(PackagingMaterialDimension::getInnerHeightMillimeter), () -> innerHeightMillimeter)
-                .supply(Select.field(PackagingMaterialDimension::getInnerLengthMillimeter), () -> innerLengthMillimeter)
-                .supply(Select.field(PackagingMaterialDimension::getThicknessInMillimeter), () -> thicknessInMillimeter)
+                .supply(Select.field(PackagingMaterialDimension::getInnerWidthInMillimeters), () -> innerWidthInMillimeters)
+                .supply(Select.field(PackagingMaterialDimension::getInnerHeightInMillimeters), () -> innerHeightInMillimeters)
+                .supply(Select.field(PackagingMaterialDimension::getInnerLengthInMillimeters), () -> innerLengthInMillimeters)
+                .supply(Select.field(PackagingMaterialDimension::getThicknessInMillimeters), () -> thicknessInMillimeters)
                 .create();
     }
 

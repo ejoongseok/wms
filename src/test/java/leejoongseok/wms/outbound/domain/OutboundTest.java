@@ -109,7 +109,7 @@ class OutboundTest {
         assertThatThrownBy(() -> {
             outbound.split(List.of(outboundItemToSplit));
         }).isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("출고는 대기 상태에서만 분할할 수 있습니다.");
+                .hasMessageContaining("출고는 대기 상태에서만 분할 할 수 있습니다.");
     }
 
     @Test
@@ -232,13 +232,13 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 총 부피를 계산한다. (출고의 부피 = 상품의 부피 * 상품의 수량 + 완충재의 부피 * 완충재의 수량)")
     void calculateTotalVolume() {
-        final Integer itemLengthMillimeter = 100;
-        final Integer itemWidthMillimeter = 100;
-        final Integer itemHeightMillimeter = 100;
+        final Integer itemLengthInMillimeter = 100;
+        final Integer itemWidthInMillimeter = 100;
+        final Integer itemHeightInMillimeter = 100;
         final Item item = createItemWithItemSize(
-                itemLengthMillimeter,
-                itemWidthMillimeter,
-                itemHeightMillimeter);
+                itemLengthInMillimeter,
+                itemWidthInMillimeter,
+                itemHeightInMillimeter);
         final Integer outboundQuantity = 1;
         final OutboundItem outboundItem = createOutboundWithItemOrQuantity(
                 item,
@@ -260,13 +260,13 @@ class OutboundTest {
     }
 
     private Item createItemWithItemSize(
-            final Integer itemLengthMillimeter,
-            final Integer itemWidthMillimeter,
-            final Integer itemHeightMillimeter) {
+            final Integer itemLengthInMillimeter,
+            final Integer itemWidthInMillimeter,
+            final Integer itemHeightInMillimeter) {
         final ItemSize itemSize = Instancio.of(ItemSize.class)
-                .supply(Select.field(ItemSize::getLengthMillimeter), () -> itemLengthMillimeter)
-                .supply(Select.field(ItemSize::getWidthMillimeter), () -> itemWidthMillimeter)
-                .supply(Select.field(ItemSize::getHeightMillimeter), () -> itemHeightMillimeter)
+                .supply(Select.field(ItemSize::getLengthInMillimeters), () -> itemLengthInMillimeter)
+                .supply(Select.field(ItemSize::getWidthInMillimeters), () -> itemWidthInMillimeter)
+                .supply(Select.field(ItemSize::getHeightInMillimeters), () -> itemHeightInMillimeter)
                 .create();
         return Instancio.of(Item.class)
                 .supply(Select.field(Item::getItemSize), () -> itemSize)
@@ -300,8 +300,8 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 총 무게를 계산한다. (출고의 무게 = 상품의 무게 * 상품의 수량 + 완충재의 무게 * 완충재의 수량)")
     void calculateTotalWeightInGrams() {
-        final Integer itemWeightGram = 100;
-        final Item item = createItemWithItemWeight(itemWeightGram);
+        final Integer itemWeightInGrams = 100;
+        final Item item = createItemWithItemWeight(itemWeightInGrams);
         final Integer outboundQuantity = 1;
         final OutboundItem outboundItem = createOutboundWithItemOrQuantity(
                 item,
@@ -323,9 +323,9 @@ class OutboundTest {
     }
 
     private Item createItemWithItemWeight(
-            final Integer itemWeightGram) {
+            final Integer itemWeightInGrams) {
         return Instancio.of(Item.class)
-                .supply(Select.field(Item::getWeightInGrams), () -> itemWeightGram)
+                .supply(Select.field(Item::getWeightInGrams), () -> itemWeightInGrams)
                 .create();
     }
 }

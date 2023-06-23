@@ -77,36 +77,36 @@ class PackagingMaterialRecommenderTest {
     }
 
     private PackagingMaterialDimension createPackagingMaterialDimension(
-            final int innerWidthMillimeter,
-            final int innerHeightMillimeter,
-            final int innerLengthMillimeter,
-            final int thicknessInMillimeter) {
+            final int innerWidthInMillimeters,
+            final int innerHeightInMillimeters,
+            final int innerLengthInMillimeters,
+            final int thicknessInMillimeters) {
         return Instancio.of(PackagingMaterialDimension.class)
-                .supply(Select.field(PackagingMaterialDimension::getInnerWidthMillimeter),
-                        () -> innerWidthMillimeter)
-                .supply(Select.field(PackagingMaterialDimension::getInnerHeightMillimeter),
-                        () -> innerHeightMillimeter)
-                .supply(Select.field(PackagingMaterialDimension::getInnerLengthMillimeter),
-                        () -> innerLengthMillimeter)
-                .supply(Select.field(PackagingMaterialDimension::getThicknessInMillimeter),
-                        () -> thicknessInMillimeter)
+                .supply(Select.field(PackagingMaterialDimension::getInnerWidthInMillimeters),
+                        () -> innerWidthInMillimeters)
+                .supply(Select.field(PackagingMaterialDimension::getInnerHeightInMillimeters),
+                        () -> innerHeightInMillimeters)
+                .supply(Select.field(PackagingMaterialDimension::getInnerLengthInMillimeters),
+                        () -> innerLengthInMillimeters)
+                .supply(Select.field(PackagingMaterialDimension::getThicknessInMillimeters),
+                        () -> thicknessInMillimeters)
                 .create();
     }
 
     @Test
     @DisplayName("출고에 사용할 포장재를 선택한다. 포장 자재1 선택")
     void select() {
-        final int widthMillimeter = 10;
-        final int lengthMillimeter = 10;
-        final int heightMillimeter = 10;
+        final int widthInMillimeter = 10;
+        final int lengthInMillimeter = 10;
+        final int heightInMillimeter = 10;
         final int orderQuantity = 10;
         final int itemWeightInGrams = 100;
         final List<OrderItem> orderItems = List.of(
                 createOrderItem(
                         createItemSize(
-                                widthMillimeter,
-                                lengthMillimeter,
-                                heightMillimeter
+                                widthInMillimeter,
+                                lengthInMillimeter,
+                                heightInMillimeter
                         ),
                         orderQuantity,
                         itemWeightInGrams
@@ -127,30 +127,30 @@ class PackagingMaterialRecommenderTest {
     }
 
     private ItemSize createItemSize(
-            final int widthMillimeter,
-            final int lengthMillimeter,
-            final int heightMillimeter) {
+            final int widthInMillimeter,
+            final int lengthInMillimeter,
+            final int heightInMillimeter) {
         return new ItemSize(
-                widthMillimeter,
-                lengthMillimeter,
-                heightMillimeter
+                widthInMillimeter,
+                lengthInMillimeter,
+                heightInMillimeter
         );
     }
 
     @Test
     @DisplayName("출고에 사용할 포장재를 선택한다. 포장 자재2 선택 (포장자재1은 최대무게 1키로이므로 무게 100그램 짜리 상품 11개를 포장할 수 없다.)")
     void select2() {
-        final int widthMillimeter = 10;
-        final int lengthMillimeter = 10;
-        final int heightMillimeter = 10;
+        final int widthInMillimeter = 10;
+        final int lengthInMillimeter = 10;
+        final int heightInMillimeter = 10;
         final int orderQuantity = 11;
         final int itemWeightInGrams = 100;
         final List<OrderItem> orderItems = List.of(
                 createOrderItem(
                         createItemSize(
-                                widthMillimeter,
-                                lengthMillimeter,
-                                heightMillimeter
+                                widthInMillimeter,
+                                lengthInMillimeter,
+                                heightInMillimeter
                         ),
                         orderQuantity,
                         itemWeightInGrams
@@ -173,17 +173,17 @@ class PackagingMaterialRecommenderTest {
     @Test
     @DisplayName("출고에 사용할 포장재를 선택한다. 포장 자재2 선택 (포장자재1은 최대 부피는 100x100x100 이므로 부피 100x100x100 짜리 상품 2개를 포장할 수 없다.)")
     void select2_() {
-        final int widthMillimeter = 100;
-        final int lengthMillimeter = 100;
-        final int heightMillimeter = 100;
+        final int widthInMillimeter = 100;
+        final int lengthInMillimeter = 100;
+        final int heightInMillimeter = 100;
         final int orderQuantity = 2;
         final int itemWeightInGrams = 1;
         final List<OrderItem> orderItems = List.of(
                 createOrderItem(
                         createItemSize(
-                                widthMillimeter,
-                                lengthMillimeter,
-                                heightMillimeter
+                                widthInMillimeter,
+                                lengthInMillimeter,
+                                heightInMillimeter
                         ),
                         orderQuantity,
                         itemWeightInGrams
@@ -206,17 +206,17 @@ class PackagingMaterialRecommenderTest {
     @Test
     @DisplayName("출고에 사용할 포장재를 선택한다. 포장가능한 자재가 없음(최대 무게 초과)")
     void select_empty() {
-        final int widthMillimeter = 100;
-        final int lengthMillimeter = 100;
-        final int heightMillimeter = 100;
+        final int widthInMillimeter = 100;
+        final int lengthInMillimeter = 100;
+        final int heightInMillimeter = 100;
         final int orderQuantity = 2;
         final int itemWeightInGrams = 10000;
         final List<OrderItem> orderItems = List.of(
                 createOrderItem(
                         createItemSize(
-                                widthMillimeter,
-                                lengthMillimeter,
-                                heightMillimeter
+                                widthInMillimeter,
+                                lengthInMillimeter,
+                                heightInMillimeter
                         ),
                         orderQuantity,
                         itemWeightInGrams
@@ -238,17 +238,17 @@ class PackagingMaterialRecommenderTest {
     @Test
     @DisplayName("출고에 사용할 포장재를 선택한다. 포장가능한 자재가 없음(최대 부피 초과)")
     void select_empty2() {
-        final int widthMillimeter = 200;
-        final int lengthMillimeter = 200;
-        final int heightMillimeter = 200;
+        final int widthInMillimeter = 200;
+        final int lengthInMillimeter = 200;
+        final int heightInMillimeter = 200;
         final int orderQuantity = 2;
         final int itemWeightInGrams = 1;
         final List<OrderItem> orderItems = List.of(
                 createOrderItem(
                         createItemSize(
-                                widthMillimeter,
-                                lengthMillimeter,
-                                heightMillimeter
+                                widthInMillimeter,
+                                lengthInMillimeter,
+                                heightInMillimeter
                         ),
                         orderQuantity,
                         itemWeightInGrams
@@ -270,14 +270,14 @@ class PackagingMaterialRecommenderTest {
     @Test
     @DisplayName("출고에 사용할 포장재를 선택한다. ")
     void select_outbound() {
-        final Integer itemLengthMillimeter = 10;
-        final Integer itemWidthMillimeter = 10;
-        final Integer itemHeightMillimeter = 10;
+        final Integer itemLengthInMillimeter = 10;
+        final Integer itemWidthInMillimeter = 10;
+        final Integer itemHeightInMillimeter = 10;
         final Integer itemWeightInGrams = 100;
         final Item item = createItemWithItemSize(
-                itemLengthMillimeter,
-                itemWidthMillimeter,
-                itemHeightMillimeter,
+                itemLengthInMillimeter,
+                itemWidthInMillimeter,
+                itemHeightInMillimeter,
                 itemWeightInGrams);
         final Integer outboundQuantity = 1;
         final OutboundItem outboundItem = createOutboundWithItemOrQuantity(
@@ -296,17 +296,17 @@ class PackagingMaterialRecommenderTest {
     }
 
     private Item createItemWithItemSize(
-            final Integer itemLengthMillimeter,
-            final Integer itemWidthMillimeter,
-            final Integer itemHeightMillimeter,
+            final Integer itemLengthInMillimeter,
+            final Integer itemWidthInMillimeter,
+            final Integer itemHeightInMillimeter,
             final Integer itemWeightInGrams) {
         final ItemSize itemSize = Instancio.of(ItemSize.class)
-                .supply(Select.field(ItemSize::getLengthMillimeter),
-                        () -> itemLengthMillimeter)
-                .supply(Select.field(ItemSize::getWidthMillimeter),
-                        () -> itemWidthMillimeter)
-                .supply(Select.field(ItemSize::getHeightMillimeter),
-                        () -> itemHeightMillimeter)
+                .supply(Select.field(ItemSize::getLengthInMillimeters),
+                        () -> itemLengthInMillimeter)
+                .supply(Select.field(ItemSize::getWidthInMillimeters),
+                        () -> itemWidthInMillimeter)
+                .supply(Select.field(ItemSize::getHeightInMillimeters),
+                        () -> itemHeightInMillimeter)
                 .create();
         return Instancio.of(Item.class)
                 .supply(Select.field(Item::getItemSize),
@@ -345,14 +345,14 @@ class PackagingMaterialRecommenderTest {
     @Test
     @DisplayName("출고에 사용할 포장재를 선택한다. 포장자재 2선택 (무게 1.1kg)")
     void select_outbound2() {
-        final Integer itemLengthMillimeter = 10;
-        final Integer itemWidthMillimeter = 10;
-        final Integer itemHeightMillimeter = 10;
+        final Integer itemLengthInMillimeter = 10;
+        final Integer itemWidthInMillimeter = 10;
+        final Integer itemHeightInMillimeter = 10;
         final Integer itemWeightInGrams = 100;
         final Item item = createItemWithItemSize(
-                itemLengthMillimeter,
-                itemWidthMillimeter,
-                itemHeightMillimeter,
+                itemLengthInMillimeter,
+                itemWidthInMillimeter,
+                itemHeightInMillimeter,
                 itemWeightInGrams);
         final Integer outboundQuantity = 11;
         final OutboundItem outboundItem = createOutboundWithItemOrQuantity(

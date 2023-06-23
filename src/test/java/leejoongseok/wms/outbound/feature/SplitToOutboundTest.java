@@ -32,10 +32,10 @@ class SplitToOutboundTest extends ApiTest {
                 .createLocation().request()
                 .assignLPNToLocation().request(2)
                 .createPackagingMaterial()
-                .maxWeightGram(1000)
-                .innerHeightMillimeter(100)
-                .innerLengthMillimeter(100)
-                .innerWidthMillimeter(100)
+                .maxWeightInGrams(1000)
+                .innerHeightInMillimeters(100)
+                .innerLengthInMillimeters(100)
+                .innerWidthInMillimeters(100)
                 .request()
                 .createOutbound().request();
         assertThat(outboundRepository.testingFindById(1L).get().getOutboundItems().get(0).getOutboundQuantity()).isEqualTo(2);

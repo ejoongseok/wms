@@ -53,11 +53,11 @@ public class CreateItem {
             @NotBlank(message = "제조사명은 필수입니다.")
             String makerName,
             @Min(value = 1, message = "상품의 가로 길이는 1mm 이상이어야 합니다.")
-            Integer widthMillimeter,
+            Integer widthInMillimeters,
             @Min(value = 1, message = "상품의 세로 길이는 1mm 이상이어야 합니다.")
-            Integer lengthMillimeter,
+            Integer lengthInMillimeters,
             @Min(value = 1, message = "상품의 높이는 1mm 이상이어야 합니다.")
-            Integer heightMillimeter,
+            Integer heightInMillimeters,
             @Min(value = 1, message = "상품의 무게는 1g 이상이어야 합니다.")
             Integer weightInGrams,
             @NotNull(message = "상품의 보관 온도는 필수입니다.")
@@ -73,9 +73,9 @@ public class CreateItem {
                     brandName,
                     makerName,
                     new ItemSize(
-                            widthMillimeter,
-                            lengthMillimeter,
-                            heightMillimeter),
+                            widthInMillimeters,
+                            lengthInMillimeters,
+                            heightInMillimeters),
                     weightInGrams,
                     temperatureZone,
                     category
