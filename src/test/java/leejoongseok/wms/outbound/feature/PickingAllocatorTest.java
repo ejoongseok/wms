@@ -1,10 +1,13 @@
 package leejoongseok.wms.outbound.feature;
 
+import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.outbound.domain.Outbound;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,8 +24,9 @@ class PickingAllocatorTest {
     @DisplayName("출고에 집품목록을 할당한다.")
     void allocate() {
         final Outbound outbound = Instancio.create(Outbound.class);
+        final List<LocationLPN> locationLPNList = List.of();
 
-        pickingAllocator.allocate(outbound);
+        pickingAllocator.allocate(outbound, locationLPNList);
 
         assertThat(outbound.isPickingProgress()).isTrue();
     }
