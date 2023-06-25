@@ -164,7 +164,7 @@ public class Outbound {
                 outboundItemToSplits);
         final Outbound cloneNewOutbound = cloneNewOutbound(splitOutboundItems);
         decreaseQuantityBySplitQuantity(outboundItemToSplits);
-        afterSplitClearEmptyOutboundItems();
+        clearEmptyOutboundItemsAfterSplit();
         return cloneNewOutbound;
     }
 
@@ -261,7 +261,7 @@ public class Outbound {
      * 출고해야할 상품의 수량이 0인 경우 해당
      * 출고 상품을 목록에서 제거한다.
      */
-    private void afterSplitClearEmptyOutboundItems() {
+    private void clearEmptyOutboundItemsAfterSplit() {
         final List<OutboundItem> emptyOutboundItems = outboundItems.stream()
                 .filter(OutboundItem::isZeroQuantity)
                 .toList();
