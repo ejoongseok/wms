@@ -11,4 +11,7 @@ public interface LocationLPNRepository extends JpaRepository<LocationLPN, Long> 
      */
     @Query("select l from LocationLPN l join fetch l.lpn where l.itemId = :itemId")
     List<LocationLPN> findByItemIdAndFetchJoinLPN(Long itemId);
+
+    @Query("select l from LocationLPN l join fetch l.lpn where l.lpn.id in :lpnIds")
+    List<LocationLPN> findByLPNIdsAndFetchJoinLPNAndLocation(List<Long> lpnIds);
 }
