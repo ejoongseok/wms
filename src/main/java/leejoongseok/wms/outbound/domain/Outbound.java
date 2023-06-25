@@ -160,9 +160,9 @@ public class Outbound {
     public Outbound split(
             final List<SplittableOutboundItem> splittableOutboundItems) {
         validateSplit(splittableOutboundItems);
-        final List<OutboundItem> splitOutboundItems = splitOutboundItems(
+        final List<OutboundItem> splittedOutboundItems = splitOutboundItems(
                 splittableOutboundItems);
-        final Outbound cloneNewOutbound = cloneNewOutbound(splitOutboundItems);
+        final Outbound cloneNewOutbound = cloneNewOutbound(splittedOutboundItems);
         decreaseOutboundItemQuantityBySplit(splittableOutboundItems);
         clearEmptyOutboundItemsAfterSplit();
         return cloneNewOutbound;
