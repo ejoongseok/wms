@@ -32,6 +32,7 @@ public class LocationLPN {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("로케이션 LPN ID")
     private Long id;
+    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id", nullable = false)
     @Comment("로케이션 ID")
@@ -97,5 +98,15 @@ public class LocationLPN {
 
     public boolean isEmptyInventory() {
         return 0 >= inventoryQuantity;
+    }
+
+    public Long getLPNId() {
+        return lpn.getId();
+    }
+
+    public boolean isPickingAllocatable(final LocalDateTime thisDateTime) {
+        return lpn.getExpirationAt().isAfter(thisDateTime) &&
+                location.isStow()
+                && 0L < inventoryQuantity;
     }
 }

@@ -102,4 +102,87 @@ class LocationLPNTest {
         assertThat(isEmpty).isFalse();
         assertThat(locationLPN.getInventoryQuantity()).isEqualTo(1);
     }
+
+    @Test
+    @DisplayName("로케이션 LPN이 집품 가능한지 확인한다.")
+    void isPickingAllocatable() {
+        final UsagePurpose usagePurpose = UsagePurpose.STOW;
+        final Location location = createLocation(usagePurpose);
+        final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
+        final LPN lpn = createLPN(expirationAt);
+        final Integer inventoryQuantity = 1;
+        final LocationLPN locationLPN = createLocationLPN(location, lpn, inventoryQuantity);
+
+        final boolean isPickingAllocatable = locationLPN.isPickingAllocatable(LocalDateTime.now());
+
+        assertThat(isPickingAllocatable).isTrue();
+    }
+
+    private Location createLocation(final UsagePurpose usagePurpose) {
+        return Instancio.of(Location.class)
+                .supply(Select.field(Location::getUsagePurpose), () -> usagePurpose)
+                .create();
+    }
+
+    private LPN createLPN(final LocalDateTime expirationAt) {
+        return Instancio.of(LPN.class)
+                .supply(Select.field(LPN::getExpirationAt), () -> expirationAt)
+                .create();
+    }
+
+    private LocationLPN createLocationLPN(
+            final Location location,
+            final LPN lpn,
+            final Integer inventoryQuantity) {
+        return Instancio.of(LocationLPN.class)
+                .supply(Select.field(LocationLPN::getLpn), () -> lpn)
+                .supply(Select.field(LocationLPN::getLocation), () -> location)
+                .supply(Select.field(LocationLPN::getInventoryQuantity), () -> inventoryQuantity)
+                .create();
+    }
+
+    @Test
+    @DisplayName("로케이션 LPN이 집품 가능한지 확인한다. - 유통기한 지남")
+    void isPickingAllocatable_expiredLPN() {
+        final UsagePurpose usagePurpose = UsagePurpose.STOW;
+        final Location location = createLocation(usagePurpose);
+        final LocalDateTime expirationAt = LocalDateTime.now().minusDays(1);
+        final LPN lpn = createLPN(expirationAt);
+        final Integer inventoryQuantity = 1;
+        final LocationLPN locationLPN = createLocationLPN(location, lpn, inventoryQuantity);
+
+        final boolean isPickingAllocatable = locationLPN.isPickingAllocatable(LocalDateTime.now());
+
+        assertThat(isPickingAllocatable).isFalse();
+    }
+
+    @Test
+    @DisplayName("로케이션 LPN이 집품 가능한지 확인한다. - 사용 용도가 진열이 아님")
+    void isPickingAllocatable_invalidUsagePurpose() {
+        final UsagePurpose usagePurpose = UsagePurpose.MOVE;
+        final Location location = createLocation(usagePurpose);
+        final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
+        final LPN lpn = createLPN(expirationAt);
+        final Integer inventoryQuantity = 1;
+        final LocationLPN locationLPN = createLocationLPN(location, lpn, inventoryQuantity);
+
+        final boolean isPickingAllocatable = locationLPN.isPickingAllocatable(LocalDateTime.now());
+
+        assertThat(isPickingAllocatable).isFalse();
+    }
+
+    @Test
+    @DisplayName("로케이션 LPN이 집품 가능한지 확인한다. - 재고 수량이 0")
+    void isPickingAllocatable_inventoryQuantity() {
+        final UsagePurpose usagePurpose = UsagePurpose.STOW;
+        final Location location = createLocation(usagePurpose);
+        final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
+        final LPN lpn = createLPN(expirationAt);
+        final Integer inventoryQuantity = 0;
+        final LocationLPN locationLPN = createLocationLPN(location, lpn, inventoryQuantity);
+
+        final boolean isPickingAllocatable = locationLPN.isPickingAllocatable(LocalDateTime.now());
+
+        assertThat(isPickingAllocatable).isFalse();
+    }
 }
