@@ -18,8 +18,8 @@ class OutboundItemTest {
         final Integer outboundQuantity = 1;
         final OutboundItem outboundItem = createOutboundItem(outboundQuantity);
 
-        final int quantityOfSplit = 1;
-        final OutboundItem splittedOutboundItem = outboundItem.split(quantityOfSplit);
+        final int quantityToSplit = 1;
+        final OutboundItem splittedOutboundItem = outboundItem.split(quantityToSplit);
         assertThat(splittedOutboundItem.getOutboundQuantity()).isEqualTo(1);
         assertThat(outboundItem.getItem()).isEqualTo(splittedOutboundItem.getItem());
         assertThat(outboundItem.getUnitPrice()).isEqualTo(splittedOutboundItem.getUnitPrice());
@@ -37,9 +37,9 @@ class OutboundItemTest {
         final Integer outboundQuantity = 1;
         final OutboundItem outboundItem = createOutboundItem(outboundQuantity);
 
-        final int overQuantityOfSplit = 2;
+        final int overQuantityToSplit = 2;
         assertThatThrownBy(() -> {
-            outboundItem.split(overQuantityOfSplit);
+            outboundItem.split(overQuantityToSplit);
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("분할 수량은 출고 수량보다 작거나 같아야 합니다. 출고 수량: 1, 분할 수량: 2");
     }
@@ -50,9 +50,9 @@ class OutboundItemTest {
         final Integer outboundQuantity = 1;
         final OutboundItem outboundItem = createOutboundItem(outboundQuantity);
 
-        final int zeroQuantityOfSplit = 0;
+        final int zeroQuantityToSplit = 0;
         assertThatThrownBy(() -> {
-            outboundItem.split(zeroQuantityOfSplit);
+            outboundItem.split(zeroQuantityToSplit);
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("출고 수량은 0보다 커야합니다.");
     }

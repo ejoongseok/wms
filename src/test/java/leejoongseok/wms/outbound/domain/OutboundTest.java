@@ -29,10 +29,10 @@ class OutboundTest {
                 readyStatus);
 
         final Long outboundItemIdToSplit = 1L;
-        final Integer quantityOfSplit = 1;
+        final Integer quantityToSplit = 1;
         final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
                 outboundItemIdToSplit,
-                quantityOfSplit);
+                quantityToSplit);
 
         final Outbound splittedOutbound = outbound.split(
                 List.of(splittableOutboundItem));
@@ -81,10 +81,10 @@ class OutboundTest {
 
     private SplittableOutboundItem createSplittableOutboundItem(
             final Long outboundItemIdToSplit,
-            final Integer quantityOfSplit) {
+            final Integer quantityToSplit) {
         return new SplittableOutboundItem(
                 outboundItemIdToSplit,
-                quantityOfSplit);
+                quantityToSplit);
     }
 
     @Test
@@ -101,10 +101,10 @@ class OutboundTest {
                 invalidStatus);
 
         final Long outboundItemIdToSplit = 1L;
-        final Integer quantityOfSplit = 1;
+        final Integer quantityToSplit = 1;
         final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
                 outboundItemIdToSplit,
-                quantityOfSplit);
+                quantityToSplit);
 
         assertThatThrownBy(() -> {
             outbound.split(List.of(splittableOutboundItem));
@@ -126,10 +126,10 @@ class OutboundTest {
                 readyStatus);
 
         final Long outboundItemIdToSplit = 2L;
-        final Integer quantityOfSplit = 1;
+        final Integer quantityToSplit = 1;
         final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
                 outboundItemIdToSplit,
-                quantityOfSplit);
+                quantityToSplit);
 
         assertThatThrownBy(() -> {
             outbound.split(List.of(splittableOutboundItem));
@@ -151,10 +151,10 @@ class OutboundTest {
                 readyStatus);
 
         final Long outboundItemIdToSplit = 1L;
-        final Integer quantityOfSplit = 2;
+        final Integer quantityToSplit = 2;
         final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
                 outboundItemIdToSplit,
-                quantityOfSplit);
+                quantityToSplit);
 
         assertThatThrownBy(() -> {
             outbound.split(List.of(splittableOutboundItem));
@@ -181,10 +181,10 @@ class OutboundTest {
         outbound.addOutboundItem(outboundItem2);
 
         final Long outboundItemIdToSplit = 1L;
-        final Integer quantityOfSplit = 2;
+        final Integer quantityToSplit = 2;
         final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
                 outboundItemIdToSplit,
-                quantityOfSplit);
+                quantityToSplit);
 
         final Outbound splittedOutbound = outbound.split(
                 List.of(splittableOutboundItem));
@@ -214,10 +214,10 @@ class OutboundTest {
         outbound.addOutboundItem(outboundItem2);
 
         final Long outboundItemIdToSplit = 1L;
-        final Integer quantityOfSplit = 1;
+        final Integer quantityToSplit = 1;
         final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
                 outboundItemIdToSplit,
-                quantityOfSplit);
+                quantityToSplit);
 
         final Outbound splittedOutbound = outbound.split(
                 List.of(splittableOutboundItem));

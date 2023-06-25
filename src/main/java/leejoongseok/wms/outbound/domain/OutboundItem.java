@@ -85,21 +85,21 @@ public class OutboundItem {
     /**
      * 출고 상품을 분할합니다.
      */
-    public OutboundItem split(final Integer quantityOfSplit) {
-        validateSplit(quantityOfSplit);
+    public OutboundItem split(final Integer quantityToSplit) {
+        validateSplit(quantityToSplit);
         return new OutboundItem(
                 item,
-                quantityOfSplit,
+                quantityToSplit,
                 unitPrice);
     }
 
-    private void validateSplit(final Integer quantityOfSplit) {
-        Assert.notNull(quantityOfSplit, "분할 수량은 필수입니다.");
-        if (quantityOfSplit > outboundQuantity) {
+    private void validateSplit(final Integer quantityToSplit) {
+        Assert.notNull(quantityToSplit, "분할 수량은 필수입니다.");
+        if (quantityToSplit > outboundQuantity) {
             throw new IllegalArgumentException(
                     ("분할 수량은 출고 수량보다 작거나 같아야 합니다. " +
                             "출고 수량: %d, 분할 수량: %d")
-                            .formatted(outboundQuantity, quantityOfSplit));
+                            .formatted(outboundQuantity, quantityToSplit));
         }
     }
 
