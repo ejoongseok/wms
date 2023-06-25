@@ -160,4 +160,31 @@ class LocationTest {
 
         assertThat(hasLocationLPN).isFalse();
     }
+
+    @Test
+    @DisplayName("로케이션의 용도가 진열인지 확인한다.")
+    void isStow() {
+        final Location location = createLocation(UsagePurpose.STOW);
+
+        final boolean isStow = location.isStow();
+
+        assertThat(isStow).isTrue();
+    }
+
+    private Location createLocation(final UsagePurpose usagePurpose) {
+        return Instancio.of(Location.class)
+                .supply(Select.field(Location::getUsagePurpose), () -> usagePurpose)
+                .create();
+    }
+
+
+    @Test
+    @DisplayName("로케이션의 용도가 진열인지 확인한다. - 진열이 아닌 경우 false")
+    void isStow_false() {
+        final Location location = createLocation(UsagePurpose.MOVE);
+
+        final boolean isStow = location.isStow();
+
+        assertThat(isStow).isFalse();
+    }
 }

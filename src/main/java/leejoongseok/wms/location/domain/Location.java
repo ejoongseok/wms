@@ -48,6 +48,7 @@ public class Location {
     @Comment("보관 타입")
     @Enumerated(EnumType.STRING)
     private StorageType storageType;
+    @Getter
     @Column(name = "usage_purpose", nullable = false)
     @Comment("사용 목적")
     @Enumerated(EnumType.STRING)
@@ -151,5 +152,9 @@ public class Location {
 
     public boolean hasLocationLPN() {
         return !locationLPNList.isEmpty();
+    }
+
+    public boolean isStow() {
+        return UsagePurpose.STOW == usagePurpose;
     }
 }
