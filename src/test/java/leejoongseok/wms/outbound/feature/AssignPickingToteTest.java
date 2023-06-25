@@ -16,6 +16,14 @@ class AssignPickingToteTest {
     @Test
     @DisplayName("출고를 집품할 토트를 할당한다.")
     void assignPickingTote() {
-        assignPickingTote.request();
+        final Long outboundId = 1L;
+        final String toteBarcode = "TOTE0001";
+        final AssignPickingTote.Request request = new AssignPickingTote.Request(
+                outboundId,
+                toteBarcode);
+
+        assignPickingTote.request(request);
+
+
     }
 }
