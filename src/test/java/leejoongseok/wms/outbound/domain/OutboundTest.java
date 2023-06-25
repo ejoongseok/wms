@@ -478,4 +478,31 @@ class OutboundTest {
         }).isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("이미 할당된 토트가 존재합니다.");
     }
+
+    @Test
+    @DisplayName("출고에 집품할 토트를 배정한다. - 포장재가 할당되지 않은 경우 IllegalStateException이 발생한다.")
+    void assignPickingTote_unassignedPackagingMaterial() {
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status);
+        final List<LocationLPN> locationLPNList = List.of();
+        final Location toteLocation = createToteLocation(
+                locationLPNList,
+                StorageType.TOTE);
+
+        assertThatThrownBy(() -> {
+            outbound.assignPickingTote(toteLocation);
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("추천 포장재가 할당되지 않았습니다.");
+    }
+
+    private Outbound createOutbound(final OutboundStatus status) {
+        return Instancio.of(Outbound.class)
+                .supply(Select.field(Outbound::getOutboundStatus), () -> status)
+                .supply(Select.field(Outbound::getCushioningMaterial), () -> CushioningMaterial.NONE)
+                .supply(Select.field(Outbound::getCushioningMaterialQuantity), () -> 0)
+                .ignore(Select.field(Outbound::getOutboundItems))
+                .ignore(Select.field(Outbound::getToteLocation))
+                .ignore(Select.field(Outbound::getRecommendedPackagingMaterial))
+                .create();
+    }
 }

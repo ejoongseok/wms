@@ -275,6 +275,7 @@ public class Outbound {
 
     public void assignRecommendedPackagingMaterial(
             final PackagingMaterial packagingMaterial) {
+        Assert.notNull(packagingMaterial, "추천 포장재는 null이 될 수 없습니다.");
         recommendedPackagingMaterial = packagingMaterial;
     }
 
@@ -337,6 +338,9 @@ public class Outbound {
         }
         if (hasAssignedTote()) {
             throw new IllegalStateException("이미 할당된 토트가 존재합니다.");
+        }
+        if (null == recommendedPackagingMaterial) {
+            throw new IllegalStateException("추천 포장재가 할당되지 않았습니다.");
         }
     }
 }
