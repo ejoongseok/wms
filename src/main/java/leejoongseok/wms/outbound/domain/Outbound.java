@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.outbound.exception.OutboundItemIdNotFoundException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -35,28 +36,37 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Comment("출고")
 public class Outbound {
-
-    @OneToMany(mappedBy = "outbound", cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter
-    private final List<OutboundItem> outboundItems = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(name = "outbound_status", nullable = false)
+    @Comment("출고 상태")
+    private final OutboundStatus outboundStatus = OutboundStatus.READY;
     @Column(name = "order_id", nullable = false)
     @Comment("주문 ID")
     private Long orderId;
+    @Getter
+    @OneToMany(mappedBy = "outbound", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<OutboundItem> outboundItems = new ArrayList<>();
+    @Id
+    @Getter(AccessLevel.PROTECTED)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("출고 ID")
+    private Long id;
+    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recommended_packaging_material_id", nullable = true)
     @Comment("추천 포장재 ID")
-    @Getter
     private PackagingMaterial recommendedPackagingMaterial;
     @Embedded
     private OutboundCustomer outboundCustomer;
+    @Getter(AccessLevel.PROTECTED)
     @Enumerated(EnumType.STRING)
     @Column(name = "cushioning_material", nullable = false)
     @Comment("완충재")
-    @Getter(AccessLevel.PROTECTED)
     private CushioningMaterial cushioningMaterial;
+    @Getter(AccessLevel.PROTECTED)
     @Column(name = "cushioning_material_quantity", nullable = false)
     @Comment("완충재 수량")
-    @Getter(AccessLevel.PROTECTED)
     private Integer cushioningMaterialQuantity;
     @Column(name = "is_priority_delivery", nullable = false)
     @Comment("우선 배송 여부")
@@ -73,16 +83,11 @@ public class Outbound {
     @Column(name = "ordered_at", nullable = false)
     @Comment("주문 일시")
     private LocalDateTime orderedAt;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "outbound_status", nullable = false)
-    @Comment("출고 상태")
     @Getter
-    private final OutboundStatus outboundStatus = OutboundStatus.READY;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Comment("출고 ID")
-    @Getter(AccessLevel.PROTECTED)
-    private Long id;
+    @JoinColumn(name = "tote_location_id", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Comment("토트 로케이션 ID")
+    private Location toteLocation;
 
     public Outbound(
             final Long orderId,
@@ -302,5 +307,9 @@ public class Outbound {
 
     public boolean isReadyStatus() {
         return outboundStatus == OutboundStatus.READY;
+    }
+
+    public boolean hasAssignedTote() {
+        return null != toteLocation;
     }
 }

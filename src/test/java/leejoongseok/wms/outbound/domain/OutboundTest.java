@@ -2,6 +2,7 @@ package leejoongseok.wms.outbound.domain;
 
 import leejoongseok.wms.item.domain.Item;
 import leejoongseok.wms.item.domain.ItemSize;
+import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.outbound.exception.OutboundItemIdNotFoundException;
 import org.instancio.Instancio;
 import org.instancio.Select;
@@ -351,5 +352,33 @@ class OutboundTest {
         final boolean isReadyStatus = outbound.isReadyStatus();
 
         assertThat(isReadyStatus).isFalse();
+    }
+
+    @Test
+    @DisplayName("출고에 토트가 배정되어 있는 상태인지 확인한다.")
+    void hasAssignedTote() {
+        final Location toteLocation = Instancio.create(Location.class);
+        final Outbound outbound = createOutbound(toteLocation);
+
+        final boolean hasAssignedTote = outbound.hasAssignedTote();
+
+        assertThat(hasAssignedTote).isTrue();
+    }
+
+    private Outbound createOutbound(final Location toteLocation) {
+        return Instancio.of(Outbound.class)
+                .supply(Select.field(Outbound::getToteLocation), () -> toteLocation)
+                .create();
+    }
+
+    @Test
+    @DisplayName("출고에 토트가 배정되어 있는 상태인지 확인한다. - 토트가 배정되어 있지 않은 경우 hasAssignedTote는 false를 반환한다.")
+    void hasAssignedTote_false() {
+        final Location toteLocation = null;
+        final Outbound outbound = createOutbound(toteLocation);
+
+        final boolean hasAssignedTote = outbound.hasAssignedTote();
+
+        assertThat(hasAssignedTote).isFalse();
     }
 }
