@@ -169,17 +169,6 @@ public class Outbound {
     }
 
     /**
-     * 분할한 만큼 현재 출고 상품의 수량을 감소시킨다.
-     */
-    private void decreaseOutboundItemQuantityBySplit(
-            final List<SplittableOutboundItem> splittableOutboundItems) {
-        for (final SplittableOutboundItem splittableOutboundItem : splittableOutboundItems) {
-            final OutboundItem outboundItem = getOutboundItem(splittableOutboundItem.getOutboundItemId());
-            outboundItem.decreaseQuantity(splittableOutboundItem.getQuantityToSplit());
-        }
-    }
-
-    /**
      * 출고를 분할 할 수 있는지 검증한다.
      * 출고를 분할하기 위해서는 출고는 반드시 대기 상태여야 한다.
      * 분할한 뒤 기존 출고의 상품이 하나도 남아있지 않으면 안된다.
@@ -254,6 +243,17 @@ public class Outbound {
                 orderedAt);
         splitOutboundItems.forEach(outbound::addOutboundItem);
         return outbound;
+    }
+
+    /**
+     * 분할한 만큼 현재 출고 상품의 수량을 감소시킨다.
+     */
+    private void decreaseOutboundItemQuantityBySplit(
+            final List<SplittableOutboundItem> splittableOutboundItems) {
+        for (final SplittableOutboundItem splittableOutboundItem : splittableOutboundItems) {
+            final OutboundItem outboundItem = getOutboundItem(splittableOutboundItem.getOutboundItemId());
+            outboundItem.decreaseQuantity(splittableOutboundItem.getQuantityToSplit());
+        }
     }
 
     /**
