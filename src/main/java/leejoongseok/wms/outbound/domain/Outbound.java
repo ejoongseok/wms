@@ -163,7 +163,7 @@ public class Outbound {
         final List<OutboundItem> splitOutboundItems = splitOutboundItems(
                 outboundItemToSplits);
         final Outbound cloneNewOutbound = cloneNewOutbound(splitOutboundItems);
-        decreaseQuantityBySplitQuantity(outboundItemToSplits);
+        decreaseOutboundItemQuantityBySplit(outboundItemToSplits);
         clearEmptyOutboundItemsAfterSplit();
         return cloneNewOutbound;
     }
@@ -171,7 +171,7 @@ public class Outbound {
     /**
      * 분할한 만큼 현재 출고 상품의 수량을 감소시킨다.
      */
-    private void decreaseQuantityBySplitQuantity(
+    private void decreaseOutboundItemQuantityBySplit(
             final List<OutboundItemToSplit> outboundItemToSplits) {
         for (final OutboundItemToSplit outboundItemToSplit : outboundItemToSplits) {
             final OutboundItem outboundItem = getOutboundItem(outboundItemToSplit.getOutboundItemId());
