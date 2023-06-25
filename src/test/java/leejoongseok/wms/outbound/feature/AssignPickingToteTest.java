@@ -39,16 +39,10 @@ class AssignPickingToteTest extends ApiTest {
                 .locationBarcode(toteBarcode)
                 .storageType(StorageType.TOTE)
                 .usagePurpose(UsagePurpose.MOVE)
-                .request();
+                .request()
+                .assignPickingTote().request();
 
-        final Long outboundId = 1L;
-        final AssignPickingTote.Request request = new AssignPickingTote.Request(
-                outboundId,
-                toteBarcode);
-
-        assignPickingTote.request(request);
-
-        final Outbound outbound = outboundRepository.findById(outboundId).get();
+        final Outbound outbound = outboundRepository.findById(1L).get();
         assertThat(outbound.hasAssignedTote()).isTrue();
     }
 }

@@ -1,5 +1,6 @@
 package leejoongseok.wms.outbound.feature;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.location.domain.Location;
@@ -9,17 +10,21 @@ import leejoongseok.wms.outbound.domain.Outbound;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
 import leejoongseok.wms.outbound.exception.OutboundIdNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Component
+@RestController
 @RequiredArgsConstructor
 public class AssignPickingTote {
     private final OutboundRepository outboundRepository;
     private final LocationRepository locationRepository;
 
     @Transactional
-    public void request(final Request request) {
+    @PostMapping("/outbounds/assign-picking-tote")
+    public void request(
+            @RequestBody @Valid final Request request) {
         final Outbound outbound = getOutbound(request.outboundId);
         final Location tote = getTote(request.toteBarcode);
         outbound.assignPickingTote(tote);
