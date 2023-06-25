@@ -109,4 +109,12 @@ public class LocationLPN {
                 location.isStow()
                 && 0L < inventoryQuantity;
     }
+
+    public LocalDateTime getExpirationAt() {
+        return lpn.getExpirationAt();
+    }
+
+    public String getLocationBarcode() {
+        return location.getLocationBarcode();
+    }
 }

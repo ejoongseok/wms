@@ -7,6 +7,7 @@ import leejoongseok.wms.outbound.exception.NotEnoughInventoryException;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -20,6 +21,13 @@ public class PickingAllocator {
         validatePickingAllocatable(
                 outboundItems,
                 pickingAllocatableLocationLPNList);
+
+        for (final OutboundItem outboundItem : outboundItems) {
+            final Long itemId = outboundItem.getItemId();
+            final List<LocationLPN> locationLPNS = getLocationLPNListByItemId(locationLPNList, itemId);
+
+            final List<LocationLPN> sortedLocationLPNList = sort(locationLPNS);
+        }
 
     }
 
@@ -64,5 +72,24 @@ public class PickingAllocator {
             final Integer outboundQuantity,
             final Long availableInventoryQuantity) {
         return outboundQuantity <= availableInventoryQuantity;
+    }
+
+    private List<LocationLPN> getLocationLPNListByItemId(final List<LocationLPN> locationLPNList, final Long itemId) {
+        return locationLPNList.stream()
+                .filter(locationLPN -> locationLPN.getItemId().equals(itemId))
+                .toList();
+    }
+
+    /**
+     * 1. 유통기한이 가장 빠른 순서
+     * 2. 재고수량이 많은 순서
+     * 3. 로케이션 바코드 순서 A -> Z
+     */
+    private List<LocationLPN> sort(final List<LocationLPN> locationLPNS) {
+        return locationLPNS.stream()
+                .sorted(Comparator.comparing(LocationLPN::getExpirationAt)
+                        .thenComparing(LocationLPN::getInventoryQuantity).reversed()
+                        .thenComparing(LocationLPN::getLocationBarcode))
+                .toList();
     }
 }
