@@ -137,4 +137,27 @@ class LocationTest {
 
         assertThat(isTote).isFalse();
     }
+
+    @Test
+    @DisplayName("로케이션에 LPN이 있는지 확인한다.")
+    void hasLocationLPN() {
+        final Location location = createLocation();
+        final String lpnBarcode = "lpnBarcode";
+        final LPN lpn = createLPN(lpnBarcode);
+        location.assignLPN(lpn);
+
+        final boolean hasLocationLPN = location.hasLocationLPN();
+
+        assertThat(hasLocationLPN).isTrue();
+    }
+
+    @Test
+    @DisplayName("로케이션에 LPN이 있는지 확인한다. - LPN이 없는 경우 false")
+    void hasLocationLPN_fals() {
+        final Location location = createLocation();
+
+        final boolean hasLocationLPN = location.hasLocationLPN();
+
+        assertThat(hasLocationLPN).isFalse();
+    }
 }

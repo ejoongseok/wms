@@ -148,4 +148,8 @@ public class Location {
     public boolean isTote() {
         return StorageType.TOTE == storageType;
     }
+
+    public boolean hasLocationLPN() {
+        return !locationLPNList.isEmpty();
+    }
 }
