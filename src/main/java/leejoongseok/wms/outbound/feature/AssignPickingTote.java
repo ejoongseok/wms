@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AssignPickingTote {
     private final OutboundRepository outboundRepository;
     private final LocationRepository locationRepository;
+    private final PickingAllocator pickingAllocator;
 
     @Transactional
     @PostMapping("/outbounds/assign-picking-tote")
@@ -31,6 +32,7 @@ public class AssignPickingTote {
         final Outbound outbound = getOutbound(request.outboundId);
         final Location tote = getTote(request.toteBarcode);
         outbound.assignPickingTote(tote);
+        pickingAllocator.allocate(outbound);
     }
 
     private Outbound getOutbound(final Long outboundId) {
