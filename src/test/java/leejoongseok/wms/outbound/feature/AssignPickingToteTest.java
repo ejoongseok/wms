@@ -16,5 +16,6 @@ class AssignPickingToteTest {
     @Test
     @DisplayName("출고를 집품할 토트를 할당한다.")
     void assignPickingTote() {
+        assignPickingTote.request();
     }
 }
