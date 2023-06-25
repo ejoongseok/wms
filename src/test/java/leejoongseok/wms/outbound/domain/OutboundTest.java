@@ -505,4 +505,26 @@ class OutboundTest {
                 .ignore(Select.field(Outbound::getRecommendedPackagingMaterial))
                 .create();
     }
+
+    @Test
+    @DisplayName("출고의 상태가 집품 중인지 확인한다.")
+    void isPickingProgress() {
+        final OutboundStatus status = OutboundStatus.PICKING;
+        final Outbound outbound = createOutbound(status);
+
+        final boolean isPickingProgress = outbound.isPickingProgress();
+
+        assertThat(isPickingProgress).isTrue();
+    }
+
+    @Test
+    @DisplayName("출고의 상태가 집품 중인지 확인한다. - 출고의 상태가 집품 중이 아닌 경우 false를 반환한다.")
+    void isPickingProgress_false() {
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status);
+
+        final boolean isPickingProgress = outbound.isPickingProgress();
+
+        assertThat(isPickingProgress).isFalse();
+    }
 }

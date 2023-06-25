@@ -343,4 +343,8 @@ public class Outbound {
             throw new IllegalStateException("추천 포장재가 할당되지 않았습니다.");
         }
     }
+
+    public boolean isPickingProgress() {
+        return outboundStatus == OutboundStatus.PICKING;
+    }
 }
