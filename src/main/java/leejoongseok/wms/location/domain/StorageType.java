@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public enum StorageType {
-    CELL("상품을 진열하기 위한 최소 단위");
+    CELL("상품을 진열하기 위한 최소 단위"),
+    TOTE("상품을 집품 하기위한 용도"),
+    ;
 
     private final String description;
 }
