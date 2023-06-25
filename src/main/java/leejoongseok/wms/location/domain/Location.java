@@ -43,7 +43,7 @@ public class Location {
     @Column(name = "location_barcode", nullable = false)
     @Comment("로케이션 바코드")
     private String locationBarcode;
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     @Column(name = "storage_type", nullable = false)
     @Comment("보관 타입")
     @Enumerated(EnumType.STRING)

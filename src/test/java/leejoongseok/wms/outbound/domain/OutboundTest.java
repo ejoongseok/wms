@@ -3,6 +3,8 @@ package leejoongseok.wms.outbound.domain;
 import leejoongseok.wms.item.domain.Item;
 import leejoongseok.wms.item.domain.ItemSize;
 import leejoongseok.wms.location.domain.Location;
+import leejoongseok.wms.location.domain.LocationLPN;
+import leejoongseok.wms.location.domain.StorageType;
 import leejoongseok.wms.outbound.exception.OutboundItemIdNotFoundException;
 import org.instancio.Instancio;
 import org.instancio.Select;
@@ -68,6 +70,7 @@ class OutboundTest {
                 .supply(Select.field(Outbound::getCushioningMaterial), () -> CushioningMaterial.NONE)
                 .supply(Select.field(Outbound::getCushioningMaterialQuantity), () -> 0)
                 .ignore(Select.field(Outbound::getOutboundItems))
+                .ignore(Select.field(Outbound::getToteLocation))
                 .create();
     }
 
@@ -380,5 +383,99 @@ class OutboundTest {
         final boolean hasAssignedTote = outbound.hasAssignedTote();
 
         assertThat(hasAssignedTote).isFalse();
+    }
+
+    @Test
+    @DisplayName("출고에 집품할 토트를 배정한다.")
+    void assignPickingTote() {
+        final long outboundId = 1L;
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status, outboundId);
+        final List<LocationLPN> locationLPNList = List.of();
+        final Location toteLocation = createToteLocation(
+                locationLPNList,
+                StorageType.TOTE);
+
+        outbound.assignPickingTote(toteLocation);
+
+        assertThat(outbound.hasAssignedTote()).isTrue();
+    }
+
+    private Location createToteLocation(
+            final List<LocationLPN> locationLPNList,
+            final StorageType storageType) {
+        return Instancio.of(Location.class)
+                .supply(Select.field(Location::getStorageType), () -> storageType)
+                .supply(Select.field(Location::getLocationLPNList), () -> locationLPNList)
+                .create();
+    }
+
+    @Test
+    @DisplayName("출고에 집품할 토트를 배정한다. - 로케이션이 토트가 아닌 경우 IllegalArgumentException이 발생한다.")
+    void assignPickingTote_isNotTote() {
+        final long outboundId = 1L;
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status, outboundId);
+        final List<LocationLPN> locationLPNList = List.of();
+        final Location toteLocation = createToteLocation(
+                locationLPNList,
+                StorageType.CELL);
+
+        assertThatThrownBy(() -> {
+            outbound.assignPickingTote(toteLocation);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("토트가 아닙니다.");
+    }
+
+    @Test
+    @DisplayName("출고에 집품할 토트를 배정한다. - 로케이션에 LPN이 존재하는 경우 IllegalArgumentException이 발생한다.")
+    void assignPickingTote_alreadyExistsLocationLPN() {
+        final long outboundId = 1L;
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status, outboundId);
+        final List<LocationLPN> locationLPNList = List.of(Instancio.create(LocationLPN.class));
+        final Location toteLocation = createToteLocation(
+                locationLPNList,
+                StorageType.TOTE);
+
+        assertThatThrownBy(() -> {
+            outbound.assignPickingTote(toteLocation);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("집품에 사용할 토트에 상품이 이미 담겨 있습니다.");
+    }
+
+    @Test
+    @DisplayName("출고에 집품할 토트를 배정한다. - 출고의 상태가 출고 대기가 아닌 경우 IllegalArgumentException이 발생한다.")
+    void assignPickingTote_invalidStatus() {
+        final long outboundId = 1L;
+        final OutboundStatus status = OutboundStatus.PICKING;
+        final Outbound outbound = createOutbound(status, outboundId);
+        final List<LocationLPN> locationLPNList = List.of();
+        final Location toteLocation = createToteLocation(
+                locationLPNList,
+                StorageType.TOTE);
+
+        assertThatThrownBy(() -> {
+            outbound.assignPickingTote(toteLocation);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("집품할 토트 할당은 출고 대기상태에만 가능합니다.");
+    }
+
+    @Test
+    @DisplayName("출고에 집품할 토트를 배정한다. - 출고에 이미 토트가 배정되어 있는 경우 IllegalStateException이 발생한다.")
+    void assignPickingTote_alreadyAssignedTote() {
+        final long outboundId = 1L;
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status, outboundId);
+        final List<LocationLPN> locationLPNList = List.of();
+        final Location toteLocation = createToteLocation(
+                locationLPNList,
+                StorageType.TOTE);
+        outbound.assignPickingTote(toteLocation);
+
+        assertThatThrownBy(() -> {
+            outbound.assignPickingTote(toteLocation);
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("이미 할당된 토트가 존재합니다.");
     }
 }

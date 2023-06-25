@@ -312,4 +312,31 @@ public class Outbound {
     public boolean hasAssignedTote() {
         return null != toteLocation;
     }
+
+    public void assignPickingTote(final Location tote) {
+        validateAssignPickingTote(tote);
+        toteLocation = tote;
+    }
+
+    private void validateAssignPickingTote(final Location tote) {
+        final String locationBarcode = tote.getLocationBarcode();
+        if (!tote.isTote()) {
+            throw new IllegalArgumentException(
+                    "로케이션 바코드[%s]는 토트가 아닙니다.".formatted(locationBarcode));
+        }
+        if (tote.hasLocationLPN()) {
+            throw new IllegalArgumentException(
+                    "집품에 사용할 토트에 상품이 이미 담겨 있습니다. 로케이션바코드[%s]"
+                            .formatted(locationBarcode));
+        }
+        if (!isReadyStatus()) {
+            throw new IllegalArgumentException(
+                    ("집품할 토트 할당은 출고 대기상태에만 가능합니다. " +
+                            "출고 상태: %s").formatted(
+                            outboundStatus.getDescription()));
+        }
+        if (hasAssignedTote()) {
+            throw new IllegalStateException("이미 할당된 토트가 존재합니다.");
+        }
+    }
 }
