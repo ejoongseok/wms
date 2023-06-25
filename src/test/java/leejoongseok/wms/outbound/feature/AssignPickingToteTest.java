@@ -1,29 +1,54 @@
 package leejoongseok.wms.outbound.feature;
 
-import org.junit.jupiter.api.BeforeEach;
+import leejoongseok.wms.common.ApiTest;
+import leejoongseok.wms.common.Scenario;
+import leejoongseok.wms.location.domain.StorageType;
+import leejoongseok.wms.location.domain.UsagePurpose;
+import leejoongseok.wms.outbound.domain.Outbound;
+import leejoongseok.wms.outbound.domain.OutboundRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-class AssignPickingToteTest {
+import static org.assertj.core.api.Assertions.assertThat;
 
+class AssignPickingToteTest extends ApiTest {
+
+    @Autowired
     private AssignPickingTote assignPickingTote;
+    @Autowired
+    private OutboundRepository outboundRepository;
 
-    @BeforeEach
-    void setUp() {
-        assignPickingTote = new AssignPickingTote();
-    }
 
     @Test
     @DisplayName("출고를 집품할 토트를 할당한다.")
     void assignPickingTote() {
-        final Long outboundId = 1L;
+        new Scenario()
+                .createItem().request()
+                .createInbound().request()
+                .confirmInspectedInbound().request()
+                .createLPN().request()
+                .createLocation().request()
+                .assignLPNToLocation().request(2)
+                .createPackagingMaterial().request()
+                .createOutbound().request();
+
         final String toteBarcode = "TOTE0001";
+        new Scenario()
+                .createLocation()
+                .locationBarcode(toteBarcode)
+                .storageType(StorageType.TOTE)
+                .usagePurpose(UsagePurpose.MOVE)
+                .request();
+
+        final Long outboundId = 1L;
         final AssignPickingTote.Request request = new AssignPickingTote.Request(
                 outboundId,
                 toteBarcode);
 
         assignPickingTote.request(request);
 
-        // TODO outboundId로 출고를 조회하여 토트가 할당되었는지 확인한다.
+        final Outbound outbound = outboundRepository.findById(outboundId).get();
+        assertThat(outbound.hasAssignedTote()).isTrue();
     }
 }
