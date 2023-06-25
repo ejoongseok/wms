@@ -15,20 +15,20 @@ public class PickingAllocator {
             final Outbound outbound,
             final List<LocationLPN> locationLPNList) {
         final List<OutboundItem> outboundItems = outbound.getOutboundItems();
-        final List<LocationLPN> pickingAllocatableLocationLPNList = locationLPNList.stream()
-                .filter(locationLPN -> locationLPN.isPickingAllocatable(LocalDateTime.now()))
-                .toList();
+        final List<LocationLPN> pickingAllocatableLocationLPNList = filterByPickingAllocatable(
+                locationLPNList);
         validatePickingAllocatable(
                 outboundItems,
                 pickingAllocatableLocationLPNList);
 
-//        for (final OutboundItem outboundItem : outboundItems) {
-//            final Long itemId = outboundItem.getItmId();
-//            final long availableStockQuantity = getAvailableStockQuantity(lpnList, itemId);
-//            if (!outboundItem.hasEnoughStock(availableStockQuantity)) {
-//                throw new NotEnoughStockException(itemId, availableStockQuantity, outboundItem.getRequiredQuantity());
-//            }
-//        }
+    }
+
+    private List<LocationLPN> filterByPickingAllocatable(
+            final List<LocationLPN> locationLPNList) {
+        return locationLPNList.stream()
+                .filter(locationLPN -> locationLPN.isPickingAllocatable(
+                        LocalDateTime.now()))
+                .toList();
     }
 
     private void validatePickingAllocatable(
