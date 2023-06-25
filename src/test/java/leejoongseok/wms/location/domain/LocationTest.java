@@ -109,4 +109,32 @@ class LocationTest {
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("추가할 재고 수량은 1이상이어야 합니다.");
     }
+
+    @Test
+    @DisplayName("로케이션이 토트인지 확인한다.")
+    void isTote() {
+        final StorageType storageType = StorageType.TOTE;
+        final Location tote = createLocation(storageType);
+
+        final boolean isTote = tote.isTote();
+
+        assertThat(isTote).isTrue();
+    }
+
+    private Location createLocation(final StorageType storageType) {
+        return Instancio.of(Location.class)
+                .supply(Select.field(Location::getStorageType), () -> storageType)
+                .create();
+    }
+
+    @Test
+    @DisplayName("로케이션이 토트인지 확인한다. - 토트가 아닌 경우 isTote는 false")
+    void isCell() {
+        final StorageType storageType = StorageType.CELL;
+        final Location cell = createLocation(storageType);
+
+        final boolean isTote = cell.isTote();
+
+        assertThat(isTote).isFalse();
+    }
 }
