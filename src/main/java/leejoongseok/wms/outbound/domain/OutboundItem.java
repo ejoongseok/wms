@@ -133,4 +133,8 @@ public class OutboundItem {
                             .formatted(outboundQuantity, quantity));
         }
     }
+
+    public Long getItemId() {
+        return item.getId();
+    }
 }
