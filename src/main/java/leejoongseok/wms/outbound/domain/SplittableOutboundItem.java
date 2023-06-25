@@ -9,25 +9,25 @@ import org.springframework.util.Assert;
  * 출고 수량
  */
 @Getter
-public class OutboundItemToSplit {
+public class SplittableOutboundItem {
     private final Long outboundItemId;
-    private final Integer quantityOfSplit;
+    private final Integer quantityToSplit;
 
-    public OutboundItemToSplit(
+    public SplittableOutboundItem(
             final Long outboundItemId,
-            final Integer quantityOfSplit) {
+            final Integer quantityToSplit) {
         validateConstructor(
                 outboundItemId,
-                quantityOfSplit);
+                quantityToSplit);
         this.outboundItemId = outboundItemId;
-        this.quantityOfSplit = quantityOfSplit;
+        this.quantityToSplit = quantityToSplit;
     }
 
     private void validateConstructor(
             final Long outboundItemIdToSplit,
-            final Integer quantityOfSplit) {
+            final Integer quantityToSplit) {
         Assert.notNull(outboundItemIdToSplit, "분할 대상 출고 상품의 ID는 필수 입니다.");
-        Assert.notNull(quantityOfSplit, "분할 대상 출고 상품의 수량은 필수 입니다.");
-        Assert.isTrue(0 < quantityOfSplit, "분할 대상 출고 상품의 수량은 0보다 커야 합니다.");
+        Assert.notNull(quantityToSplit, "분할 대상 출고 상품의 수량은 필수 입니다.");
+        Assert.isTrue(0 < quantityToSplit, "분할 대상 출고 상품의 수량은 0보다 커야 합니다.");
     }
 }

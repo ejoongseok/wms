@@ -30,12 +30,12 @@ class OutboundTest {
 
         final Long outboundItemIdToSplit = 1L;
         final Integer quantityOfSplit = 1;
-        final OutboundItemToSplit outboundItemToSplit = createOutboundItemToSplit(
+        final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
                 outboundItemIdToSplit,
                 quantityOfSplit);
 
         final Outbound splittedOutbound = outbound.split(
-                List.of(outboundItemToSplit));
+                List.of(splittableOutboundItem));
 
         assertThat(splittedOutbound.getOutboundItems().size()).isEqualTo(1);
         assertThat(splittedOutbound.getOutboundItems().get(0).getOutboundQuantity()).isEqualTo(1);
@@ -79,10 +79,10 @@ class OutboundTest {
                 .create();
     }
 
-    private OutboundItemToSplit createOutboundItemToSplit(
+    private SplittableOutboundItem createSplittableOutboundItem(
             final Long outboundItemIdToSplit,
             final Integer quantityOfSplit) {
-        return new OutboundItemToSplit(
+        return new SplittableOutboundItem(
                 outboundItemIdToSplit,
                 quantityOfSplit);
     }
@@ -102,12 +102,12 @@ class OutboundTest {
 
         final Long outboundItemIdToSplit = 1L;
         final Integer quantityOfSplit = 1;
-        final OutboundItemToSplit outboundItemToSplit = createOutboundItemToSplit(
+        final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
                 outboundItemIdToSplit,
                 quantityOfSplit);
 
         assertThatThrownBy(() -> {
-            outbound.split(List.of(outboundItemToSplit));
+            outbound.split(List.of(splittableOutboundItem));
         }).isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("출고는 대기 상태에서만 분할 할 수 있습니다.");
     }
@@ -127,12 +127,12 @@ class OutboundTest {
 
         final Long outboundItemIdToSplit = 2L;
         final Integer quantityOfSplit = 1;
-        final OutboundItemToSplit outboundItemToSplit = createOutboundItemToSplit(
+        final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
                 outboundItemIdToSplit,
                 quantityOfSplit);
 
         assertThatThrownBy(() -> {
-            outbound.split(List.of(outboundItemToSplit));
+            outbound.split(List.of(splittableOutboundItem));
         }).isInstanceOf(OutboundItemIdNotFoundException.class)
                 .hasMessageContaining("출고 상품 ID [2]에 해당하는 출고 상품을 찾을 수 없습니다.");
     }
@@ -152,12 +152,12 @@ class OutboundTest {
 
         final Long outboundItemIdToSplit = 1L;
         final Integer quantityOfSplit = 2;
-        final OutboundItemToSplit outboundItemToSplit = createOutboundItemToSplit(
+        final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
                 outboundItemIdToSplit,
                 quantityOfSplit);
 
         assertThatThrownBy(() -> {
-            outbound.split(List.of(outboundItemToSplit));
+            outbound.split(List.of(splittableOutboundItem));
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("분할하려는 상품의 총 수량은 출고 상품의 총 수량보다 작아야 합니다." +
                         "\n분할하려는 상품의 총 수량: 2, 출고 상품의 총 수량: 2\n");
@@ -182,12 +182,12 @@ class OutboundTest {
 
         final Long outboundItemIdToSplit = 1L;
         final Integer quantityOfSplit = 2;
-        final OutboundItemToSplit outboundItemToSplit = createOutboundItemToSplit(
+        final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
                 outboundItemIdToSplit,
                 quantityOfSplit);
 
         final Outbound splittedOutbound = outbound.split(
-                List.of(outboundItemToSplit));
+                List.of(splittableOutboundItem));
 
         assertThat(splittedOutbound.getOutboundItems().size()).isEqualTo(1);
         assertThat(splittedOutbound.getOutboundItems().get(0).getOutboundQuantity()).isEqualTo(2);
@@ -215,12 +215,12 @@ class OutboundTest {
 
         final Long outboundItemIdToSplit = 1L;
         final Integer quantityOfSplit = 1;
-        final OutboundItemToSplit outboundItemToSplit = createOutboundItemToSplit(
+        final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
                 outboundItemIdToSplit,
                 quantityOfSplit);
 
         final Outbound splittedOutbound = outbound.split(
-                List.of(outboundItemToSplit));
+                List.of(splittableOutboundItem));
 
         assertThat(splittedOutbound.getOutboundItems().size()).isEqualTo(1);
         assertThat(splittedOutbound.getOutboundItems().get(0).getOutboundQuantity()).isEqualTo(1);

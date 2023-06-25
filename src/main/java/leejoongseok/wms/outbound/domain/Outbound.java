@@ -158,12 +158,12 @@ public class Outbound {
      * 출고를 분할한 뒤 기존의 출고 목록 중 출고해야할 상품의 수량이 0인 경우 해당 출고 상품을 목록에서 제거한다.
      */
     public Outbound split(
-            final List<OutboundItemToSplit> outboundItemToSplits) {
-        validateSplit(outboundItemToSplits);
+            final List<SplittableOutboundItem> splittableOutboundItems) {
+        validateSplit(splittableOutboundItems);
         final List<OutboundItem> splitOutboundItems = splitOutboundItems(
-                outboundItemToSplits);
+                splittableOutboundItems);
         final Outbound cloneNewOutbound = cloneNewOutbound(splitOutboundItems);
-        decreaseOutboundItemQuantityBySplit(outboundItemToSplits);
+        decreaseOutboundItemQuantityBySplit(splittableOutboundItems);
         clearEmptyOutboundItemsAfterSplit();
         return cloneNewOutbound;
     }
@@ -172,10 +172,10 @@ public class Outbound {
      * 분할한 만큼 현재 출고 상품의 수량을 감소시킨다.
      */
     private void decreaseOutboundItemQuantityBySplit(
-            final List<OutboundItemToSplit> outboundItemToSplits) {
-        for (final OutboundItemToSplit outboundItemToSplit : outboundItemToSplits) {
-            final OutboundItem outboundItem = getOutboundItem(outboundItemToSplit.getOutboundItemId());
-            outboundItem.decreaseQuantity(outboundItemToSplit.getQuantityOfSplit());
+            final List<SplittableOutboundItem> splittableOutboundItems) {
+        for (final SplittableOutboundItem splittableOutboundItem : splittableOutboundItems) {
+            final OutboundItem outboundItem = getOutboundItem(splittableOutboundItem.getOutboundItemId());
+            outboundItem.decreaseQuantity(splittableOutboundItem.getQuantityToSplit());
         }
     }
 
@@ -185,19 +185,19 @@ public class Outbound {
      * 분할한 뒤 기존 출고의 상품이 하나도 남아있지 않으면 안된다.
      */
     private void validateSplit(
-            final List<OutboundItemToSplit> outboundItemToSplits) {
+            final List<SplittableOutboundItem> splittableOutboundItems) {
         if (outboundStatus != OutboundStatus.READY) {
             throw new IllegalStateException(
                     "출고는 대기 상태에서만 분할 할 수 있습니다.");
         }
-        Assert.notEmpty(outboundItemToSplits,
+        Assert.notEmpty(splittableOutboundItems,
                 "분할 대상 출고 상품은 1개 이상이어야 합니다.");
-        if (outboundItemToSplits.size() > outboundItems.size()) {
+        if (splittableOutboundItems.size() > outboundItems.size()) {
             throw new IllegalArgumentException(
                     "분할 대상 출고 상품은 출고 상품의 개수보다 많을 수 없습니다.");
         }
-        final int totalQuantityOfSplit = outboundItemToSplits.stream()
-                .mapToInt(OutboundItemToSplit::getQuantityOfSplit)
+        final int totalQuantityOfSplit = splittableOutboundItems.stream()
+                .mapToInt(SplittableOutboundItem::getQuantityToSplit)
                 .sum();
         final int totalQuantityOfOutboundItem = outboundItems.stream()
                 .mapToInt(OutboundItem::getOutboundQuantity)
@@ -215,11 +215,11 @@ public class Outbound {
     }
 
     private List<OutboundItem> splitOutboundItems(
-            final List<OutboundItemToSplit> outboundItemToSplits) {
-        return outboundItemToSplits.stream()
-                .map(outboundItemToSplit ->
-                        getOutboundItem(outboundItemToSplit.getOutboundItemId())
-                                .split(outboundItemToSplit.getQuantityOfSplit()))
+            final List<SplittableOutboundItem> splittableOutboundItems) {
+        return splittableOutboundItems.stream()
+                .map(splittableOutboundItem ->
+                        getOutboundItem(splittableOutboundItem.getOutboundItemId())
+                                .split(splittableOutboundItem.getQuantityToSplit()))
                 .toList();
     }
 
