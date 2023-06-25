@@ -24,6 +24,6 @@ class AssignPickingToteTest {
 
         assignPickingTote.request(request);
 
-
+        // TODO outboundId로 출고를 조회하여 토트가 할당되었는지 확인한다.
     }
 }
