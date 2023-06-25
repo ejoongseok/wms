@@ -1,10 +1,12 @@
 package leejoongseok.wms.outbound.domain;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
  * 출고 상태
  */
+@Getter
 @RequiredArgsConstructor
 public enum OutboundStatus {
     READY("출고 대기"),

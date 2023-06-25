@@ -76,7 +76,7 @@ public class Outbound {
     @Enumerated(EnumType.STRING)
     @Column(name = "outbound_status", nullable = false)
     @Comment("출고 상태")
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     private final OutboundStatus outboundStatus = OutboundStatus.READY;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -298,5 +298,9 @@ public class Outbound {
                 ? 0
                 : recommendedPackagingMaterial.getWeightInGrams();
         return itemTotalWeightInGrams + cushioningMaterialTotalWeightInGrams + packagingMaterialWeightInGrams;
+    }
+
+    public boolean isReadyStatus() {
+        return outboundStatus == OutboundStatus.READY;
     }
 }

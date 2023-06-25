@@ -328,4 +328,28 @@ class OutboundTest {
                 .supply(Select.field(Item::getWeightInGrams), () -> itemWeightInGrams)
                 .create();
     }
+
+    @Test
+    @DisplayName("출고의 상태가 출고 대기 인지 확인한다.")
+    void isReadyStatus() {
+        final long outboundId = 1L;
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status, outboundId);
+
+        final boolean isReadyStatus = outbound.isReadyStatus();
+
+        assertThat(isReadyStatus).isTrue();
+    }
+
+    @Test
+    @DisplayName("출고의 상태가 출고 대기 인지 확인한다. - 출고 대기가 아닌 경우 isReadyStatus는 false를 반환한다.")
+    void isNotReadyStatus() {
+        final long outboundId = 1L;
+        final OutboundStatus status = OutboundStatus.PICKING;
+        final Outbound outbound = createOutbound(status, outboundId);
+
+        final boolean isReadyStatus = outbound.isReadyStatus();
+
+        assertThat(isReadyStatus).isFalse();
+    }
 }
