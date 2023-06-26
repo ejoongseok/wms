@@ -17,6 +17,7 @@ import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 출고 상품은 출고에 포함되는 상품을 의미합니다.
@@ -136,5 +137,10 @@ public class OutboundItem {
 
     public Long getItemId() {
         return item.getId();
+    }
+
+    public void assignPickings(final List<Picking> pickings) {
+        Assert.notEmpty(pickings, "출고 상품에 할당할 집품 목록은 필수입니다.");
+//        pickings.forEach(picking -> picking.assignOutboundItem(this));
     }
 }
