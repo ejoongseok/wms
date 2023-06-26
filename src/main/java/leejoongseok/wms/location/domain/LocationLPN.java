@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 @Comment("로케이션 LPN")
 public class LocationLPN {
     @Id
+    @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("로케이션 LPN ID")
     private Long id;
