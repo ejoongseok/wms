@@ -1,6 +1,7 @@
 package leejoongseok.wms.outbound.domain;
 
 import leejoongseok.wms.location.domain.LocationLPN;
+import org.springframework.util.Assert;
 
 import java.util.Comparator;
 import java.util.List;
@@ -13,6 +14,7 @@ public class EfficiencyLocationLPNSorter {
      * 3. 로케이션 바코드 명으로 정렬 (보통 로케이션 바코드는 A -> Z 순서로 정렬되어 있음)
      */
     public List<LocationLPN> sort(final List<LocationLPN> locationLPNS) {
+        Assert.notEmpty(locationLPNS, "정렬하려는 LocationLPN이 존재하지 않습니다.");
         return locationLPNS.stream()
                 .sorted(Comparator.comparing(LocationLPN::getExpirationAt).reversed()
                         .thenComparing(LocationLPN::getInventoryQuantity).reversed()

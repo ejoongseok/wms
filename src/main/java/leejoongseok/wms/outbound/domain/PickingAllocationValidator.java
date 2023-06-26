@@ -2,6 +2,7 @@ package leejoongseok.wms.outbound.domain;
 
 import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.outbound.exception.NotEnoughInventoryException;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +14,8 @@ public class PickingAllocationValidator {
     public void validate(
             final List<OutboundItem> outboundItems,
             final List<LocationLPN> locationLPNList) {
+        Assert.notEmpty(outboundItems, "검증할 출고 상품이 존재하지 않습니다.");
+        Assert.notEmpty(locationLPNList, "검증할 LocationLPN이 존재하지 않습니다.");
         for (final OutboundItem outboundItem : outboundItems) {
             final long availableInventoryQuantity = calculateAvailableInventoryQuantity(
                     locationLPNList,
