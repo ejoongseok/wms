@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PickingCreator {
+public enum PickingCreator {
+    ;
 
     /**
      * 출고할 주문 상품의 집품목록을 생성.
@@ -16,7 +17,7 @@ public class PickingCreator {
      * 3. 재고수량이 출고수량보다 작은 LocationLPN이 출고수량을 충족하면, Picking 생성을 중단.
      * 4. 재고수량이 출고수량보다 작은 LocationLPN이 출고수량을 충족하지 못하면, 다음 재고수량이 출고수량보다 큰 LocationLPN으로 이동.
      */
-    public List<Picking> createPickings(
+    public static List<Picking> createPickings(
             final Long itemId,
             final Integer outboundQuantity,
             final List<LocationLPN> locationLPNList) {
@@ -44,7 +45,7 @@ public class PickingCreator {
         return pickings;
     }
 
-    private void validate(
+    private static void validate(
             final Long itemId,
             final Integer outboundQuantity,
             final List<LocationLPN> locationLPNList) {
@@ -75,7 +76,7 @@ public class PickingCreator {
         }
     }
 
-    private boolean isAllocationComplete(final Integer remainingQuantity) {
+    private static boolean isAllocationComplete(final Integer remainingQuantity) {
         return 0 >= remainingQuantity;
     }
 }

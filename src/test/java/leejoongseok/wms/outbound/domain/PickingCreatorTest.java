@@ -5,7 +5,6 @@ import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationLPN;
 import org.instancio.Instancio;
 import org.instancio.Select;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,13 +14,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PickingCreatorTest {
-
-    private PickingCreator pickingCreator;
-
-    @BeforeEach
-    void setUp() {
-        pickingCreator = new PickingCreator();
-    }
 
     @Test
     @DisplayName("재고가 집품해야할 수량보다 충분하면 출고상품의 집품목록을 생성한다.")
@@ -33,7 +25,7 @@ class PickingCreatorTest {
                 createLocationLPN(itemId, 1, "locationBarcode-1", 1, LocalDateTime.now().plusDays(1L))
         );
 
-        final List<Picking> pickings = pickingCreator.createPickings(1L, 5, locationLPNList);
+        final List<Picking> pickings = PickingCreator.createPickings(1L, 5, locationLPNList);
         assertThat(pickings).hasSize(2);
         assertThat(pickings.get(0).getLocationLPN().getLocationBarcode()).isEqualTo("locationBarcode-3");
         assertThat(pickings.get(1).getLocationLPN().getLocationBarcode()).isEqualTo("locationBarcode-2");

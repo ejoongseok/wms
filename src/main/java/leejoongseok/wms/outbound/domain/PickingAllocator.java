@@ -7,7 +7,6 @@ import java.util.List;
 
 @Component
 public class PickingAllocator {
-    private final PickingCreator pickingCreator = new PickingCreator();
     private final PickingAllocationValidator pickingAllocationValidator = new PickingAllocationValidator();
 
     /**
@@ -25,7 +24,7 @@ public class PickingAllocator {
                     locationLPNList,
                     outboundItem.getItemId());
 
-            final List<Picking> pickings = pickingCreator.createPickings(
+            final List<Picking> pickings = PickingCreator.createPickings(
                     outboundItem.getItemId(),
                     outboundItem.getOutboundQuantity(),
                     sortedLocationLPNList
