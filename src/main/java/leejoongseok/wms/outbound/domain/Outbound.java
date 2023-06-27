@@ -380,4 +380,31 @@ public class Outbound {
                             outboundStatus.getDescription()));
         }
     }
+
+    /**
+     * Picking에 할당된 집품 수량만큼 LocationLPN의 재고 수량을 감소시킨다.
+     */
+    public void deductAllocatedPickingInventoryQuantity() {
+        validateDeductAllocatedPickingInventoryQuantity();
+        final List<OutboundItem> pickingOutboundItems = outboundItems;
+//        for (final OutboundItem pickingOutboundItem : pickingOutboundItems) {
+//            final LocationLPN locationLPN = pickingOutboundItem.getLocationLPN();
+//            locationLPN.deductInventoryQuantity(pickingOutboundItem.getQuantity());
+//        }
+    }
+
+    private void validateDeductAllocatedPickingInventoryQuantity() {
+        final List<Picking> pickings = outboundItems.stream()
+                .map(outboundItem -> outboundItem.getPickings())
+                .flatMap(List::stream)
+                .toList();
+        final boolean isToteContainsItemPicked = pickings.stream()
+                .anyMatch(picking -> picking.hasPickedItem());
+        if (!isPickingProgress() && isToteContainsItemPicked) {
+            throw new IllegalStateException(
+                    ("Picking에 할당된 집품 수량만큼 LocationLPN의 재고 수량을 감소시키기 위해서는 " +
+                            "집품 진행 상태여야 하고 토트에 집품한 상품이 없어야합니다. 현재 상태: %s").formatted(
+                            outboundStatus.getDescription()));
+        }
+    }
 }
