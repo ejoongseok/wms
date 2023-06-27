@@ -1,5 +1,6 @@
 package leejoongseok.wms.outbound.feature;
 
+import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.inbound.domain.LPNRepository;
 import leejoongseok.wms.location.domain.LocationLPN;
@@ -30,7 +31,7 @@ public class AllocatePicking {
     }
 
     private Outbound getOutbound(final Request request) {
-        return outboundRepository.findById(request.outboundId)
+        return outboundRepository.findByIdAndFetchJoinOutboundItems(request.outboundId)
                 .orElseThrow(() -> new IllegalArgumentException("출고 정보가 존재하지 않습니다."));
     }
 
@@ -70,6 +71,8 @@ public class AllocatePicking {
         return lpnList;
     }
 
-    public record Request(Long outboundId) {
+    public record Request(
+            @NotNull(message = "출고 ID는 필수 입니다.")
+            Long outboundId) {
     }
 }
