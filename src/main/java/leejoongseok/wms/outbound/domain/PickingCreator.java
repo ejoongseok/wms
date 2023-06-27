@@ -17,11 +17,11 @@ public class PickingCreator {
      * 4. 재고수량이 출고수량보다 작은 LocationLPN이 출고수량을 충족하지 못하면, 다음 재고수량이 출고수량보다 큰 LocationLPN으로 이동.
      */
     public List<Picking> createPickings(
-            final Long outboundItemId,
+            final Long itemId,
             final Integer outboundQuantity,
             final List<LocationLPN> locationLPNList) {
         validate(
-                outboundItemId,
+                itemId,
                 outboundQuantity,
                 locationLPNList);
         final LocationLPN firstLocationLPN = locationLPNList.get(0);
