@@ -42,8 +42,8 @@ public class AssignPickingTote {
             @RequestBody @Valid final Request request) {
         final Outbound outbound = getOutbound(request.outboundId);
         final Location tote = getTote(request.toteBarcode);
+
         outbound.assignPickingTote(tote);
-        allocatePicking(outbound);
     }
 
     private Outbound getOutbound(final Long outboundId) {

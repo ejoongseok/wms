@@ -15,8 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AssignPickingToteTest extends ApiTest {
 
     @Autowired
-    private AssignPickingTote assignPickingTote;
-    @Autowired
     private OutboundRepository outboundRepository;
 
 
