@@ -3,6 +3,7 @@ package leejoongseok.wms.outbound.domain;
 import leejoongseok.wms.location.domain.LocationLPN;
 import org.springframework.util.Assert;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +55,11 @@ public class PickingCreator {
                 .filter(locationLPN -> !itemId.equals(locationLPN.getItemId()))
                 .anyMatch(locationLPN -> {
                     throw new IllegalArgumentException("상품이 다른 LPN에 존재합니다.");
+                });
+        locationLPNList.stream()
+                .filter(locationLPN -> !locationLPN.isFreshLPNBy(LocalDateTime.now()))
+                .anyMatch(locationLPN -> {
+                    throw new IllegalArgumentException("유통기한이 지난 LPN이 존재합니다.");
                 });
         //TODO 클래스가 분리되면서 중복된 검증을 여러번 하게 됐는데 과연 해야하는가? 고민.
         final int totalInventoryQuantity = locationLPNList.stream()
