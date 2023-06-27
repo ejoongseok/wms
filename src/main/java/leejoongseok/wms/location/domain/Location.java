@@ -151,7 +151,8 @@ public class Location {
     }
 
     public boolean hasLocationLPN() {
-        return !locationLPNList.isEmpty();
+        return !locationLPNList.isEmpty() && locationLPNList.stream().anyMatch(
+                locationLPN -> !locationLPN.isEmptyInventory());
     }
 
     public boolean isStow() {
