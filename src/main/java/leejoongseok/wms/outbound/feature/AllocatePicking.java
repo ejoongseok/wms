@@ -27,9 +27,11 @@ public class AllocatePicking {
     @Transactional
     public void request(final Request request) {
         final Outbound outbound = getOutbound(request);
+
         allocatePicking(outbound);
+        outbound.deductAllocatedInventory();
+
         outbound.startPickingProgress();
-        outbound.deductAllocatedPickingInventoryQuantity();
     }
 
     private Outbound getOutbound(final Request request) {

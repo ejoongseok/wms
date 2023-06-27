@@ -32,17 +32,19 @@ public class Picking {
     @JoinColumn(name = "location_lpn_id", nullable = false)
     @Comment("로케이션 LPN ID")
     private LocationLPN locationLPN;
-    @Column(name = "quantity_required_for_pick", nullable = false)
-    @Comment("집품해야할 수량")
-    private Integer quantityRequiredForPick = 0;
     @Getter
-    @Column(name = "picked_quantity", nullable = false)
-    @Comment("집품한 수량")
-    private final Integer pickedQuantity = 0;
     @Column(name = "status", nullable = false)
     @Comment("상태")
     @Enumerated(EnumType.STRING)
     private final PickingStatus status = PickingStatus.READY;
+    @Getter
+    @Column(name = "picked_quantity", nullable = false)
+    @Comment("집품한 수량")
+    private final Integer pickedQuantity = 0;
+    @Getter
+    @Column(name = "quantity_required_for_pick", nullable = false)
+    @Comment("집품해야할 수량")
+    private Integer quantityRequiredForPick = 0;
     @ManyToOne(fetch = FetchType.LAZY)
     @Comment("출고 상품")
     @JoinColumn(name = "outbound_item_id")
@@ -64,5 +66,14 @@ public class Picking {
 
     public boolean hasPickedItem() {
         return pickedQuantity > 0;
+    }
+
+    public void deductAllocatedInventory() {
+        if (status != PickingStatus.READY) {
+            throw new IllegalStateException(
+                    "집품에 할당된 LocationLPN의 재고를 차감하기위해서는 " +
+                            "집품을 시작하기 전이어야 합니다.");
+        }
+        locationLPN.deductInventory(quantityRequiredForPick);
     }
 }

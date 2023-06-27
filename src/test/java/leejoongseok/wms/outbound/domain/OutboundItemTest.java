@@ -2,10 +2,13 @@ package leejoongseok.wms.outbound.domain;
 
 import leejoongseok.wms.item.domain.Item;
 import leejoongseok.wms.item.domain.ItemSize;
+import leejoongseok.wms.location.domain.LocationLPN;
 import org.instancio.Instancio;
 import org.instancio.Select;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -170,4 +173,73 @@ class OutboundItemTest {
                 .hasMessageContaining(
                         "감소 수량은 0보다 커야합니다.");
     }
+
+    @Test
+    @DisplayName("출고 상품에 할당된 집품 목록만큼 LocationLPN의 재고를 차감한다.")
+    void deductAllocatedInventory() {
+        final int inventoryQuantity = 10;
+        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
+        final int quantityRequiredForPick = 5;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final OutboundItem outboundItem = createOutboundItem(List.of(picking));
+
+        outboundItem.deductAllocatedInventory();
+
+        assertThat(locationLPN.getInventoryQuantity()).isEqualTo(5);
+    }
+
+    private LocationLPN createLocationLPN(final int inventoryQuantity) {
+        return Instancio.of(LocationLPN.class)
+                .supply(Select.field(LocationLPN::getInventoryQuantity), () -> inventoryQuantity)
+                .create();
+    }
+
+    private Picking createPicking(
+            final int quantityRequiredForPick,
+            final LocationLPN locationLPN,
+            final PickingStatus pickingStatus) {
+        return Instancio.of(Picking.class)
+                .supply(Select.field(Picking::getQuantityRequiredForPick), () -> quantityRequiredForPick)
+                .supply(Select.field(Picking::getStatus), () -> pickingStatus)
+                .supply(Select.field(Picking::getLocationLPN), () -> locationLPN)
+                .create();
+    }
+
+    private OutboundItem createOutboundItem(final List<Picking> pickings) {
+        return Instancio.of(OutboundItem.class)
+                .supply(Select.field(OutboundItem::getPickings), () -> pickings)
+                .create();
+    }
+
+
+    @Test
+    @DisplayName("출고 상품에 할당된 집품 목록만큼 LocationLPN의 재고를 차감한다. - pickings가 비어있을 경우 예외가 발생한다.")
+    void deductAllocatedInventory_empty_pickings() {
+        final OutboundItem outboundItem = createOutboundItem(List.of());
+
+        assertThatThrownBy(() -> {
+            outboundItem.deductAllocatedInventory();
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("집품 목록이 비어있습니다.");
+
+    }
+
+    @Test
+    @DisplayName("출고 상품에 할당된 집품 목록만큼 LocationLPN의 재고를 차감한다. - 차감해야할 수량이 재고보다 많을 경우 예외가 발생한다.")
+    void deductAllocatedInventory_over_deduct() {
+        final int inventoryQuantity = 10;
+        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
+        final int quantityRequiredForPick = 50;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final OutboundItem outboundItem = createOutboundItem(List.of(picking));
+
+        assertThatThrownBy(() -> {
+            outboundItem.deductAllocatedInventory();
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("차감할 재고 수량이 재고 수량보다 많습니다. 재고 수량: 10, 차감할 재고 수량: 50");
+
+    }
+
 }

@@ -601,4 +601,81 @@ class OutboundTest {
         }).isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("집품 진행 상태가 되기 위해서는 집품 대기 상태여야 합니다. 현재 상태: 출고 대기");
     }
+
+    @Test
+    @DisplayName("집품에 할당된 출고 상품의 수량만큼 재고를 차감한다.")
+    void deductAllocatedInventory() {
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status);
+        final PackagingMaterial packagingMaterial = Instancio.create(PackagingMaterial.class);
+        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
+        final Location toteLocation = createToteLocation(
+                List.of(),
+                StorageType.TOTE);
+        outbound.assignPickingTote(toteLocation);
+        outbound.startPickingReady();
+        final int inventoryQuantity = 10;
+        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
+        final int quantityRequiredForPick = 5;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final OutboundItem outboundItem = createOutboundItem(List.of(picking));
+        outbound.addOutboundItem(outboundItem);
+
+        outbound.deductAllocatedInventory();
+
+        assertThat(locationLPN.getInventoryQuantity()).isEqualTo(inventoryQuantity - quantityRequiredForPick);
+    }
+
+    private LocationLPN createLocationLPN(final int inventoryQuantity) {
+        return Instancio.of(LocationLPN.class)
+                .supply(Select.field(LocationLPN::getInventoryQuantity), () -> inventoryQuantity)
+                .create();
+    }
+
+    private Picking createPicking(
+            final int quantityRequiredForPick,
+            final LocationLPN locationLPN,
+            final PickingStatus pickingStatus) {
+        return Instancio.of(Picking.class)
+                .supply(Select.field(Picking::getQuantityRequiredForPick), () -> quantityRequiredForPick)
+                .supply(Select.field(Picking::getStatus), () -> pickingStatus)
+                .supply(Select.field(Picking::getLocationLPN), () -> locationLPN)
+                .create();
+    }
+
+    private OutboundItem createOutboundItem(final List<Picking> pickings) {
+        return Instancio.of(OutboundItem.class)
+                .supply(Select.field(OutboundItem::getPickings), () -> pickings)
+                .create();
+    }
+
+    @Test
+    @DisplayName("집품에 할당된 출고 상품의 수량만큼 재고를 차감한다. - 집품의 상태가 집품 대기가 아님")
+    void deductAllocatedInventory_invalidStatus() {
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status);
+        final PackagingMaterial packagingMaterial = Instancio.create(PackagingMaterial.class);
+        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
+        final Location toteLocation = createToteLocation(
+                List.of(),
+                StorageType.TOTE);
+        outbound.assignPickingTote(toteLocation);
+        outbound.startPickingReady();
+        final int inventoryQuantity = 10;
+        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
+        final int quantityRequiredForPick = 5;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final OutboundItem outboundItem = createOutboundItem(List.of(picking));
+        outbound.addOutboundItem(outboundItem);
+        outbound.startPickingProgress();
+
+        assertThatThrownBy(() -> {
+            outbound.deductAllocatedInventory();
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Picking에 할당된 집품 수량만큼 LocationLPN의 재고 수량을 감소시키기 위해서는" +
+                        " 집품 대기 상태여야 하고 토트에 집품한 상품이 없어야합니다. 현재 상태: 피킹 중");
+    }
+
 }
