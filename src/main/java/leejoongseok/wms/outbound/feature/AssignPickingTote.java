@@ -44,6 +44,7 @@ public class AssignPickingTote {
         final Location tote = getTote(request.toteBarcode);
 
         outbound.assignPickingTote(tote);
+        outbound.startPickingReady();
     }
 
     private Outbound getOutbound(final Long outboundId) {

@@ -40,7 +40,7 @@ public class Outbound {
     @Enumerated(EnumType.STRING)
     @Column(name = "outbound_status", nullable = false)
     @Comment("출고 상태")
-    private final OutboundStatus outboundStatus = OutboundStatus.READY;
+    private OutboundStatus outboundStatus = OutboundStatus.READY;
     @Column(name = "order_id", nullable = false)
     @Comment("주문 ID")
     private Long orderId;
@@ -180,7 +180,7 @@ public class Outbound {
      */
     private void validateSplit(
             final List<SplittableOutboundItem> splittableOutboundItems) {
-        if (outboundStatus != OutboundStatus.READY) {
+        if (OutboundStatus.READY != outboundStatus) {
             throw new IllegalStateException(
                     "출고는 대기 상태에서만 분할 할 수 있습니다.");
         }
@@ -307,7 +307,7 @@ public class Outbound {
     }
 
     public boolean isReadyStatus() {
-        return outboundStatus == OutboundStatus.READY;
+        return OutboundStatus.READY == outboundStatus;
     }
 
     public boolean hasAssignedTote() {
@@ -345,10 +345,26 @@ public class Outbound {
     }
 
     public boolean isPickingProgress() {
-        return outboundStatus == OutboundStatus.PICKING;
+        return OutboundStatus.PICKING == outboundStatus;
     }
 
     public boolean isPickingReadyStatus() {
-        return hasAssignedTote() && outboundStatus == OutboundStatus.PICKING_READY;
+        return hasAssignedTote() && OutboundStatus.PICKING_READY == outboundStatus;
+    }
+
+    public void startPickingReady() {
+        validateStartPickingReady();
+        outboundStatus = OutboundStatus.PICKING_READY;
+    }
+
+    private void validateStartPickingReady() {
+        if (!isReadyStatus()) {
+            throw new IllegalStateException(
+                    "집품대기 상태가 되기 위해서는 출고 준비 상태여야 합니다. 현재 상태: %s".formatted(
+                            outboundStatus.getDescription()));
+        }
+        if (!hasAssignedTote()) {
+            throw new IllegalStateException("집품 대기 상태가 되기 위해서는 할당된 토트가 필요합니다.");
+        }
     }
 }

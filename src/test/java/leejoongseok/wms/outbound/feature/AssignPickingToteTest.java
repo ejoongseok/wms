@@ -42,5 +42,6 @@ class AssignPickingToteTest extends ApiTest {
 
         final Outbound outbound = outboundRepository.findById(1L).get();
         assertThat(outbound.hasAssignedTote()).isTrue();
+        assertThat(outbound.isPickingReadyStatus()).isTrue();
     }
 }
