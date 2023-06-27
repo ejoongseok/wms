@@ -24,7 +24,7 @@ class PickingCreatorTest {
     }
 
     @Test
-    @DisplayName("재고가 집품해야할 수량보다 충분하면 출고 주문을 집품한다.")
+    @DisplayName("재고가 집품해야할 수량보다 충분하면 출고상품의 집품목록을 생성한다.")
     void createPickings() {
         final long itemId = 1L;
         final List<LocationLPN> locationLPNList = List.of(
