@@ -571,4 +571,34 @@ class OutboundTest {
     }
 
 
+    @Test
+    @DisplayName("집품의 상태를 집품 중으로 변경한다." +
+            "집품중 상태가 되기 위해서는 출고의 상태가 집품 대기여야 하고 토트가 할당되어 있어야 한다.")
+    void startPickingProgress() {
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status);
+        final PackagingMaterial packagingMaterial = Instancio.create(PackagingMaterial.class);
+        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
+        final Location toteLocation = createToteLocation(
+                List.of(),
+                StorageType.TOTE);
+        outbound.assignPickingTote(toteLocation);
+        outbound.startPickingReady();
+
+        outbound.startPickingProgress();
+
+        assertThat(outbound.isPickingProgress()).isTrue();
+    }
+
+    @Test
+    @DisplayName("집품의 상태를 집품 중으로 변경한다. - 출고의 상태가 집품 대기가 아닌 경우 IllegalStateException이 발생한다.")
+    void startPickingProgress_invalid_status() {
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status);
+
+        assertThatThrownBy(() -> {
+            outbound.startPickingProgress();
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("집품 진행 상태가 되기 위해서는 집품 대기 상태여야 합니다. 현재 상태: 출고 대기");
+    }
 }

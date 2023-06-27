@@ -367,4 +367,17 @@ public class Outbound {
             throw new IllegalStateException("집품 대기 상태가 되기 위해서는 할당된 토트가 필요합니다.");
         }
     }
+
+    public void startPickingProgress() {
+        validateStartPicking();
+        outboundStatus = OutboundStatus.PICKING;
+    }
+
+    private void validateStartPicking() {
+        if (!isPickingReadyStatus()) {
+            throw new IllegalStateException(
+                    "집품 진행 상태가 되기 위해서는 집품 대기 상태여야 합니다. 현재 상태: %s".formatted(
+                            outboundStatus.getDescription()));
+        }
+    }
 }
