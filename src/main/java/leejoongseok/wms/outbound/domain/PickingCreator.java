@@ -60,7 +60,12 @@ public class PickingCreator {
                 .mapToInt(locationLPN -> locationLPN.getInventoryQuantity())
                 .sum();
         if (totalInventoryQuantity < outboundQuantity) {
-            throw new IllegalStateException("집품해야할 수량이 재고수량보다 많습니다.");
+            throw new IllegalStateException(
+                    "집품해야할 수량이 재고수량보다 많습니다. " +
+                            "상품ID: %d, 재고수량: %d, 집품해야할 수량: %d".formatted(
+                                    itemId,
+                                    totalInventoryQuantity,
+                                    outboundQuantity));
         }
     }
 
