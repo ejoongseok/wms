@@ -10,8 +10,10 @@ import java.util.List;
 /**
  * 출고하려는 주문이 집품 가능한지 확인.
  */
-public class PickingAllocationValidator {
-    public void validate(
+public enum PickingAllocationValidator {
+    ;
+
+    public static void validate(
             final Outbound outbound,
             final List<LocationLPN> locationLPNList) {
         Assert.notNull(outbound, "검증할 출고가 존재하지 않습니다.");
@@ -39,7 +41,7 @@ public class PickingAllocationValidator {
         }
     }
 
-    private long calculateAvailableInventoryQuantity(
+    private static long calculateAvailableInventoryQuantity(
             final List<LocationLPN> locationLPNList,
             final Long itemId) {
         return locationLPNList.stream()
@@ -50,7 +52,7 @@ public class PickingAllocationValidator {
                 .sum();
     }
 
-    private boolean isEnoughInventoryQuantity(
+    private static boolean isEnoughInventoryQuantity(
             final Integer outboundQuantity,
             final Long availableInventoryQuantity) {
         return outboundQuantity <= availableInventoryQuantity;

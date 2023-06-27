@@ -7,7 +7,6 @@ import java.util.List;
 
 @Component
 public class PickingAllocator {
-    private final PickingAllocationValidator pickingAllocationValidator = new PickingAllocationValidator();
 
     /**
      * 집품을 할당한다.
@@ -15,7 +14,7 @@ public class PickingAllocator {
     public void allocate(
             final Outbound outbound,
             final List<LocationLPN> locationLPNList) {
-        pickingAllocationValidator.validate(
+        PickingAllocationValidator.validate(
                 outbound,
                 locationLPNList);
 

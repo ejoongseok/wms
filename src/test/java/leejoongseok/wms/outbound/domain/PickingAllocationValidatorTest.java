@@ -9,7 +9,6 @@ import leejoongseok.wms.location.domain.UsagePurpose;
 import leejoongseok.wms.outbound.exception.NotEnoughInventoryException;
 import org.instancio.Instancio;
 import org.instancio.Select;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,13 +18,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PickingAllocationValidatorTest {
-
-    private PickingAllocationValidator pickingAllocationValidator;
-
-    @BeforeEach
-    void setUp() {
-        pickingAllocationValidator = new PickingAllocationValidator();
-    }
 
     @Test
     @DisplayName("출고하려는 주문이 집품 가능한지 확인.")
@@ -43,7 +35,7 @@ class PickingAllocationValidatorTest {
                 itemId,
                 outboundQuantity);
 
-        pickingAllocationValidator.validate(
+        PickingAllocationValidator.validate(
                 createPickingReadyStatusOutbound(outboundItem),
                 List.of(locationLPN));
     }
@@ -143,7 +135,7 @@ class PickingAllocationValidatorTest {
                 outboundQuantity);
 
         assertThatThrownBy(() -> {
-            pickingAllocationValidator.validate(
+            PickingAllocationValidator.validate(
                     createPickingReadyStatusOutbound(outboundItem),
                     List.of(locationLPN));
         }).isInstanceOf(NotEnoughInventoryException.class)
@@ -167,7 +159,7 @@ class PickingAllocationValidatorTest {
                 outboundQuantity);
 
         assertThatThrownBy(() -> {
-            pickingAllocationValidator.validate(
+            PickingAllocationValidator.validate(
                     createPickingReadyStatusOutbound(outboundItem),
                     List.of(locationLPN));
         }).isInstanceOf(NotEnoughInventoryException.class)
