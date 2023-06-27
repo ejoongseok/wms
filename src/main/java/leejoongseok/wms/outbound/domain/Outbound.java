@@ -405,4 +405,10 @@ public class Outbound {
                             outboundStatus.getDescription()));
         }
     }
+
+    public List<Long> getItemIds() {
+        return outboundItems.stream()
+                .map(OutboundItem::getItemId)
+                .toList();
+    }
 }

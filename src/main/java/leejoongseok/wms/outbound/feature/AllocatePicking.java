@@ -1,5 +1,6 @@
 package leejoongseok.wms.outbound.feature;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.inbound.domain.LPNRepository;
@@ -7,16 +8,17 @@ import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.LocationLPNRepository;
 import leejoongseok.wms.location.exception.LocationLPNNotFoundException;
 import leejoongseok.wms.outbound.domain.Outbound;
-import leejoongseok.wms.outbound.domain.OutboundItem;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
 import leejoongseok.wms.outbound.exception.LPNItemIdNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Component
+@RestController
 @RequiredArgsConstructor
 public class AllocatePicking {
     private final OutboundRepository outboundRepository;
@@ -24,8 +26,9 @@ public class AllocatePicking {
     private final LPNRepository lpnRepository;
     private final LocationLPNRepository locationLPNRepository;
 
+    @PostMapping("/outbounds/allocate-picking")
     @Transactional
-    public void request(final Request request) {
+    public void request(@RequestBody @Valid final Request request) {
         final Outbound outbound = getOutbound(request);
 
         allocatePicking(outbound);
@@ -40,11 +43,8 @@ public class AllocatePicking {
     }
 
     private void allocatePicking(final Outbound outbound) {
-        final List<OutboundItem> outboundItems = outbound.getOutboundItems();
-        final List<Long> itemIds = outboundItems.stream()
-                .map(OutboundItem::getItemId)
-                .toList();
-        final List<LocationLPN> locationLPNList = getLocationLPNList(itemIds);
+        final List<LocationLPN> locationLPNList = getLocationLPNList(
+                outbound.getItemIds());
         pickingAllocator.allocate(outbound, locationLPNList);
     }
 
