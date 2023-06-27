@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum OutboundStatus {
     READY("출고 대기"),
+    PICKING_READY("피킹 대기(토트만 할당된 상태)"),
     PICKING("피킹 중"),
     PICKED("피킹 완료"),
     COMPLETE("출고 완료"),

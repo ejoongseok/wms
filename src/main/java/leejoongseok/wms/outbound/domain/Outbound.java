@@ -347,4 +347,8 @@ public class Outbound {
     public boolean isPickingProgress() {
         return outboundStatus == OutboundStatus.PICKING;
     }
+
+    public boolean isPickingReadyStatus() {
+        return hasAssignedTote() && outboundStatus == OutboundStatus.PICKING_READY;
+    }
 }
