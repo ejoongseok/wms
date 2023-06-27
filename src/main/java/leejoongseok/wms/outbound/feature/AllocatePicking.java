@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 출고에 상품에 대한 집품 목록을 할당하는 기능을 담당하는 클래스
+ */
 @RestController
 @RequiredArgsConstructor
 public class AllocatePicking {
@@ -26,6 +29,11 @@ public class AllocatePicking {
     private final LPNRepository lpnRepository;
     private final LocationLPNRepository locationLPNRepository;
 
+    /**
+     * 집품 목록을 출고상품에 할당하고
+     * 출고상품의 수량만큼 LocationLPN의 재고를 감소.
+     * 출고의 진행상태를 집품준비로 변경
+     */
     @PostMapping("/outbounds/allocate-picking")
     @Transactional
     public void request(@RequestBody @Valid final Request request) {

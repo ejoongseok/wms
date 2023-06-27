@@ -13,6 +13,9 @@ import java.util.List;
 public enum PickingAllocationValidator {
     ;
 
+    /**
+     * 출고가 집품 대기상태인지, 집품할 상품의 재고가 충분한지 검증한다.
+     */
     public static void validate(
             final Outbound outbound,
             final List<LocationLPN> locationLPNList) {

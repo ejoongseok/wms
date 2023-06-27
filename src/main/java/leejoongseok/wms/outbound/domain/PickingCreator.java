@@ -12,10 +12,12 @@ public enum PickingCreator {
 
     /**
      * 출고할 주문 상품의 집품목록을 생성.
-     * 1. 재고수량이 출고수량보다 크거나 같으면, 하나의 Picking만 생성.
-     * 2. 재고수량이 출고수량보다 작으면, 재고수량이 출고수량보다 작은 LocationLPN부터 순서대로 Picking을 생성.
-     * 3. 재고수량이 출고수량보다 작은 LocationLPN이 출고수량을 충족하면, Picking 생성을 중단.
-     * 4. 재고수량이 출고수량보다 작은 LocationLPN이 출고수량을 충족하지 못하면, 다음 재고수량이 출고수량보다 큰 LocationLPN으로 이동.
+     * 1.재고수량이 출고수량보다 크거나 같으면, 하나의 Picking만 생성.
+     * <p>
+     * 2-1.LocationLPN이 출고수량을 충족하면, Picking 생성 후 다음 Picking 생성을 중단.
+     * 2-2.LocationLPN이 출고수량을 충족하지 못하면, Picking 생성 후 다음 LocationLPN으로 이동 (2-1).
+     * <p>
+     * 재고수량이 출고수량보다 작으면 예외발생
      */
     public static List<Picking> createPickings(
             final Long itemId,
@@ -62,7 +64,6 @@ public enum PickingCreator {
                 .anyMatch(locationLPN -> {
                     throw new IllegalArgumentException("유통기한이 지난 LPN이 존재합니다.");
                 });
-        //TODO 클래스가 분리되면서 중복된 검증을 여러번 하게 됐는데 과연 해야하는가? 고민.
         final int totalInventoryQuantity = locationLPNList.stream()
                 .mapToInt(locationLPN -> locationLPN.getInventoryQuantity())
                 .sum();
