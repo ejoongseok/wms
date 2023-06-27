@@ -185,4 +185,31 @@ class LocationLPNTest {
 
         assertThat(isPickingAllocatable).isFalse();
     }
+
+    @Test
+    @DisplayName("집품에 필요한 수량만큼 재고를 차감한다.")
+    void deductInventory() {
+        final LocationLPN locationLPN = Instancio.of(LocationLPN.class)
+                .supply(Select.field(LocationLPN::getInventoryQuantity), () -> 10)
+                .create();
+        final int quantityRequiredForPick = 5;
+
+        locationLPN.deductInventory(quantityRequiredForPick);
+
+        assertThat(locationLPN.getInventoryQuantity()).isEqualTo(5);
+    }
+
+    @Test
+    @DisplayName("집품에 필요한 수량만큼 재고를 차감한다. - 차감할 수량이 재고 수량보다 많음")
+    void deductInventory_over_pick_quantity() {
+        final LocationLPN locationLPN = Instancio.of(LocationLPN.class)
+                .supply(Select.field(LocationLPN::getInventoryQuantity), () -> 10)
+                .create();
+        final int quantityRequiredForPick = 50;
+
+        assertThatThrownBy(() -> {
+            locationLPN.deductInventory(quantityRequiredForPick);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("차감할 재고 수량이 재고 수량보다 많습니다. 재고 수량: 10, 차감할 재고 수량: 50");
+    }
 }
