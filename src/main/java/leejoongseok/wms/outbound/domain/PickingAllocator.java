@@ -1,11 +1,9 @@
 package leejoongseok.wms.outbound.domain;
 
 import leejoongseok.wms.location.domain.LocationLPN;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
 public enum PickingAllocator {
     ;
 
