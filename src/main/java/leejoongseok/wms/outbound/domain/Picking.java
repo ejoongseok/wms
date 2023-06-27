@@ -55,4 +55,9 @@ public class Picking {
         this.locationLPN = locationLPN;
         this.quantityRequiredForPick = quantityRequiredForPick;
     }
+
+    public void assignOutboundItem(final OutboundItem outboundItem) {
+        Assert.notNull(outboundItem, "출고 상품은 필수입니다.");
+        this.outboundItem = outboundItem;
+    }
 }
