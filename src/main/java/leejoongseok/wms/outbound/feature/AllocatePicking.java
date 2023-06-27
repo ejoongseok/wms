@@ -23,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AllocatePicking {
     private final OutboundRepository outboundRepository;
-    private final PickingAllocator pickingAllocator;
     private final LPNRepository lpnRepository;
     private final LocationLPNRepository locationLPNRepository;
 
@@ -46,7 +45,7 @@ public class AllocatePicking {
     private void allocatePicking(final Outbound outbound) {
         final List<LocationLPN> locationLPNList = getLocationLPNList(
                 outbound.getItemIds());
-        pickingAllocator.allocate(outbound, locationLPNList);
+        PickingAllocator.allocate(outbound, locationLPNList);
     }
 
     private List<LocationLPN> getLocationLPNList(final List<Long> itemIds) {

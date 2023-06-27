@@ -6,12 +6,13 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class PickingAllocator {
+public enum PickingAllocator {
+    ;
 
     /**
      * 집품을 할당한다.
      */
-    public void allocate(
+    public static void allocate(
             final Outbound outbound,
             final List<LocationLPN> locationLPNList) {
         PickingAllocationValidator.validate(
@@ -37,7 +38,7 @@ public class PickingAllocator {
     /**
      * 상품ID에 해당하는 LocationLPN을 집품하기에 효율적으로 정렬후 반환한다.
      */
-    private List<LocationLPN> filterByItemIdAndSortLocationLPNList(
+    private static List<LocationLPN> filterByItemIdAndSortLocationLPNList(
             final List<LocationLPN> locationLPNList,
             final Long itemId) {
         final List<LocationLPN> locationLPNS = locationLPNList.stream()

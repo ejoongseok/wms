@@ -12,7 +12,6 @@ import leejoongseok.wms.outbound.domain.PickingAllocator;
 import leejoongseok.wms.outbound.exception.NotEnoughInventoryException;
 import org.instancio.Instancio;
 import org.instancio.Select;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,13 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PickingAllocatorTest {
-
-    private PickingAllocator pickingAllocator;
-
-    @BeforeEach
-    void setUp() {
-        pickingAllocator = new PickingAllocator();
-    }
 
     @Test
     @DisplayName("출고에 집품목록을 할당한다.")
@@ -51,7 +43,7 @@ class PickingAllocatorTest {
                 createLocationLPN(3L, 5L, "locationBarcode-5", 2, expirationAt)
         );
 
-        pickingAllocator.allocate(outbound, locationLPNList);
+        PickingAllocator.allocate(outbound, locationLPNList);
 
         /**
          * 아래와 같은 순서로 집품에 LocationLPN이 할당된다.
@@ -124,7 +116,7 @@ class PickingAllocatorTest {
         );
 
         assertThatThrownBy(() -> {
-            pickingAllocator.allocate(outbound, locationLPNList);
+            PickingAllocator.allocate(outbound, locationLPNList);
         }).isInstanceOf(NotEnoughInventoryException.class)
                 .hasMessageContaining("집품할 상품의 재고가 부족합니다.상품ID: 1, 재고수량: 2, 필요한 수량: 3");
     }
@@ -144,7 +136,7 @@ class PickingAllocatorTest {
         );
 
         assertThatThrownBy(() -> {
-            pickingAllocator.allocate(outbound, locationLPNList);
+            PickingAllocator.allocate(outbound, locationLPNList);
         }).isInstanceOf(NotEnoughInventoryException.class)
                 .hasMessageContaining("집품할 상품의 재고가 부족합니다.상품ID: 1, 재고수량: 2, 필요한 수량: 3");
     }
