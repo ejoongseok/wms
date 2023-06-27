@@ -35,6 +35,7 @@ public class Picking {
     @Column(name = "quantity_required_for_pick", nullable = false)
     @Comment("집품해야할 수량")
     private Integer quantityRequiredForPick = 0;
+    @Getter
     @Column(name = "picked_quantity", nullable = false)
     @Comment("집품한 수량")
     private final Integer pickedQuantity = 0;
@@ -59,5 +60,9 @@ public class Picking {
     public void assignOutboundItem(final OutboundItem outboundItem) {
         Assert.notNull(outboundItem, "출고 상품은 필수입니다.");
         this.outboundItem = outboundItem;
+    }
+
+    public boolean hasPickedItem() {
+        return pickedQuantity > 0;
     }
 }
