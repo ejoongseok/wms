@@ -8,6 +8,7 @@ import leejoongseok.wms.location.domain.UsagePurpose;
 import leejoongseok.wms.outbound.domain.Outbound;
 import leejoongseok.wms.outbound.domain.OutboundItem;
 import leejoongseok.wms.outbound.domain.OutboundStatus;
+import leejoongseok.wms.outbound.domain.PickingAllocator;
 import leejoongseok.wms.outbound.exception.NotEnoughInventoryException;
 import org.instancio.Instancio;
 import org.instancio.Select;

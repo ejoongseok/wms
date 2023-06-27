@@ -1,12 +1,6 @@
-package leejoongseok.wms.outbound.feature;
+package leejoongseok.wms.outbound.domain;
 
 import leejoongseok.wms.location.domain.LocationLPN;
-import leejoongseok.wms.outbound.domain.EfficiencyLocationLPNSorter;
-import leejoongseok.wms.outbound.domain.Outbound;
-import leejoongseok.wms.outbound.domain.OutboundItem;
-import leejoongseok.wms.outbound.domain.Picking;
-import leejoongseok.wms.outbound.domain.PickingAllocationValidator;
-import leejoongseok.wms.outbound.domain.PickingCreator;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

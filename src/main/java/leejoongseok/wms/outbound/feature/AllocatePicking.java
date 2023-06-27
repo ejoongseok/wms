@@ -9,6 +9,7 @@ import leejoongseok.wms.location.domain.LocationLPNRepository;
 import leejoongseok.wms.location.exception.LocationLPNNotFoundException;
 import leejoongseok.wms.outbound.domain.Outbound;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
+import leejoongseok.wms.outbound.domain.PickingAllocator;
 import leejoongseok.wms.outbound.exception.LPNItemIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
