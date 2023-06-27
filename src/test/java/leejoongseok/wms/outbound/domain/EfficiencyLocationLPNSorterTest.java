@@ -5,7 +5,6 @@ import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationLPN;
 import org.instancio.Instancio;
 import org.instancio.Select;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,13 +14,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class EfficiencyLocationLPNSorterTest {
-
-    private EfficiencyLocationLPNSorter efficiencyLocationLPNSorter;
-
-    @BeforeEach
-    void setUp() {
-        efficiencyLocationLPNSorter = new EfficiencyLocationLPNSorter();
-    }
 
     @Test
     @DisplayName("효율적인 위치별 Lpn을 정렬한다." +
@@ -38,7 +30,7 @@ class EfficiencyLocationLPNSorterTest {
                 createLocationLPN(5L, "B0001", 1, today.plusDays(3))
         );
 
-        final List<LocationLPN> sortedLocationLPNList = efficiencyLocationLPNSorter.sort(locationLPNList);
+        final List<LocationLPN> sortedLocationLPNList = EfficiencyLocationLPNSorter.sort(locationLPNList);
         assertThat(sortedLocationLPNList.get(0).getLocationBarcode()).isEqualTo("C0001");
         assertThat(sortedLocationLPNList.get(1).getLocationBarcode()).isEqualTo("D0001");
         assertThat(sortedLocationLPNList.get(2).getLocationBarcode()).isEqualTo("B0001");

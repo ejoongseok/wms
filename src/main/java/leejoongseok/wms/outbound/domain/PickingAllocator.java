@@ -7,7 +7,6 @@ import java.util.List;
 
 @Component
 public class PickingAllocator {
-    private final EfficiencyLocationLPNSorter efficiencyLocationLPNSorter = new EfficiencyLocationLPNSorter();
     private final PickingCreator pickingCreator = new PickingCreator();
     private final PickingAllocationValidator pickingAllocationValidator = new PickingAllocationValidator();
 
@@ -46,7 +45,7 @@ public class PickingAllocator {
         final List<LocationLPN> locationLPNS = locationLPNList.stream()
                 .filter(locationLPN -> locationLPN.getItemId().equals(itemId))
                 .toList();
-        return efficiencyLocationLPNSorter.sort(
+        return EfficiencyLocationLPNSorter.sort(
                 locationLPNS);
     }
 
