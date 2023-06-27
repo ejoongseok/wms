@@ -155,4 +155,12 @@ public class OutboundItem {
         picking.assignOutboundItem(this);
         pickings.add(picking);
     }
+
+    public void deductAllocatedInventory() {
+        Assert.notEmpty(pickings, "집품 목록이 비어있습니다.");
+        for (final Picking picking : pickings) {
+            picking.deductAllocatedInventory();
+        }
+    }
+
 }

@@ -367,4 +367,48 @@ public class Outbound {
             throw new IllegalStateException("집품 대기 상태가 되기 위해서는 할당된 토트가 필요합니다.");
         }
     }
+
+    public void startPickingProgress() {
+        validateStartPicking();
+        outboundStatus = OutboundStatus.PICKING;
+    }
+
+    private void validateStartPicking() {
+        if (!isPickingReadyStatus()) {
+            throw new IllegalStateException(
+                    "집품 진행 상태가 되기 위해서는 집품 대기 상태여야 합니다. 현재 상태: %s".formatted(
+                            outboundStatus.getDescription()));
+        }
+    }
+
+    /**
+     * Picking에 할당된 집품 수량만큼 LocationLPN의 재고 수량을 감소시킨다.
+     */
+    public void deductAllocatedInventory() {
+        validateDeductAllocatedInventory();
+        for (final OutboundItem outboundItem : outboundItems) {
+            outboundItem.deductAllocatedInventory();
+        }
+    }
+
+    private void validateDeductAllocatedInventory() {
+        final List<Picking> pickings = outboundItems.stream()
+                .map(outboundItem -> outboundItem.getPickings())
+                .flatMap(List::stream)
+                .toList();
+        final boolean isToteContainsItemPicked = pickings.stream()
+                .anyMatch(picking -> picking.hasPickedItem());
+        if (!isPickingReadyStatus() && isToteContainsItemPicked) {
+            throw new IllegalStateException(
+                    ("Picking에 할당된 집품 수량만큼 LocationLPN의 재고 수량을 감소시키기 위해서는 " +
+                            "집품 대기 상태여야 하고 토트에 집품한 상품이 없어야합니다. 현재 상태: %s").formatted(
+                            outboundStatus.getDescription()));
+        }
+    }
+
+    public List<Long> getItemIds() {
+        return outboundItems.stream()
+                .map(OutboundItem::getItemId)
+                .toList();
+    }
 }

@@ -23,12 +23,11 @@ public class PickingAllocator {
     public void allocate(
             final Outbound outbound,
             final List<LocationLPN> locationLPNList) {
-        final List<OutboundItem> outboundItems = outbound.getOutboundItems();
         pickingAllocationValidator.validate(
-                outboundItems,
+                outbound,
                 locationLPNList);
 
-        for (final OutboundItem outboundItem : outboundItems) {
+        for (final OutboundItem outboundItem : outbound.getOutboundItems()) {
             final List<LocationLPN> sortedLocationLPNList = filterByItemIdAndSortLocationLPNList(
                     locationLPNList,
                     outboundItem.getItemId());

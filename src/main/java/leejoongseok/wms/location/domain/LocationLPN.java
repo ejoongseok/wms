@@ -118,4 +118,21 @@ public class LocationLPN {
     public String getLocationBarcode() {
         return location.getLocationBarcode();
     }
+
+    public void deductInventory(final Integer quantityRequiredForPick) {
+        Assert.notNull(quantityRequiredForPick, "차감할 재고 수량은 필수입니다.");
+        if (0 >= quantityRequiredForPick) {
+            throw new IllegalArgumentException("차감할 재고 수량은 1이상이어야 합니다.");
+        }
+        if (inventoryQuantity < quantityRequiredForPick) {
+            throw new IllegalArgumentException(
+                    "차감할 재고 수량이 재고 수량보다 많습니다. 재고 수량: %d, 차감할 재고 수량: %d"
+                            .formatted(
+                                    inventoryQuantity,
+                                    quantityRequiredForPick
+                            ));
+        }
+
+        inventoryQuantity -= quantityRequiredForPick;
+    }
 }

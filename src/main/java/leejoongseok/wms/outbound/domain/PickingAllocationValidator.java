@@ -12,8 +12,14 @@ import java.util.List;
  */
 public class PickingAllocationValidator {
     public void validate(
-            final List<OutboundItem> outboundItems,
+            final Outbound outbound,
             final List<LocationLPN> locationLPNList) {
+        Assert.notNull(outbound, "검증할 출고가 존재하지 않습니다.");
+        if (!outbound.isPickingReadyStatus()) {
+            throw new IllegalStateException("집품 대기 상태에서만 집품을 할당할 수 있습니다." +
+                    "출고 상태: %s".formatted(outbound.getOutboundStatus()));
+        }
+        final List<OutboundItem> outboundItems = outbound.getOutboundItems();
         Assert.notEmpty(outboundItems, "검증할 출고 상품이 존재하지 않습니다.");
         Assert.notEmpty(locationLPNList, "검증할 LocationLPN이 존재하지 않습니다.");
         for (final OutboundItem outboundItem : outboundItems) {
