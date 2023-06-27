@@ -106,7 +106,7 @@ public class LocationLPN {
     }
 
     public boolean isPickingAllocatable(final LocalDateTime thisDateTime) {
-        return lpn.getExpirationAt().isAfter(thisDateTime) &&
+        return isFreshLPNBy(thisDateTime) &&
                 location.isStow()
                 && 0L < inventoryQuantity;
     }
