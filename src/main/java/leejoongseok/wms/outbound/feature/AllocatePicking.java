@@ -28,6 +28,7 @@ public class AllocatePicking {
     public void request(final Request request) {
         final Outbound outbound = getOutbound(request);
         allocatePicking(outbound);
+        outbound.startPickingProgress();
     }
 
     private Outbound getOutbound(final Request request) {
