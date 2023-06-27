@@ -4,6 +4,7 @@ import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.item.domain.Item;
 import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationLPN;
+import leejoongseok.wms.location.domain.StorageType;
 import leejoongseok.wms.location.domain.UsagePurpose;
 import leejoongseok.wms.outbound.exception.NotEnoughInventoryException;
 import org.instancio.Instancio;
@@ -43,8 +44,42 @@ class PickingAllocationValidatorTest {
                 outboundQuantity);
 
         pickingAllocationValidator.validate(
-                List.of(outboundItem),
+                createPickingReadyStatusOutbound(outboundItem),
                 List.of(locationLPN));
+    }
+
+    private Outbound createPickingReadyStatusOutbound(final OutboundItem outboundItem) {
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status);
+        final PackagingMaterial packagingMaterial = Instancio.create(PackagingMaterial.class);
+        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
+        final Location toteLocation = createToteLocation(
+                List.of(),
+                StorageType.TOTE);
+        outbound.assignPickingTote(toteLocation);
+        outbound.startPickingReady();
+        outbound.addOutboundItem(outboundItem);
+        return outbound;
+    }
+
+    private Outbound createOutbound(final OutboundStatus status) {
+        return Instancio.of(Outbound.class)
+                .supply(Select.field(Outbound::getOutboundStatus), () -> status)
+                .supply(Select.field(Outbound::getCushioningMaterial), () -> CushioningMaterial.NONE)
+                .supply(Select.field(Outbound::getCushioningMaterialQuantity), () -> 0)
+                .ignore(Select.field(Outbound::getOutboundItems))
+                .ignore(Select.field(Outbound::getToteLocation))
+                .ignore(Select.field(Outbound::getRecommendedPackagingMaterial))
+                .create();
+    }
+
+    private Location createToteLocation(
+            final List<LocationLPN> locationLPNList,
+            final StorageType storageType) {
+        return Instancio.of(Location.class)
+                .supply(Select.field(Location::getStorageType), () -> storageType)
+                .supply(Select.field(Location::getLocationLPNList), () -> locationLPNList)
+                .create();
     }
 
     private LocationLPN createLocationLPN(
@@ -109,7 +144,7 @@ class PickingAllocationValidatorTest {
 
         assertThatThrownBy(() -> {
             pickingAllocationValidator.validate(
-                    List.of(outboundItem),
+                    createPickingReadyStatusOutbound(outboundItem),
                     List.of(locationLPN));
         }).isInstanceOf(NotEnoughInventoryException.class)
                 .hasMessageContaining("집품할 상품의 재고가 부족합니다.");
@@ -133,7 +168,7 @@ class PickingAllocationValidatorTest {
 
         assertThatThrownBy(() -> {
             pickingAllocationValidator.validate(
-                    List.of(outboundItem),
+                    createPickingReadyStatusOutbound(outboundItem),
                     List.of(locationLPN));
         }).isInstanceOf(NotEnoughInventoryException.class)
                 .hasMessageContaining("집품할 상품의 재고가 부족합니다.");

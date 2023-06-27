@@ -7,6 +7,7 @@ import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.UsagePurpose;
 import leejoongseok.wms.outbound.domain.Outbound;
 import leejoongseok.wms.outbound.domain.OutboundItem;
+import leejoongseok.wms.outbound.domain.OutboundStatus;
 import leejoongseok.wms.outbound.exception.NotEnoughInventoryException;
 import org.instancio.Instancio;
 import org.instancio.Select;
@@ -37,6 +38,7 @@ class PickingAllocatorTest {
                         createOutboundItem(1L, 3),
                         createOutboundItem(2L, 2),
                         createOutboundItem(3L, 1)))
+                .supply(Select.field(Outbound::getOutboundStatus), () -> OutboundStatus.PICKING_READY)
                 .create();
         final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1L);
         final List<LocationLPN> locationLPNList = List.of(
@@ -113,6 +115,7 @@ class PickingAllocatorTest {
         final Outbound outbound = Instancio.of(Outbound.class)
                 .supply(Select.field(Outbound::getOutboundItems), () -> List.of(
                         createOutboundItem(1L, 3)))
+                .supply(Select.field(Outbound::getOutboundStatus), () -> OutboundStatus.PICKING_READY)
                 .create();
         final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1L);
         final List<LocationLPN> locationLPNList = List.of(
@@ -131,6 +134,7 @@ class PickingAllocatorTest {
         final Outbound outbound = Instancio.of(Outbound.class)
                 .supply(Select.field(Outbound::getOutboundItems), () -> List.of(
                         createOutboundItem(1L, 3)))
+                .supply(Select.field(Outbound::getOutboundStatus), () -> OutboundStatus.PICKING_READY)
                 .create();
         final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1L);
         final List<LocationLPN> locationLPNList = List.of(
