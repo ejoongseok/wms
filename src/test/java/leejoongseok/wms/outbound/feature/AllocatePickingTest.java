@@ -17,6 +17,8 @@ public class AllocatePickingTest {
     @Test
     @DisplayName("출고 상품에 대한 집품 목록을 할당한다.")
     void allocatePicking() {
-        allocatePicking.request();
+        final Long outboundId = 1L;
+        final AllocatePicking.Request request = new AllocatePicking.Request(outboundId);
+        allocatePicking.request(request);
     }
 }
