@@ -9,18 +9,18 @@ import org.springframework.http.HttpStatus;
 
 public class CreatePackagingMaterialSteps {
     public static class Request {
-        private Integer innerWidthInMillimeters = 1;
-        private Integer innerHeightInMillimeters = 1;
-        private Integer innerLengthInMillimeters = 1;
-        private Integer outerWidthInMillimeters = 1;
-        private Integer outerHeightInMillimeters = 1;
-        private Integer outerLengthInMillimeters = 1;
-        private Integer weightInGrams = 1;
+        private Integer innerWidthInMillimeters = 200;
+        private Integer innerHeightInMillimeters = 200;
+        private Integer innerLengthInMillimeters = 200;
+        private Integer outerWidthInMillimeters = 201;
+        private Integer outerHeightInMillimeters = 201;
+        private Integer outerLengthInMillimeters = 201;
+        private Integer weightInGrams = 10;
         private PackagingType packagingType = PackagingType.BOX;
         private Integer thickness = 1;
         private String name = "name";
         private String code = "code";
-        private Integer maxWeightInGrams = 1;
+        private Integer maxWeightInGrams = 10000;
         private String description = "description";
 
         public Request innerWidthInMillimeters(final Integer innerWidthInMillimeters) {

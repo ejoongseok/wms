@@ -29,9 +29,11 @@ import java.time.LocalDateTime;
 @Comment("로케이션 LPN")
 public class LocationLPN {
     @Id
+    @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("로케이션 LPN ID")
     private Long id;
+    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id", nullable = false)
     @Comment("로케이션 ID")
@@ -97,5 +99,23 @@ public class LocationLPN {
 
     public boolean isEmptyInventory() {
         return 0 >= inventoryQuantity;
+    }
+
+    public Long getLPNId() {
+        return lpn.getId();
+    }
+
+    public boolean isPickingAllocatable(final LocalDateTime thisDateTime) {
+        return isFreshLPNBy(thisDateTime) &&
+                location.isStow()
+                && 0L < inventoryQuantity;
+    }
+
+    public LocalDateTime getExpirationAt() {
+        return lpn.getExpirationAt();
+    }
+
+    public String getLocationBarcode() {
+        return location.getLocationBarcode();
     }
 }

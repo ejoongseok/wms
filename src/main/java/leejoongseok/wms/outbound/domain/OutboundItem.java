@@ -1,5 +1,6 @@
 package leejoongseok.wms.outbound.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -8,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import leejoongseok.wms.item.domain.Item;
 import lombok.AccessLevel;
@@ -17,6 +19,8 @@ import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 출고 상품은 출고에 포함되는 상품을 의미합니다.
@@ -34,7 +38,7 @@ public class OutboundItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     @Comment("입고 ID")
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     private Item item;
     @Column(name = "outbound_quantity", nullable = false)
     @Comment("출고 수량")
@@ -48,6 +52,9 @@ public class OutboundItem {
     @JoinColumn(name = "outbound_id")
     @Comment("출고")
     private Outbound outbound;
+    @Getter
+    @OneToMany(mappedBy = "outboundItem", cascade = CascadeType.ALL)
+    private final List<Picking> pickings = new ArrayList<>();
 
     public OutboundItem(
             final Item item,
@@ -132,5 +139,20 @@ public class OutboundItem {
                             "출고 수량: %d, 감소 수량: %d")
                             .formatted(outboundQuantity, quantity));
         }
+    }
+
+    public Long getItemId() {
+        return item.getId();
+    }
+
+    public void assignPickings(final List<Picking> pickings) {
+        Assert.notEmpty(pickings, "출고 상품에 할당할 집품 목록은 필수입니다.");
+        pickings.forEach(picking -> assignPicking(picking));
+    }
+
+    private void assignPicking(final Picking picking) {
+        Assert.notNull(picking, "출고 상품에 할당할 집품은 필수입니다.");
+        picking.assignOutboundItem(this);
+        pickings.add(picking);
     }
 }

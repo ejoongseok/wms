@@ -8,6 +8,7 @@ import leejoongseok.wms.item.steps.CreateItemSteps;
 import leejoongseok.wms.location.steps.AddManualInventoryToLocationLPNSteps;
 import leejoongseok.wms.location.steps.AssignLPNToLocationSteps;
 import leejoongseok.wms.location.steps.CreateLocationSteps;
+import leejoongseok.wms.outbound.steps.AssignPickingToteSteps;
 import leejoongseok.wms.outbound.steps.CreateOutboundSteps;
 import leejoongseok.wms.outbound.steps.CreatePackagingMaterialSteps;
 import leejoongseok.wms.outbound.steps.SplitToOutboundSteps;
@@ -55,5 +56,9 @@ public class Scenario {
 
     public SplitToOutboundSteps.Request splitToOutbound() {
         return new SplitToOutboundSteps.Request();
+    }
+
+    public AssignPickingToteSteps.Request assignPickingTote() {
+        return new AssignPickingToteSteps.Request();
     }
 }

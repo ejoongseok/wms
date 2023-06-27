@@ -11,7 +11,8 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public enum UsagePurpose {
-    STOW("상품을 진열하기 위한 용도");
+    STOW("상품을 진열하기 위한 용도"),
+    MOVE("상품을 이동하기 위한 용도");
 
     private final String description;
 }

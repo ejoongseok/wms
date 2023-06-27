@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.outbound.exception.OutboundItemIdNotFoundException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -35,28 +36,37 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Comment("출고")
 public class Outbound {
-
-    @OneToMany(mappedBy = "outbound", cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter
-    private final List<OutboundItem> outboundItems = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(name = "outbound_status", nullable = false)
+    @Comment("출고 상태")
+    private OutboundStatus outboundStatus = OutboundStatus.READY;
     @Column(name = "order_id", nullable = false)
     @Comment("주문 ID")
     private Long orderId;
+    @Getter
+    @OneToMany(mappedBy = "outbound", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<OutboundItem> outboundItems = new ArrayList<>();
+    @Id
+    @Getter(AccessLevel.PROTECTED)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("출고 ID")
+    private Long id;
+    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recommended_packaging_material_id", nullable = true)
     @Comment("추천 포장재 ID")
-    @Getter
     private PackagingMaterial recommendedPackagingMaterial;
     @Embedded
     private OutboundCustomer outboundCustomer;
+    @Getter(AccessLevel.PROTECTED)
     @Enumerated(EnumType.STRING)
     @Column(name = "cushioning_material", nullable = false)
     @Comment("완충재")
-    @Getter(AccessLevel.PROTECTED)
     private CushioningMaterial cushioningMaterial;
+    @Getter(AccessLevel.PROTECTED)
     @Column(name = "cushioning_material_quantity", nullable = false)
     @Comment("완충재 수량")
-    @Getter(AccessLevel.PROTECTED)
     private Integer cushioningMaterialQuantity;
     @Column(name = "is_priority_delivery", nullable = false)
     @Comment("우선 배송 여부")
@@ -73,16 +83,11 @@ public class Outbound {
     @Column(name = "ordered_at", nullable = false)
     @Comment("주문 일시")
     private LocalDateTime orderedAt;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "outbound_status", nullable = false)
-    @Comment("출고 상태")
-    @Getter(AccessLevel.PROTECTED)
-    private final OutboundStatus outboundStatus = OutboundStatus.READY;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Comment("출고 ID")
-    @Getter(AccessLevel.PROTECTED)
-    private Long id;
+    @Getter
+    @JoinColumn(name = "tote_location_id", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Comment("토트 로케이션 ID")
+    private Location toteLocation;
 
     public Outbound(
             final Long orderId,
@@ -175,7 +180,7 @@ public class Outbound {
      */
     private void validateSplit(
             final List<SplittableOutboundItem> splittableOutboundItems) {
-        if (outboundStatus != OutboundStatus.READY) {
+        if (OutboundStatus.READY != outboundStatus) {
             throw new IllegalStateException(
                     "출고는 대기 상태에서만 분할 할 수 있습니다.");
         }
@@ -270,6 +275,7 @@ public class Outbound {
 
     public void assignRecommendedPackagingMaterial(
             final PackagingMaterial packagingMaterial) {
+        Assert.notNull(packagingMaterial, "추천 포장재는 null이 될 수 없습니다.");
         recommendedPackagingMaterial = packagingMaterial;
     }
 
@@ -298,5 +304,67 @@ public class Outbound {
                 ? 0
                 : recommendedPackagingMaterial.getWeightInGrams();
         return itemTotalWeightInGrams + cushioningMaterialTotalWeightInGrams + packagingMaterialWeightInGrams;
+    }
+
+    public boolean isReadyStatus() {
+        return OutboundStatus.READY == outboundStatus;
+    }
+
+    public boolean hasAssignedTote() {
+        return null != toteLocation;
+    }
+
+    public void assignPickingTote(final Location tote) {
+        validateAssignPickingTote(tote);
+        toteLocation = tote;
+    }
+
+    private void validateAssignPickingTote(final Location tote) {
+        final String locationBarcode = tote.getLocationBarcode();
+        if (!tote.isTote()) {
+            throw new IllegalArgumentException(
+                    "로케이션 바코드[%s]는 토트가 아닙니다.".formatted(locationBarcode));
+        }
+        if (tote.hasLocationLPN()) {
+            throw new IllegalArgumentException(
+                    "집품에 사용할 토트에 상품이 이미 담겨 있습니다. 로케이션바코드[%s]"
+                            .formatted(locationBarcode));
+        }
+        if (!isReadyStatus()) {
+            throw new IllegalArgumentException(
+                    ("집품할 토트 할당은 출고 대기상태에만 가능합니다. " +
+                            "출고 상태: %s").formatted(
+                            outboundStatus.getDescription()));
+        }
+        if (hasAssignedTote()) {
+            throw new IllegalStateException("이미 할당된 토트가 존재합니다.");
+        }
+        if (null == recommendedPackagingMaterial) {
+            throw new IllegalStateException("추천 포장재가 할당되지 않았습니다.");
+        }
+    }
+
+    public boolean isPickingProgress() {
+        return OutboundStatus.PICKING == outboundStatus;
+    }
+
+    public boolean isPickingReadyStatus() {
+        return hasAssignedTote() && OutboundStatus.PICKING_READY == outboundStatus;
+    }
+
+    public void startPickingReady() {
+        validateStartPickingReady();
+        outboundStatus = OutboundStatus.PICKING_READY;
+    }
+
+    private void validateStartPickingReady() {
+        if (!isReadyStatus()) {
+            throw new IllegalStateException(
+                    "집품대기 상태가 되기 위해서는 출고 준비 상태여야 합니다. 현재 상태: %s".formatted(
+                            outboundStatus.getDescription()));
+        }
+        if (!hasAssignedTote()) {
+            throw new IllegalStateException("집품 대기 상태가 되기 위해서는 할당된 토트가 필요합니다.");
+        }
     }
 }

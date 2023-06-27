@@ -109,4 +109,82 @@ class LocationTest {
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("추가할 재고 수량은 1이상이어야 합니다.");
     }
+
+    @Test
+    @DisplayName("로케이션이 토트인지 확인한다.")
+    void isTote() {
+        final StorageType storageType = StorageType.TOTE;
+        final Location tote = createLocation(storageType);
+
+        final boolean isTote = tote.isTote();
+
+        assertThat(isTote).isTrue();
+    }
+
+    private Location createLocation(final StorageType storageType) {
+        return Instancio.of(Location.class)
+                .supply(Select.field(Location::getStorageType), () -> storageType)
+                .create();
+    }
+
+    @Test
+    @DisplayName("로케이션이 토트인지 확인한다. - 토트가 아닌 경우 isTote는 false")
+    void isCell() {
+        final StorageType storageType = StorageType.CELL;
+        final Location cell = createLocation(storageType);
+
+        final boolean isTote = cell.isTote();
+
+        assertThat(isTote).isFalse();
+    }
+
+    @Test
+    @DisplayName("로케이션에 LPN이 있는지 확인한다.")
+    void hasLocationLPN() {
+        final Location location = createLocation();
+        final String lpnBarcode = "lpnBarcode";
+        final LPN lpn = createLPN(lpnBarcode);
+        location.assignLPN(lpn);
+
+        final boolean hasLocationLPN = location.hasLocationLPN();
+
+        assertThat(hasLocationLPN).isTrue();
+    }
+
+    @Test
+    @DisplayName("로케이션에 LPN이 있는지 확인한다. - LPN이 없는 경우 false")
+    void hasLocationLPN_fals() {
+        final Location location = createLocation();
+
+        final boolean hasLocationLPN = location.hasLocationLPN();
+
+        assertThat(hasLocationLPN).isFalse();
+    }
+
+    @Test
+    @DisplayName("로케이션의 용도가 진열인지 확인한다.")
+    void isStow() {
+        final Location location = createLocation(UsagePurpose.STOW);
+
+        final boolean isStow = location.isStow();
+
+        assertThat(isStow).isTrue();
+    }
+
+    private Location createLocation(final UsagePurpose usagePurpose) {
+        return Instancio.of(Location.class)
+                .supply(Select.field(Location::getUsagePurpose), () -> usagePurpose)
+                .create();
+    }
+
+
+    @Test
+    @DisplayName("로케이션의 용도가 진열인지 확인한다. - 진열이 아닌 경우 false")
+    void isStow_false() {
+        final Location location = createLocation(UsagePurpose.MOVE);
+
+        final boolean isStow = location.isStow();
+
+        assertThat(isStow).isFalse();
+    }
 }
