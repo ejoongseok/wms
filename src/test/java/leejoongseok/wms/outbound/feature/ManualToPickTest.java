@@ -15,8 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ManualToPickTest extends ApiTest {
 
     @Autowired
-    private ManualToPick manualToPick;
-    @Autowired
     private PickingRepository pickingRepository;
 
     @Test
@@ -41,18 +39,8 @@ class ManualToPickTest extends ApiTest {
                 .usagePurpose(UsagePurpose.MOVE)
                 .request()
                 .assignPickingTote().request()
-                .allocatePicking().request();
-
-        final Long pickingId = 1L;
-        final Long locationLPNId = 1L;
-        final Integer pickedQuantity = 1;
-        final ManualToPick.Request request = new ManualToPick.Request(
-                pickingId,
-                locationLPNId,
-                pickedQuantity
-        );
-
-        manualToPick.request(request);
+                .allocatePicking().request()
+                .manualToPick().request();
 
         final Picking picking = pickingRepository.findById(1L).get();
         assertThat(picking.getPickedQuantity()).isEqualTo(1);
