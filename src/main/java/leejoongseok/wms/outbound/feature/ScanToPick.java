@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 public class ScanToPick {
 
-    public void request() {
+    public void request(final Request request) {
         throw new UnsupportedOperationException("Unsupported request");
     }
 
