@@ -1,5 +1,6 @@
 package leejoongseok.wms.outbound.feature;
 
+import leejoongseok.wms.outbound.domain.OutboundRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,10 +8,12 @@ import org.junit.jupiter.api.Test;
 class CompletePickingTest {
 
     private CompletePicking completePicking;
+    private OutboundRepository outboundRepository;
 
     @BeforeEach
     void setUp() {
-        completePicking = new CompletePicking();
+        outboundRepository = null;
+        completePicking = new CompletePicking(outboundRepository);
     }
 
     @Test
