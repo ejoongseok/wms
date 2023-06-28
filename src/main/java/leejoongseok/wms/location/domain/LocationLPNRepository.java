@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LocationLPNRepository extends JpaRepository<LocationLPN, Long> {
     /**
@@ -14,4 +15,7 @@ public interface LocationLPNRepository extends JpaRepository<LocationLPN, Long> 
 
     @Query("select l from LocationLPN l join fetch l.lpn where l.lpn.id in :lpnIds")
     List<LocationLPN> findByLPNIdsAndFetchJoinLPNAndLocation(List<Long> lpnIds);
+
+    @Query("select l from LocationLPN  l join fetch l.lpn join fetch l.location where l.location.locationBarcode = :locationBarcode and l.lpn.lpnBarcode = :lpnBarcode")
+    Optional<LocationLPN> findByLocationBarcodeAndLPNBarcode(String locationBarcode, String lpnBarcode);
 }

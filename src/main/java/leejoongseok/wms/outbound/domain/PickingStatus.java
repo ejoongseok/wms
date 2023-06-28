@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum PickingStatus {
     READY("집품대기"),
-    PROCESSING("집품중"),
+    IN_PROGRESS("집품중"),
     COMPLETED("집품완료");
 
     private final String description;

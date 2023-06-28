@@ -2,32 +2,26 @@ package leejoongseok.wms.outbound.feature;
 
 import leejoongseok.wms.common.ApiTest;
 import leejoongseok.wms.common.Scenario;
-import leejoongseok.wms.location.domain.LocationLPNRepository;
 import leejoongseok.wms.location.domain.StorageType;
 import leejoongseok.wms.location.domain.UsagePurpose;
-import leejoongseok.wms.outbound.domain.OutboundRepository;
+import leejoongseok.wms.outbound.domain.Picking;
+import leejoongseok.wms.outbound.domain.PickingRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AllocatePickingTest extends ApiTest {
-
-
-    @Autowired
-    private AllocatePicking allocatePicking;
+class ScanToPickTest extends ApiTest {
 
     @Autowired
-    private OutboundRepository outboundRepository;
+    private ScanToPick scanToPick;
     @Autowired
-    LocationLPNRepository locationLPNRepository;
+    private PickingRepository pickingRepository;
 
     @Test
-    @DisplayName("출고 상품에 대한 집품 목록을 할당한다.")
-    @Transactional
-    void allocatePicking() {
+    @DisplayName("집품정보를 확인한 뒤 집품할 장소에가서 LocationBarcode와 상품의 LPNBarcode를 스캔해서 집품한다.")
+    void scanToPick() {
         new Scenario()
                 .createItem().request()
                 .createInbound().request()
@@ -46,11 +40,12 @@ public class AllocatePickingTest extends ApiTest {
                 .usagePurpose(UsagePurpose.MOVE)
                 .request()
                 .assignPickingTote().request()
-                .allocatePicking().request();
+                .allocatePicking().request()
+                .scanToPick().request();
 
-        final var outbound = outboundRepository.findById(1L).get();
-        assertThat(outbound.isPickingInProgress()).isTrue();
-        assertThat(outbound.getOutboundItems().get(0).getPickings()).isNotEmpty();
-        assertThat(locationLPNRepository.findById(1L).get().getInventoryQuantity()).isEqualTo(1);
+
+        final Picking picking = pickingRepository.findById(1L).get();
+        assertThat(picking.getPickedQuantity()).isEqualTo(1);
+        assertThat(picking.isInProgress()).isTrue();
     }
 }

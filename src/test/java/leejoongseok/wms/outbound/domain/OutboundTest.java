@@ -97,7 +97,7 @@ class OutboundTest {
         final long outboundId = 1L;
         final long outboundItemId = 1L;
         final int outboundItemQuantity = 2;
-        final OutboundStatus invalidStatus = OutboundStatus.PICKING;
+        final OutboundStatus invalidStatus = OutboundStatus.PICKING_IN_PROGRESS;
         final Outbound outbound = createSplitTargetOutbound(
                 outboundId,
                 outboundItemId,
@@ -349,7 +349,7 @@ class OutboundTest {
     @DisplayName("출고의 상태가 출고 대기 인지 확인한다. - 출고 대기가 아닌 경우 isReadyStatus는 false를 반환한다.")
     void isNotReadyStatus() {
         final long outboundId = 1L;
-        final OutboundStatus status = OutboundStatus.PICKING;
+        final OutboundStatus status = OutboundStatus.PICKING_IN_PROGRESS;
         final Outbound outbound = createOutbound(status, outboundId);
 
         final boolean isReadyStatus = outbound.isReadyStatus();
@@ -448,7 +448,7 @@ class OutboundTest {
     @DisplayName("출고에 집품할 토트를 배정한다. - 출고의 상태가 출고 대기가 아닌 경우 IllegalArgumentException이 발생한다.")
     void assignPickingTote_invalidStatus() {
         final long outboundId = 1L;
-        final OutboundStatus status = OutboundStatus.PICKING;
+        final OutboundStatus status = OutboundStatus.PICKING_IN_PROGRESS;
         final Outbound outbound = createOutbound(status, outboundId);
         final List<LocationLPN> locationLPNList = List.of();
         final Location toteLocation = createToteLocation(
@@ -509,10 +509,10 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 상태가 집품 중인지 확인한다.")
     void isPickingProgress() {
-        final OutboundStatus status = OutboundStatus.PICKING;
+        final OutboundStatus status = OutboundStatus.PICKING_IN_PROGRESS;
         final Outbound outbound = createOutbound(status);
 
-        final boolean isPickingProgress = outbound.isPickingProgress();
+        final boolean isPickingProgress = outbound.isPickingInProgress();
 
         assertThat(isPickingProgress).isTrue();
     }
@@ -523,7 +523,7 @@ class OutboundTest {
         final OutboundStatus status = OutboundStatus.READY;
         final Outbound outbound = createOutbound(status);
 
-        final boolean isPickingProgress = outbound.isPickingProgress();
+        final boolean isPickingProgress = outbound.isPickingInProgress();
 
         assertThat(isPickingProgress).isFalse();
     }
@@ -561,7 +561,7 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 상태를 집품 대기 상태로 변경한다. - 출고의 상태가 출고 대기가 아닌 경우 IllegalStateException이 발생한다.")
     void startPickingReady_invalid_status() {
-        final OutboundStatus status = OutboundStatus.PICKING;
+        final OutboundStatus status = OutboundStatus.PICKING_IN_PROGRESS;
         final Outbound outbound = createOutbound(status);
 
         assertThatThrownBy(() -> {
@@ -587,7 +587,7 @@ class OutboundTest {
 
         outbound.startPickingProgress();
 
-        assertThat(outbound.isPickingProgress()).isTrue();
+        assertThat(outbound.isPickingInProgress()).isTrue();
     }
 
     @Test

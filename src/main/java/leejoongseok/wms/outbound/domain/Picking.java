@@ -36,11 +36,11 @@ public class Picking {
     @Column(name = "status", nullable = false)
     @Comment("상태")
     @Enumerated(EnumType.STRING)
-    private final PickingStatus status = PickingStatus.READY;
+    private PickingStatus status = PickingStatus.READY;
     @Getter
     @Column(name = "picked_quantity", nullable = false)
     @Comment("집품한 수량")
-    private final Integer pickedQuantity = 0;
+    private Integer pickedQuantity = 0;
     @Getter
     @Column(name = "quantity_required_for_pick", nullable = false)
     @Comment("집품해야할 수량")
@@ -65,15 +65,60 @@ public class Picking {
     }
 
     public boolean hasPickedItem() {
-        return pickedQuantity > 0;
+        return 0 < pickedQuantity;
     }
 
     public void deductAllocatedInventory() {
-        if (status != PickingStatus.READY) {
+        if (PickingStatus.READY != status) {
             throw new IllegalStateException(
                     "집품에 할당된 LocationLPN의 재고를 차감하기위해서는 " +
                             "집품을 시작하기 전이어야 합니다.");
         }
         locationLPN.deductInventory(quantityRequiredForPick);
+    }
+
+    /**
+     * 집품하려는 LocationLPN이 맞는 지 확인하고, 집품 수량을 증가시킵니다.
+     * 집품이 완료되면 Picking의 상태를 COMPLETED로 변경합니다.
+     */
+    public void increasePickedQuantity(final LocationLPN locationLPN) {
+        validateIncreasePickedQuantity(locationLPN);
+        pickedQuantity++;
+        status = PickingStatus.IN_PROGRESS;
+        if (pickedQuantity == quantityRequiredForPick) {
+            status = PickingStatus.COMPLETED;
+        }
+    }
+
+    private void validateIncreasePickedQuantity(final LocationLPN locationLPN) {
+        Assert.notNull(locationLPN, "로케이션 LPN은 필수입니다.");
+        if (PickingStatus.COMPLETED == status) {
+            throw new IllegalStateException(
+                    "이미 완료된 집품은 집품 수량을 증가시킬 수 없습니다.");
+        }
+        if (!this.locationLPN.equals(locationLPN)) {
+            throw new IllegalArgumentException(
+                    ("집품에 할당된 LocationLPN이 아닌 LocationLPN의 수량을 증가시킬 수 없습니다. " +
+                            "집품에 할당된 LocationBarcode: %s, LPNBarcode: %s " +
+                            "스캔한 LocationBarcode: %s, LPNBarcode: %s").formatted(
+                            this.locationLPN.getLocationBarcode(),
+                            this.locationLPN.getLpnBarcode(),
+                            locationLPN.getLocationBarcode(),
+                            locationLPN.getLpnBarcode()));
+        }
+        if (quantityRequiredForPick <= pickedQuantity) {
+            throw new IllegalStateException(
+                    "집품해야할 수량보다 집품하려는 수량이 많습니다. " +
+                            "집품해야할 수량: " + quantityRequiredForPick + ", " +
+                            "집품한 수량: " + pickedQuantity);
+        }
+    }
+
+    public boolean isInProgress() {
+        return PickingStatus.IN_PROGRESS == status;
+    }
+
+    public boolean isCompletedPicking() {
+        return PickingStatus.COMPLETED == status;
     }
 }

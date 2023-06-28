@@ -12,6 +12,7 @@ import leejoongseok.wms.outbound.steps.AllocatePickingSteps;
 import leejoongseok.wms.outbound.steps.AssignPickingToteSteps;
 import leejoongseok.wms.outbound.steps.CreateOutboundSteps;
 import leejoongseok.wms.outbound.steps.CreatePackagingMaterialSteps;
+import leejoongseok.wms.outbound.steps.ScanToPickSteps;
 import leejoongseok.wms.outbound.steps.SplitToOutboundSteps;
 
 public class Scenario {
@@ -65,5 +66,9 @@ public class Scenario {
 
     public AllocatePickingSteps.Request allocatePicking() {
         return new AllocatePickingSteps.Request();
+    }
+
+    public ScanToPickSteps.Request scanToPick() {
+        return new ScanToPickSteps.Request();
     }
 }
