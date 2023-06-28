@@ -27,15 +27,17 @@ public class ScanToPick {
     @Transactional
     @PostMapping("/outbounds/pickings/scan-to-pick")
     public void request(@RequestBody @Valid final Request request) {
+        final LocationLPN locationLPN = getLocationLPN(request.locationBarcode, request.lpnBarcode);
         final Picking picking = getPicking(request.pickingId);
-        final LocationLPN locationLPN = getLocationLPN(request);
 
         picking.increasePickedQuantity(locationLPN);
     }
 
-    private LocationLPN getLocationLPN(final Request request) {
-        return locationLPNRepository.findByLocationBarcodeAndLPNBarcode(request.locationBarcode, request.lpnBarcode)
-                .orElseThrow(() -> new LocationLPNBarcodeNotFoundException(request.locationBarcode, request.lpnBarcode));
+    private LocationLPN getLocationLPN(
+            final String locationBarcode,
+            final String lpnBarcode) {
+        return locationLPNRepository.findByLocationBarcodeAndLPNBarcode(locationBarcode, lpnBarcode)
+                .orElseThrow(() -> new LocationLPNBarcodeNotFoundException(locationBarcode, lpnBarcode));
     }
 
     private Picking getPicking(final Long pickingId) {
