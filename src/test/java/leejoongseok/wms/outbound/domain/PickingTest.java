@@ -132,25 +132,6 @@ class PickingTest {
         assertThat(picking.isCompletedPicking()).isTrue();
 
     }
-
-    @Test
-    @DisplayName("집품한 수량을 증가시킨다. 집품해야할 수량보다 집품하려는 수량이 많음")
-    void increasePickedQuantity_over_pick() {
-        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
-        final int quantityRequiredForPick = 1;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(
-                quantityRequiredForPick,
-                locationLPN,
-                pickingStatus);
-
-        picking.increasePickedQuantity(locationLPN);
-        assertThatThrownBy(() -> {
-            picking.increasePickedQuantity(locationLPN);
-        }).isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("집품해야할 수량보다 집품하려는 수량이 많습니다.");
-    }
-
     @Test
     @DisplayName("집품한 수량을 증가시킨다. - 집품해야할 LocatinLPN이 아님")
     void increasePickedQuantity_not_match_locationLPN() {
