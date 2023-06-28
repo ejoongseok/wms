@@ -40,7 +40,7 @@ public class Picking {
     @Getter
     @Column(name = "picked_quantity", nullable = false)
     @Comment("집품한 수량")
-    private final Integer pickedQuantity = 0;
+    private Integer pickedQuantity = 0;
     @Getter
     @Column(name = "quantity_required_for_pick", nullable = false)
     @Comment("집품해야할 수량")
@@ -65,15 +65,36 @@ public class Picking {
     }
 
     public boolean hasPickedItem() {
-        return pickedQuantity > 0;
+        return 0 < pickedQuantity;
     }
 
     public void deductAllocatedInventory() {
-        if (status != PickingStatus.READY) {
+        if (PickingStatus.READY != status) {
             throw new IllegalStateException(
                     "집품에 할당된 LocationLPN의 재고를 차감하기위해서는 " +
                             "집품을 시작하기 전이어야 합니다.");
         }
         locationLPN.deductInventory(quantityRequiredForPick);
+    }
+
+    public void increasePickedQuantity(final LocationLPN locationLPN) {
+        validateIncreasePickedQuantity(locationLPN);
+        pickedQuantity++;
+    }
+
+    private void validateIncreasePickedQuantity(final LocationLPN locationLPN) {
+        Assert.notNull(locationLPN, "로케이션 LPN은 필수입니다.");
+        if (PickingStatus.COMPLETED == status) {
+            throw new IllegalStateException(
+                    "이미 완료된 집품은 집품 수량을 증가시킬 수 없습니다.");
+        }
+        if (!this.locationLPN.equals(locationLPN)) {
+            throw new IllegalArgumentException(
+                    "집품에 할당된 LocationLPN이 아닌 LocationLPN의 수량을 증가시킬 수 없습니다.");
+        }
+        if (quantityRequiredForPick <= pickedQuantity) {
+            throw new IllegalStateException(
+                    "집품해야할 수량보다 집품하려는 수량이 많습니다.");
+        }
     }
 }

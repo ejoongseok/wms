@@ -19,6 +19,7 @@ public class ScanToPick {
         final Picking picking = getPicking(request.pickingId);
         final LocationLPN locationLPN = getLocationLPN(request);
 
+        picking.increasePickedQuantity(locationLPN);
     }
 
     private LocationLPN getLocationLPN(final Request request) {
