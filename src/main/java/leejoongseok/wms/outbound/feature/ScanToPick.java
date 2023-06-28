@@ -2,19 +2,23 @@ package leejoongseok.wms.outbound.feature;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.location.domain.LocationLPN;
+import leejoongseok.wms.location.domain.LocationLPNRepository;
 import leejoongseok.wms.outbound.domain.Picking;
 import leejoongseok.wms.outbound.domain.PickingRepository;
+import leejoongseok.wms.outbound.exception.LocationLPNBarcodeNotFoundException;
 import leejoongseok.wms.outbound.exception.PickingIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class ScanToPick {
     private final PickingRepository pickingRepository;
-    
+    private final LocationLPNRepository locationLPNRepository;
 
     public void request(final Request request) {
         final Picking picking = getPicking(request.pickingId);
-        
+        final LocationLPN locationLPN = locationLPNRepository.findByLocationBarcodeAndLPNBarcode(request.locationBarcode, request.lpnBarcode)
+                .orElseThrow(() -> new LocationLPNBarcodeNotFoundException(request.locationBarcode, request.lpnBarcode));
     }
 
     private Picking getPicking(final Long pickingId) {
