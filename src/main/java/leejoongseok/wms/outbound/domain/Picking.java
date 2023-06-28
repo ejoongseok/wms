@@ -121,4 +121,58 @@ public class Picking {
     public boolean isCompletedPicking() {
         return PickingStatus.COMPLETED == status;
     }
+
+    /**
+     * 집품 수량을 직접 입력한 수량만큼 증가시킵니다.
+     */
+    public void addManualPickedQuantity(
+            final LocationLPN locationLPN,
+            final Integer pickedQuantity) {
+        validateAddManualPickedQuantity(locationLPN, pickedQuantity);
+        this.pickedQuantity += pickedQuantity;
+        status = PickingStatus.IN_PROGRESS;
+        if (this.pickedQuantity == quantityRequiredForPick) {
+            status = PickingStatus.COMPLETED;
+        }
+    }
+
+    private void validateAddManualPickedQuantity(
+            final LocationLPN locationLPN,
+            final Integer pickedQuantity) {
+        Assert.notNull(locationLPN, "로케이션 LPN은 필수입니다.");
+        Assert.notNull(pickedQuantity, "집품 수량은 필수입니다.");
+        if (0 >= pickedQuantity) {
+            throw new IllegalArgumentException(
+                    "집품 수량은 1개 이상이어야 합니다.");
+        }
+        if (PickingStatus.COMPLETED == status) {
+            throw new IllegalStateException(
+                    "이미 완료된 집품은 집품 수량을 증가시킬 수 없습니다.");
+        }
+        if (!this.locationLPN.equals(locationLPN)) {
+            throw new IllegalArgumentException(
+                    ("집품에 할당된 LocationLPN이 아닌 LocationLPN의 수량을 증가시킬 수 없습니다. " +
+                            "집품에 할당된 LocationBarcode: %s, LPNBarcode: %s " +
+                            "스캔한 LocationBarcode: %s, LPNBarcode: %s").formatted(
+                            this.locationLPN.getLocationBarcode(),
+                            this.locationLPN.getLpnBarcode(),
+                            locationLPN.getLocationBarcode(),
+                            locationLPN.getLpnBarcode()));
+        }
+        if (pickedQuantity > quantityRequiredForPick) {
+            throw new IllegalStateException(
+                    "집품해야할 수량보다 집품하려는 수량이 많습니다. " +
+                            "집품해야할 수량: " + quantityRequiredForPick + ", " +
+                            "입력한 수량: " + pickedQuantity);
+        }
+        if (this.pickedQuantity + pickedQuantity > quantityRequiredForPick) {
+            throw new IllegalStateException(
+                    "집품해야할 수량보다 집품하려는 수량이 많습니다. " +
+                            "집품해야할 수량: " + quantityRequiredForPick + ", " +
+                            "현재 집품한 수량: " + this.pickedQuantity + ", " +
+                            "추가로 입력한 수량: " + pickedQuantity
+            );
+        }
+
+    }
 }

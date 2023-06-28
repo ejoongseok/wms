@@ -12,14 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ScanToPickTest extends ApiTest {
+class ManualToPickTest extends ApiTest {
 
     @Autowired
     private PickingRepository pickingRepository;
 
     @Test
-    @DisplayName("집품정보를 확인한 뒤 집품할 장소에가서 LocationBarcode와 상품의 LPNBarcode를 스캔해서 집품한다.")
-    void scanToPick() {
+    @DisplayName("집품해야할 로케이션에 가서 LPN을 선택하고 토트에 담을 상품의 수량을 직접 입력합니다.")
+    void manualToPick() {
+
         new Scenario()
                 .createItem().request()
                 .createInbound().request()
@@ -39,8 +40,7 @@ class ScanToPickTest extends ApiTest {
                 .request()
                 .assignPickingTote().request()
                 .allocatePicking().request()
-                .scanToPick().request();
-
+                .manualToPick().request();
 
         final Picking picking = pickingRepository.findById(1L).get();
         assertThat(picking.getPickedQuantity()).isEqualTo(1);
