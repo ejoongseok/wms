@@ -90,11 +90,19 @@ public class Picking {
         }
         if (!this.locationLPN.equals(locationLPN)) {
             throw new IllegalArgumentException(
-                    "집품에 할당된 LocationLPN이 아닌 LocationLPN의 수량을 증가시킬 수 없습니다.");
+                    ("집품에 할당된 LocationLPN이 아닌 LocationLPN의 수량을 증가시킬 수 없습니다. " +
+                            "집품에 할당된 LocationBarcode: %s, LPNBarcode: %s " +
+                            "스캔한 LocationBarcode: %s, LPNBarcode: %s").formatted(
+                            this.locationLPN.getLocationBarcode(),
+                            this.locationLPN.getLpnBarcode(),
+                            locationLPN.getLocationBarcode(),
+                            locationLPN.getLpnBarcode()));
         }
         if (quantityRequiredForPick <= pickedQuantity) {
             throw new IllegalStateException(
-                    "집품해야할 수량보다 집품하려는 수량이 많습니다.");
+                    "집품해야할 수량보다 집품하려는 수량이 많습니다. " +
+                            "집품해야할 수량: " + quantityRequiredForPick + ", " +
+                            "집품한 수량: " + pickedQuantity);
         }
     }
 }

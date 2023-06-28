@@ -61,6 +61,7 @@ class PickingTest {
                 .supply(Select.field(Picking::getQuantityRequiredForPick), () -> quantityRequiredForPick)
                 .supply(Select.field(Picking::getStatus), () -> pickingStatus)
                 .supply(Select.field(Picking::getLocationLPN), () -> locationLPN)
+                .ignore(Select.field(Picking::getPickedQuantity))
                 .create();
     }
 
@@ -93,5 +94,74 @@ class PickingTest {
             picking.deductAllocatedInventory();
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("차감할 재고 수량이 재고 수량보다 많습니다. 재고 수량: 10, 차감할 재고 수량: 50");
+    }
+
+    @Test
+    @DisplayName("집품한 수량을 증가시킨다.")
+    void increasePickedQuantity() {
+        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
+        final int quantityRequiredForPick = 1;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(
+                quantityRequiredForPick,
+                locationLPN,
+                pickingStatus);
+
+        picking.increasePickedQuantity(locationLPN);
+
+        assertThat(picking.getPickedQuantity()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("집품한 수량을 증가시킨다. 집품해야할 수량보다 집품하려는 수량이 많음")
+    void increasePickedQuantity_over_pick() {
+        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
+        final int quantityRequiredForPick = 1;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(
+                quantityRequiredForPick,
+                locationLPN,
+                pickingStatus);
+
+        picking.increasePickedQuantity(locationLPN);
+        assertThatThrownBy(() -> {
+            picking.increasePickedQuantity(locationLPN);
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("집품해야할 수량보다 집품하려는 수량이 많습니다.");
+    }
+
+    @Test
+    @DisplayName("집품한 수량을 증가시킨다. - 집품해야할 LocatinLPN이 아님")
+    void increasePickedQuantity_not_match_locationLPN() {
+        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
+        final LocationLPN locationLPN2 = Instancio.create(LocationLPN.class);
+        final int quantityRequiredForPick = 1;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(
+                quantityRequiredForPick,
+                locationLPN,
+                pickingStatus);
+
+        assertThatThrownBy(() -> {
+            picking.increasePickedQuantity(locationLPN2);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("집품에 할당된 LocationLPN이 아닌 LocationLPN의 수량을 증가시킬 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("집품한 수량을 증가시킨다. - 이미 집품이 완료된 상태")
+    void increasePickedQuantity_invalid_status() {
+        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
+        final int quantityRequiredForPick = 1;
+        final PickingStatus pickingStatus = PickingStatus.COMPLETED;
+        final Picking picking = createPicking(
+                quantityRequiredForPick,
+                locationLPN,
+                pickingStatus);
+
+        assertThatThrownBy(() -> {
+            picking.increasePickedQuantity(locationLPN);
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("이미 완료된 집품은 집품 수량을 증가시킬 수 없습니다");
     }
 }
