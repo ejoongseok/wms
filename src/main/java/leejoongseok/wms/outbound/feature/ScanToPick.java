@@ -17,7 +17,12 @@ public class ScanToPick {
 
     public void request(final Request request) {
         final Picking picking = getPicking(request.pickingId);
-        final LocationLPN locationLPN = locationLPNRepository.findByLocationBarcodeAndLPNBarcode(request.locationBarcode, request.lpnBarcode)
+        final LocationLPN locationLPN = getLocationLPN(request);
+
+    }
+
+    private LocationLPN getLocationLPN(final Request request) {
+        return locationLPNRepository.findByLocationBarcodeAndLPNBarcode(request.locationBarcode, request.lpnBarcode)
                 .orElseThrow(() -> new LocationLPNBarcodeNotFoundException(request.locationBarcode, request.lpnBarcode));
     }
 
