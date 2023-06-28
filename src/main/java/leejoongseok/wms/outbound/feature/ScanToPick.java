@@ -2,11 +2,15 @@ package leejoongseok.wms.outbound.feature;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.outbound.domain.PickingRepository;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class ScanToPick {
+    private final PickingRepository pickingRepository;
 
     public void request(final Request request) {
-        throw new UnsupportedOperationException("Unsupported request");
+
     }
 
     public record Request(
