@@ -16,6 +16,14 @@ class ScanToPickTest {
     @Test
     @DisplayName("집품정보를 확인한 뒤 집품할 장소에가서 LocationBarcode와 상품의 LPNBarcode를 스캔해서 집품한다.")
     void scanToPick() {
-        scanToPick.request();
+        final Long pickingId = 1L;
+        final String locationBarcode = "A-1-1";
+        final String lpnBarcode = "LPN-1";
+        final ScanToPick.Request request = new ScanToPick.Request(
+                pickingId,
+                locationBarcode,
+                lpnBarcode
+        );
+        scanToPick.request(request);
     }
 }
