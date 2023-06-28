@@ -1,5 +1,6 @@
 package leejoongseok.wms.outbound.feature;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.location.domain.LocationLPN;
@@ -9,17 +10,20 @@ import leejoongseok.wms.outbound.domain.PickingRepository;
 import leejoongseok.wms.outbound.exception.LocationLPNBarcodeNotFoundException;
 import leejoongseok.wms.outbound.exception.PickingIdNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Component
+@RestController
 @RequiredArgsConstructor
 public class ScanToPick {
     private final PickingRepository pickingRepository;
     private final LocationLPNRepository locationLPNRepository;
 
     @Transactional
-    public void request(final Request request) {
+    @PostMapping("/outbounds/pickings/scan-to-pick")
+    public void request(@RequestBody @Valid final Request request) {
         final Picking picking = getPicking(request.pickingId);
         final LocationLPN locationLPN = getLocationLPN(request);
 

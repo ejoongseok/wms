@@ -40,20 +40,11 @@ class ScanToPickTest extends ApiTest {
                 .usagePurpose(UsagePurpose.MOVE)
                 .request()
                 .assignPickingTote().request()
-                .allocatePicking().request();
+                .allocatePicking().request()
+                .scanToPick().request();
 
-        final Long pickingId = 1L;
-        final String locationBarcode = "A1-1-1";
-        final String lpnBarcode = "lpnBarcode";
-        final ScanToPick.Request request = new ScanToPick.Request(
-                pickingId,
-                locationBarcode,
-                lpnBarcode
-        );
 
-        scanToPick.request(request);
-
-        final Picking picking = pickingRepository.findById(pickingId).get();
+        final Picking picking = pickingRepository.findById(1L).get();
         assertThat(picking.getPickedQuantity()).isEqualTo(1);
     }
 }
