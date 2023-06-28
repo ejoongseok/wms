@@ -24,6 +24,10 @@ class ScanToPickTest {
                 locationBarcode,
                 lpnBarcode
         );
+
         scanToPick.request(request);
+
+        // Picking picking = pickingRepository.findById(pickingId).get();
+        // picking.pickedQuantity.ast(1);
     }
 }
