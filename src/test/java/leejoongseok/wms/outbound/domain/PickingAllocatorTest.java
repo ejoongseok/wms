@@ -1,14 +1,10 @@
-package leejoongseok.wms.outbound.feature;
+package leejoongseok.wms.outbound.domain;
 
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.item.domain.Item;
 import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.UsagePurpose;
-import leejoongseok.wms.outbound.domain.Outbound;
-import leejoongseok.wms.outbound.domain.OutboundItem;
-import leejoongseok.wms.outbound.domain.OutboundStatus;
-import leejoongseok.wms.outbound.domain.PickingAllocator;
 import leejoongseok.wms.outbound.exception.NotEnoughInventoryException;
 import org.instancio.Instancio;
 import org.instancio.Select;

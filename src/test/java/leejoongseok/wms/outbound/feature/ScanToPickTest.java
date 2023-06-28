@@ -1,32 +1,50 @@
 package leejoongseok.wms.outbound.feature;
 
-import leejoongseok.wms.location.domain.LocationLPNRepository;
+import leejoongseok.wms.common.ApiTest;
+import leejoongseok.wms.common.Scenario;
+import leejoongseok.wms.location.domain.StorageType;
+import leejoongseok.wms.location.domain.UsagePurpose;
+import leejoongseok.wms.outbound.domain.Picking;
 import leejoongseok.wms.outbound.domain.PickingRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-class ScanToPickTest {
+import static org.assertj.core.api.Assertions.assertThat;
 
+class ScanToPickTest extends ApiTest {
+
+    @Autowired
     private ScanToPick scanToPick;
+    @Autowired
     private PickingRepository pickingRepository;
-    private LocationLPNRepository locationLPNRepository;
-
-    @BeforeEach
-    void setUp() {
-        pickingRepository = null;
-        locationLPNRepository = null;
-        scanToPick = new ScanToPick(
-                pickingRepository,
-                locationLPNRepository);
-    }
 
     @Test
     @DisplayName("집품정보를 확인한 뒤 집품할 장소에가서 LocationBarcode와 상품의 LPNBarcode를 스캔해서 집품한다.")
     void scanToPick() {
+        new Scenario()
+                .createItem().request()
+                .createInbound().request()
+                .confirmInspectedInbound().request()
+                .createLPN().request()
+                .createLocation().request()
+                .assignLPNToLocation().request(3)
+                .createPackagingMaterial().request()
+                .createOutbound().request();
+
+        final String toteBarcode = "TOTE0001";
+        new Scenario()
+                .createLocation()
+                .locationBarcode(toteBarcode)
+                .storageType(StorageType.TOTE)
+                .usagePurpose(UsagePurpose.MOVE)
+                .request()
+                .assignPickingTote().request()
+                .allocatePicking().request();
+
         final Long pickingId = 1L;
-        final String locationBarcode = "A-1-1";
-        final String lpnBarcode = "LPN-1";
+        final String locationBarcode = "A1-1-1";
+        final String lpnBarcode = "lpnBarcode";
         final ScanToPick.Request request = new ScanToPick.Request(
                 pickingId,
                 locationBarcode,
@@ -35,7 +53,7 @@ class ScanToPickTest {
 
         scanToPick.request(request);
 
-        // Picking picking = pickingRepository.findById(pickingId).get();
-        // picking.pickedQuantity.ast(1);
+        final Picking picking = pickingRepository.findById(pickingId).get();
+        assertThat(picking.getPickedQuantity()).isEqualTo(1);
     }
 }

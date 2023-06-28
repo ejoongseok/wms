@@ -9,12 +9,16 @@ import leejoongseok.wms.outbound.domain.PickingRepository;
 import leejoongseok.wms.outbound.exception.LocationLPNBarcodeNotFoundException;
 import leejoongseok.wms.outbound.exception.PickingIdNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+@Component
 @RequiredArgsConstructor
 public class ScanToPick {
     private final PickingRepository pickingRepository;
     private final LocationLPNRepository locationLPNRepository;
 
+    @Transactional
     public void request(final Request request) {
         final Picking picking = getPicking(request.pickingId);
         final LocationLPN locationLPN = getLocationLPN(request);
