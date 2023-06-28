@@ -77,6 +77,10 @@ public class Picking {
         locationLPN.deductInventory(quantityRequiredForPick);
     }
 
+    /**
+     * 집품하려는 LocationLPN이 맞는 지 확인하고, 집품 수량을 증가시킵니다.
+     * 집품이 완료되면 Picking의 상태를 COMPLETED로 변경합니다.
+     */
     public void increasePickedQuantity(final LocationLPN locationLPN) {
         validateIncreasePickedQuantity(locationLPN);
         pickedQuantity++;
