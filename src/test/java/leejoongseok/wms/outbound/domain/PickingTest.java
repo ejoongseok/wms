@@ -72,7 +72,7 @@ class PickingTest {
         final int inventoryQuantity = 10;
         final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
         final int quantityRequiredForPick = 5;
-        final PickingStatus pickingStatus = PickingStatus.PROCESSING;
+        final PickingStatus pickingStatus = PickingStatus.IN_PROGRESS;
         final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
 
         assertThatThrownBy(() -> {
@@ -100,7 +100,7 @@ class PickingTest {
     @DisplayName("집품한 수량을 증가시킨다.")
     void increasePickedQuantity() {
         final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
-        final int quantityRequiredForPick = 1;
+        final int quantityRequiredForPick = 2;
         final PickingStatus pickingStatus = PickingStatus.READY;
         final Picking picking = createPicking(
                 quantityRequiredForPick,
@@ -110,6 +110,27 @@ class PickingTest {
         picking.increasePickedQuantity(locationLPN);
 
         assertThat(picking.getPickedQuantity()).isEqualTo(1);
+        assertThat(picking.isInProgress()).isTrue();
+    }
+
+    @Test
+    @DisplayName("집품한 수량을 증가시킨다. - 집품완료")
+    void increasePickedQuantity_completedPicking() {
+        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
+        final int quantityRequiredForPick = 2;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(
+                quantityRequiredForPick,
+                locationLPN,
+                pickingStatus);
+
+        picking.increasePickedQuantity(locationLPN);
+        assertThat(picking.isInProgress()).isTrue();
+        picking.increasePickedQuantity(locationLPN);
+
+        assertThat(picking.getPickedQuantity()).isEqualTo(2);
+        assertThat(picking.isCompletedPicking()).isTrue();
+
     }
 
     @Test

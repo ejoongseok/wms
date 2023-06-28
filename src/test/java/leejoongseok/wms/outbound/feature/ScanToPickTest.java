@@ -46,5 +46,6 @@ class ScanToPickTest extends ApiTest {
 
         final Picking picking = pickingRepository.findById(1L).get();
         assertThat(picking.getPickedQuantity()).isEqualTo(1);
+        assertThat(picking.isInProgress()).isTrue();
     }
 }

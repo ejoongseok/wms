@@ -36,7 +36,7 @@ public class Picking {
     @Column(name = "status", nullable = false)
     @Comment("상태")
     @Enumerated(EnumType.STRING)
-    private final PickingStatus status = PickingStatus.READY;
+    private PickingStatus status = PickingStatus.READY;
     @Getter
     @Column(name = "picked_quantity", nullable = false)
     @Comment("집품한 수량")
@@ -80,6 +80,10 @@ public class Picking {
     public void increasePickedQuantity(final LocationLPN locationLPN) {
         validateIncreasePickedQuantity(locationLPN);
         pickedQuantity++;
+        status = PickingStatus.IN_PROGRESS;
+        if (pickedQuantity == quantityRequiredForPick) {
+            status = PickingStatus.COMPLETED;
+        }
     }
 
     private void validateIncreasePickedQuantity(final LocationLPN locationLPN) {
@@ -104,5 +108,13 @@ public class Picking {
                             "집품해야할 수량: " + quantityRequiredForPick + ", " +
                             "집품한 수량: " + pickedQuantity);
         }
+    }
+
+    public boolean isInProgress() {
+        return PickingStatus.IN_PROGRESS == status;
+    }
+
+    public boolean isCompletedPicking() {
+        return PickingStatus.COMPLETED == status;
     }
 }
