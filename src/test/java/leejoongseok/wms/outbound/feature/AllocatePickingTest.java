@@ -49,7 +49,7 @@ public class AllocatePickingTest extends ApiTest {
                 .allocatePicking().request();
 
         final var outbound = outboundRepository.findById(1L).get();
-        assertThat(outbound.isPickingProgress()).isTrue();
+        assertThat(outbound.isPickingInProgress()).isTrue();
         assertThat(outbound.getOutboundItems().get(0).getPickings()).isNotEmpty();
         assertThat(locationLPNRepository.findById(1L).get().getInventoryQuantity()).isEqualTo(1);
     }

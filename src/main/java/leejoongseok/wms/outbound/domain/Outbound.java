@@ -344,8 +344,8 @@ public class Outbound {
         }
     }
 
-    public boolean isPickingProgress() {
-        return OutboundStatus.PICKING == outboundStatus;
+    public boolean isPickingInProgress() {
+        return OutboundStatus.PICKING_IN_PROGRESS == outboundStatus;
     }
 
     public boolean isPickingReadyStatus() {
@@ -370,7 +370,7 @@ public class Outbound {
 
     public void startPickingProgress() {
         validateStartPicking();
-        outboundStatus = OutboundStatus.PICKING;
+        outboundStatus = OutboundStatus.PICKING_IN_PROGRESS;
     }
 
     private void validateStartPicking() {
