@@ -163,4 +163,8 @@ public class OutboundItem {
         }
     }
 
+    public boolean isCompletedPicking() {
+        return pickings.stream()
+                .allMatch(Picking::isCompletedPicking);
+    }
 }
