@@ -2,15 +2,24 @@ package leejoongseok.wms.outbound.feature;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.outbound.domain.Picking;
 import leejoongseok.wms.outbound.domain.PickingRepository;
+import leejoongseok.wms.outbound.exception.PickingIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class ScanToPick {
     private final PickingRepository pickingRepository;
+    
 
     public void request(final Request request) {
+        final Picking picking = getPicking(request.pickingId);
+        
+    }
 
+    private Picking getPicking(final Long pickingId) {
+        return pickingRepository.findById(pickingId)
+                .orElseThrow(() -> new PickingIdNotFoundException(pickingId));
     }
 
     public record Request(

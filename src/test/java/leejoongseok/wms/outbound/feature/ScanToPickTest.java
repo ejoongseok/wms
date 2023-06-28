@@ -1,5 +1,6 @@
 package leejoongseok.wms.outbound.feature;
 
+import leejoongseok.wms.outbound.domain.PickingRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,10 +8,12 @@ import org.junit.jupiter.api.Test;
 class ScanToPickTest {
 
     private ScanToPick scanToPick;
+    private PickingRepository pickingRepository;
 
     @BeforeEach
     void setUp() {
-        scanToPick = new ScanToPick();
+        pickingRepository = null;
+        scanToPick = new ScanToPick(pickingRepository);
     }
 
     @Test
