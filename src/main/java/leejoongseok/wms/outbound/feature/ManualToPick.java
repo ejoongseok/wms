@@ -22,6 +22,8 @@ public class ManualToPick {
     public void request(final Request request) {
         final Picking picking = getPicking(request.pickingId);
         final LocationLPN locationLPN = getLocationLPN(request.locationLPNId);
+
+        picking.addManualPickedQuantity(locationLPN, request.pickedQuantity);
     }
 
     private Picking getPicking(final Long pickingId) {
