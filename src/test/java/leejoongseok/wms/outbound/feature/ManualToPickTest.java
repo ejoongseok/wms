@@ -25,6 +25,6 @@ class ManualToPickTest {
 
         manualToPick.request(request);
 
-
+        //pickingRepository.findById(1L).get().getPickedQuantity().ast(pickedQuantity);
     }
 }
