@@ -680,7 +680,8 @@ class OutboundTest {
 
 
     @Test
+    @DisplayName("출고의 상태를 집품완료로 변경한다.")
     void completePicking() {
-
+        throw new RuntimeException("테스트 추가해야함.");
     }
 }
