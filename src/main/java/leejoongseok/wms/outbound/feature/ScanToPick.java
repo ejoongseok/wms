@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 집품해야할 로케이션에 가서 LPN을 스캔하면 하고 토트에 상품을 담으면 피킹이 진행됩니다.
+ */
 @RestController
 @RequiredArgsConstructor
 public class ScanToPick {
