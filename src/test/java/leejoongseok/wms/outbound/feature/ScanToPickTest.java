@@ -15,8 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ScanToPickTest extends ApiTest {
 
     @Autowired
-    private ScanToPick scanToPick;
-    @Autowired
     private PickingRepository pickingRepository;
 
     @Test
