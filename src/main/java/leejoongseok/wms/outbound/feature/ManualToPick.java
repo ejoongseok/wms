@@ -2,8 +2,11 @@ package leejoongseok.wms.outbound.feature;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.location.domain.LocationLPN;
+import leejoongseok.wms.location.domain.LocationLPNRepository;
 import leejoongseok.wms.outbound.domain.Picking;
 import leejoongseok.wms.outbound.domain.PickingRepository;
+import leejoongseok.wms.outbound.exception.LocationLPNIdNotFoundException;
 import leejoongseok.wms.outbound.exception.PickingIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -14,14 +17,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ManualToPick {
     private final PickingRepository pickingRepository;
+    private final LocationLPNRepository locationLPNRepository;
 
     public void request(final Request request) {
-        final Picking picking = getPicking(request);
+        final Picking picking = getPicking(request.pickingId);
+        final LocationLPN locationLPN = getLocationLPN(request.locationLPNId);
     }
 
-    private Picking getPicking(final Request request) {
-        return pickingRepository.findById(request.pickingId)
-                .orElseThrow(() -> new PickingIdNotFoundException(request.pickingId));
+    private Picking getPicking(final Long pickingId) {
+        return pickingRepository.findById(pickingId)
+                .orElseThrow(() -> new PickingIdNotFoundException(pickingId));
+    }
+
+    private LocationLPN getLocationLPN(final Long locationLPNId) {
+        return locationLPNRepository.findById(locationLPNId)
+                .orElseThrow(() -> new LocationLPNIdNotFoundException(locationLPNId));
     }
 
     public record Request(
