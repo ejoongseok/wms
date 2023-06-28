@@ -15,6 +15,8 @@ public class CompletePicking {
 
     public void request(final Request request) {
         final Outbound outbound = getOutbound(request.outboundId);
+
+        outbound.completePicking();
     }
 
     private Outbound getOutbound(final Long outboundId) {

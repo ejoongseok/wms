@@ -678,4 +678,9 @@ class OutboundTest {
                         " 집품 대기 상태여야 하고 토트에 집품한 상품이 없어야합니다. 현재 상태: 피킹 중");
     }
 
+
+    @Test
+    void completePicking() {
+
+    }
 }
