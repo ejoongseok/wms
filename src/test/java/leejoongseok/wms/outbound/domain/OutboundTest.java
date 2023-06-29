@@ -911,7 +911,7 @@ class OutboundTest {
         assertThatThrownBy(() -> {
             outbound.assignPacking(packagingMaterial, packagingWeightInGrams);
         }).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("실중량과 토트에 담긴 상품의 총중량의 차이가 100g 이상입니다. 실중량: 1000, 상품의 포장예상 총중량: 600");
+                .hasMessageContaining("실중량과 상품의 포장예상 총중량의 차이가 100g 이상입니다. 실중량: 1000, 상품의 포장예상 총중량: 600");
     }
 
     @Test

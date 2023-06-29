@@ -496,7 +496,7 @@ public class Outbound {
         final Integer weightErrorTolerance = 100;
         if (weightErrorTolerance < diff) {
             throw new IllegalArgumentException(
-                    "실중량과 토트에 담긴 상품의 총중량의 차이가 100g 이상입니다. " +
+                    "실중량과 상품의 포장예상 총중량의 차이가 100g 이상입니다. " +
                             "실중량: %d, 상품의 포장예상 총중량: %d".formatted(
                                     realWeightInGrams, totalWeightInGrams));
         }
