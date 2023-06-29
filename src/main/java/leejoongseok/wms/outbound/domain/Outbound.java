@@ -469,10 +469,10 @@ public class Outbound {
 
     public void assignPacking(
             final PackagingMaterial packagingMaterial,
-            final Integer weightInGrams) {
-        validateAssignPacking(packagingMaterial, weightInGrams);
+            final Integer packagingWeightInGrams) {
+        validateAssignPacking(packagingMaterial, packagingWeightInGrams);
         realPackagingMaterial = packagingMaterial;
-        realPackagingWeightInGrams = weightInGrams;
+        realPackagingWeightInGrams = packagingWeightInGrams;
         outboundStatus = OutboundStatus.PACKING_IN_PROGRESS;
     }
 
@@ -497,5 +497,9 @@ public class Outbound {
                             "실중량: %d, 상품의 포장예상 총중량: %d".formatted(
                                     realWeightInGrams, totalWeightInGrams));
         }
+    }
+
+    public boolean isPackingInProgress() {
+        return OutboundStatus.PACKING_IN_PROGRESS == outboundStatus;
     }
 }

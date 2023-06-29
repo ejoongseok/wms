@@ -785,7 +785,131 @@ class OutboundTest {
             outbound.assignTrackingNumber(trackingNumber);
         }).isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("이미 할당된 송장번호가 존재합니다.");
+    }
 
+    @Test
+    @DisplayName("포장 정보를 등록한다.")
+    void assignPacking() {
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status);
+        final int weightInGrams = 100;
+        final PackagingMaterial packagingMaterial = createPackagingMaterial(weightInGrams);
+        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
+        final Location toteLocation = createToteLocation(
+                List.of(),
+                StorageType.TOTE);
+        outbound.assignPickingTote(toteLocation);
+        outbound.startPickingReady();
+        final int inventoryQuantity = 10;
+        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
+        final int quantityRequiredForPick = 5;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final Integer itemWeightInGrams = 100;
+        final Integer outboundQuantity = 5;
+        final OutboundItem outboundItem = createOutboundItem(
+                itemWeightInGrams,
+                outboundQuantity,
+                List.of(picking));
+        outbound.addOutboundItem(outboundItem);
+        outbound.startPickingProgress();
+        picking.addManualPickedQuantity(locationLPN, 5);
+        outbound.completePicking();
 
+        final int packagingWeightInGrams = 600;
+        outbound.assignPacking(packagingMaterial, packagingWeightInGrams);
+
+        assertThat(outbound.isPackingInProgress()).isTrue();
+    }
+
+    private PackagingMaterial createPackagingMaterial(final int weightInGrams) {
+        return Instancio.of(PackagingMaterial.class)
+                .supply(Select.field(PackagingMaterial::getWeightInGrams), () -> weightInGrams)
+                .create();
+    }
+
+    private OutboundItem createOutboundItem(
+            final Integer itemWeightInGrams,
+            final Integer outboundQuantity,
+            final List<Picking> pickings) {
+        final Item item = Instancio.of(Item.class)
+                .supply(Select.field(Item::getWeightInGrams), () -> itemWeightInGrams)
+                .create();
+        return Instancio.of(OutboundItem.class)
+                .supply(Select.field(OutboundItem::getPickings), () -> pickings)
+                .supply(Select.field(OutboundItem::getItem), () -> item)
+                .supply(Select.field(OutboundItem::getOutboundQuantity), () -> outboundQuantity)
+                .create();
+    }
+
+    @Test
+    @DisplayName("포장 정보를 등록한다. - 집품이 완료되지 않은 경우 예외 발생")
+    void assignPacking_invalid_status() {
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status);
+        final int weightInGrams = 100;
+        final PackagingMaterial packagingMaterial = createPackagingMaterial(weightInGrams);
+        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
+        final Location toteLocation = createToteLocation(
+                List.of(),
+                StorageType.TOTE);
+        outbound.assignPickingTote(toteLocation);
+        outbound.startPickingReady();
+        final int inventoryQuantity = 10;
+        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
+        final int quantityRequiredForPick = 5;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final Integer itemWeightInGrams = 100;
+        final Integer outboundQuantity = 5;
+        final OutboundItem outboundItem = createOutboundItem(
+                itemWeightInGrams,
+                outboundQuantity,
+                List.of(picking));
+        outbound.addOutboundItem(outboundItem);
+        outbound.startPickingProgress();
+        picking.addManualPickedQuantity(locationLPN, 5);
+
+        final int packagingWeightInGrams = 600;
+        assertThatThrownBy(() -> {
+            outbound.assignPacking(packagingMaterial, packagingWeightInGrams);
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("포장을 위해서는 집품이 완료되어야 합니다.");
+    }
+
+    @Test
+    @DisplayName("포장 정보를 등록한다. - 무게가 100g 이상 차이날경우 예외 발생")
+    void assignPacking_diff_weight() {
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status);
+        final int weightInGrams = 100;
+        final PackagingMaterial packagingMaterial = createPackagingMaterial(weightInGrams);
+        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
+        final Location toteLocation = createToteLocation(
+                List.of(),
+                StorageType.TOTE);
+        outbound.assignPickingTote(toteLocation);
+        outbound.startPickingReady();
+        final int inventoryQuantity = 10;
+        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
+        final int quantityRequiredForPick = 5;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final Integer itemWeightInGrams = 100;
+        final Integer outboundQuantity = 5;
+        final OutboundItem outboundItem = createOutboundItem(
+                itemWeightInGrams,
+                outboundQuantity,
+                List.of(picking));
+        outbound.addOutboundItem(outboundItem);
+        outbound.startPickingProgress();
+        picking.addManualPickedQuantity(locationLPN, 5);
+        outbound.completePicking();
+
+        final int packagingWeightInGrams = 1000;
+        assertThatThrownBy(() -> {
+            outbound.assignPacking(packagingMaterial, packagingWeightInGrams);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("실중량과 토트에 담긴 상품의 총중량의 차이가 100g 이상입니다. 실중량: 1000, 상품의 포장예상 총중량: 600");
     }
 }
