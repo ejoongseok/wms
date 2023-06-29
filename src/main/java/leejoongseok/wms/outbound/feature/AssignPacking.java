@@ -9,7 +9,9 @@ import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
 import leejoongseok.wms.outbound.exception.OutboundIdNotFoundException;
 import leejoongseok.wms.outbound.exception.PackagingMaterialIdNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 public class AssignPacking {
     private final OutboundRepository outboundRepository;
@@ -18,8 +20,22 @@ public class AssignPacking {
     public void request(final Request request) {
         final Outbound outbound = getOutbound(request.outboundId);
         final PackagingMaterial packagingMaterial = getPackagingMaterial(request);
+        compareActualAndRecommendedPackaging(packagingMaterial, outbound);
 
         outbound.assignPacking(packagingMaterial, request.realWeightInGrams);
+    }
+
+    /**
+     * 실제 포장자재와 추천 포장자재를 비교하여 다른 경우 분석용 로그 남김.
+     */
+    private void compareActualAndRecommendedPackaging(
+            final PackagingMaterial packagingMaterial,
+            final Outbound outbound) {
+        final PackagingMaterial recommendedPackagingMaterial = outbound.getRecommendedPackagingMaterial();
+        if (!recommendedPackagingMaterial.equals(packagingMaterial)) {
+            log.info("추천 포장자재[{}]와 포장자재[{}]가 다릅니다. 출고 ID[{}]",
+                    recommendedPackagingMaterial.getId(), packagingMaterial.getId(), outbound.getId());
+        }
     }
 
     private Outbound getOutbound(final Long outboundId) {
