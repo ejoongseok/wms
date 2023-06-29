@@ -10,13 +10,17 @@ import leejoongseok.wms.outbound.exception.OutboundIdNotFoundException;
 import leejoongseok.wms.outbound.exception.PackagingMaterialIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class AssignPacking {
     private final OutboundRepository outboundRepository;
     private final PackagingMaterialRepository packagingMaterialRepository;
 
+    @Transactional
     public void request(final Request request) {
         final Outbound outbound = getOutbound(request.outboundId);
         final PackagingMaterial packagingMaterial = getPackagingMaterial(request);
