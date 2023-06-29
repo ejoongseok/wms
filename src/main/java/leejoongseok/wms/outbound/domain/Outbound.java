@@ -398,7 +398,7 @@ public class Outbound {
                 .toList();
         final boolean isToteContainsItemPicked = pickings.stream()
                 .anyMatch(picking -> picking.hasPickedItem());
-        if (!isPickingReadyStatus() && isToteContainsItemPicked) {
+        if (!isPickingReadyStatus() || isToteContainsItemPicked) {
             throw new IllegalStateException(
                     ("Picking에 할당된 집품 수량만큼 LocationLPN의 재고 수량을 감소시키기 위해서는 " +
                             "집품 대기 상태여야 하고 토트에 집품한 상품이 없어야합니다. 현재 상태: %s").formatted(
@@ -410,5 +410,31 @@ public class Outbound {
         return outboundItems.stream()
                 .map(OutboundItem::getItemId)
                 .toList();
+    }
+
+    /**
+     * 집품 완료 처리
+     */
+    public void completePicking() {
+        validateCompletePicking();
+        outboundStatus = OutboundStatus.PICKING_COMPLETED;
+    }
+
+    private void validateCompletePicking() {
+        if (!isPickingInProgress()) {
+            throw new IllegalStateException(
+                    "집품 완료 처리를 위해서는 집품 진행 상태여야 합니다. 현재 상태: %s".formatted(
+                            outboundStatus.getDescription()));
+        }
+        final boolean isAllCompletedPicking = outboundItems.stream()
+                .allMatch(OutboundItem::isCompletedPicking);
+        if (!isAllCompletedPicking) {
+            throw new IllegalStateException(
+                    "집품 완료 처리를 위해서는 모든 상품의 집품이 완료되어야 합니다.");
+        }
+    }
+
+    public boolean isCompletedPicking() {
+        return OutboundStatus.PICKING_COMPLETED == outboundStatus;
     }
 }

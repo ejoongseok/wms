@@ -203,6 +203,7 @@ class OutboundItemTest {
                 .supply(Select.field(Picking::getQuantityRequiredForPick), () -> quantityRequiredForPick)
                 .supply(Select.field(Picking::getStatus), () -> pickingStatus)
                 .supply(Select.field(Picking::getLocationLPN), () -> locationLPN)
+                .ignore(Select.field(Picking::getPickedQuantity))
                 .create();
     }
 
@@ -239,7 +240,37 @@ class OutboundItemTest {
             outboundItem.deductAllocatedInventory();
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("차감할 재고 수량이 재고 수량보다 많습니다. 재고 수량: 10, 차감할 재고 수량: 50");
-
     }
 
+    @Test
+    @DisplayName("출고상품에 집품이 모두 완료되었는지 확인한다.")
+    void isCompletedPicking() {
+        final int inventoryQuantity = 10;
+        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
+        final int quantityRequiredForPick = 5;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final OutboundItem outboundItem = createOutboundItem(List.of(picking));
+        picking.addManualPickedQuantity(locationLPN, 5);
+
+        final boolean isCompletedPicking = outboundItem.isCompletedPicking();
+
+        assertThat(isCompletedPicking).isTrue();
+    }
+
+    @Test
+    @DisplayName("출고상품에 집품이 모두 완료되었는지 확인한다. - 집품이 완료되지 않았을 경우")
+    void isCompletedPicking_not_completed() {
+        final int inventoryQuantity = 10;
+        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
+        final int quantityRequiredForPick = 5;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final OutboundItem outboundItem = createOutboundItem(List.of(picking));
+        picking.addManualPickedQuantity(locationLPN, 4);
+
+        final boolean isCompletedPicking = outboundItem.isCompletedPicking();
+
+        assertThat(isCompletedPicking).isFalse();
+    }
 }

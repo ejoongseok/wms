@@ -641,6 +641,7 @@ class OutboundTest {
                 .supply(Select.field(Picking::getQuantityRequiredForPick), () -> quantityRequiredForPick)
                 .supply(Select.field(Picking::getStatus), () -> pickingStatus)
                 .supply(Select.field(Picking::getLocationLPN), () -> locationLPN)
+                .ignore(Select.field(Picking::getPickedQuantity))
                 .create();
     }
 
@@ -678,4 +679,85 @@ class OutboundTest {
                         " 집품 대기 상태여야 하고 토트에 집품한 상품이 없어야합니다. 현재 상태: 피킹 중");
     }
 
+
+    @Test
+    @DisplayName("출고의 상태를 집품완료로 변경한다.")
+    void completePicking() {
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status);
+        final PackagingMaterial packagingMaterial = Instancio.create(PackagingMaterial.class);
+        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
+        final Location toteLocation = createToteLocation(
+                List.of(),
+                StorageType.TOTE);
+        outbound.assignPickingTote(toteLocation);
+        outbound.startPickingReady();
+        final int inventoryQuantity = 10;
+        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
+        final int quantityRequiredForPick = 5;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final OutboundItem outboundItem = createOutboundItem(List.of(picking));
+        outbound.addOutboundItem(outboundItem);
+        outbound.startPickingProgress();
+        picking.addManualPickedQuantity(locationLPN, 5);
+
+        outbound.completePicking();
+
+        assertThat(outbound.isCompletedPicking()).isTrue();
+    }
+
+    @Test
+    @DisplayName("출고의 상태를 집품완료로 변경한다. - 집품 진행상태가 아닌경우 짐품 완료할 수 없음.")
+    void completePicking_invalid_status() {
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status);
+        final PackagingMaterial packagingMaterial = Instancio.create(PackagingMaterial.class);
+        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
+        final Location toteLocation = createToteLocation(
+                List.of(),
+                StorageType.TOTE);
+        outbound.assignPickingTote(toteLocation);
+        outbound.startPickingReady();
+        final int inventoryQuantity = 10;
+        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
+        final int quantityRequiredForPick = 5;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final OutboundItem outboundItem = createOutboundItem(List.of(picking));
+        outbound.addOutboundItem(outboundItem);
+
+        assertThatThrownBy(() -> {
+            outbound.completePicking();
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("집품 완료 처리를 위해서는 집품 진행 상태여야 합니다. 현재 상태: 피킹 대기(토트만 할당된 상태)");
+    }
+
+    @Test
+    @DisplayName("출고의 상태를 집품완료로 변경한다. - 출고 상품별 집품이 완료되지 않은 경우 집품 완료할 수 없음.")
+    void completePicking_not_completed_picked() {
+        final OutboundStatus status = OutboundStatus.READY;
+        final Outbound outbound = createOutbound(status);
+        final PackagingMaterial packagingMaterial = Instancio.create(PackagingMaterial.class);
+        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
+        final Location toteLocation = createToteLocation(
+                List.of(),
+                StorageType.TOTE);
+        outbound.assignPickingTote(toteLocation);
+        outbound.startPickingReady();
+        final int inventoryQuantity = 10;
+        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
+        final int quantityRequiredForPick = 5;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final OutboundItem outboundItem = createOutboundItem(List.of(picking));
+        outbound.addOutboundItem(outboundItem);
+        outbound.startPickingProgress();
+        picking.addManualPickedQuantity(locationLPN, 4);
+
+        assertThatThrownBy(() -> {
+            outbound.completePicking();
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("집품 완료 처리를 위해서는 모든 상품의 집품이 완료되어야 합니다.");
+    }
 }
