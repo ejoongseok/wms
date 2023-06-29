@@ -16,7 +16,14 @@ class AssignPackingTest {
     @Test
     @DisplayName("패킹 정보를 등록한다.")
     void assignPacking() {
-        final AssignPacking.Request request = new AssignPacking.Request();
+        final Long outboundId = 1L;
+        final Long packagingMaterialId = 1L;
+        final Integer realWeightInGrams = 1000;
+        final AssignPacking.Request request = new AssignPacking.Request(
+                outboundId,
+                packagingMaterialId,
+                realWeightInGrams
+        );
 
         assignPacking.request(request);
 
