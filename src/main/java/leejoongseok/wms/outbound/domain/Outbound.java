@@ -433,4 +433,8 @@ public class Outbound {
                     "집품 완료 처리를 위해서는 모든 상품의 집품이 완료되어야 합니다.");
         }
     }
+
+    public boolean isCompletedPicking() {
+        return OutboundStatus.PICKING_COMPLETED == outboundStatus;
+    }
 }
