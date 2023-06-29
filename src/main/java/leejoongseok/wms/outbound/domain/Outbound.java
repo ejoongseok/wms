@@ -473,6 +473,7 @@ public class Outbound {
         validateAssignPacking(packagingMaterial, weightInGrams);
         realPackagingMaterial = packagingMaterial;
         realPackagingWeightInGrams = weightInGrams;
+        outboundStatus = OutboundStatus.PACKING_IN_PROGRESS;
     }
 
     private void validateAssignPacking(
