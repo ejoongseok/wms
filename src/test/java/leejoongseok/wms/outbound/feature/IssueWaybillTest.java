@@ -12,8 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class IssueWaybillTest extends ApiTest {
 
     @Autowired
-    private IssueWaybill issueWaybill;
-    @Autowired
     private OutboundRepository outboundRepository;
 
 
@@ -28,11 +26,8 @@ class IssueWaybillTest extends ApiTest {
                 .createLocation().request()
                 .assignLPNToLocation().request(2)
                 .createPackagingMaterial().request()
-                .createOutbound().request();
-
-        final Long outboundId = 1L;
-
-        issueWaybill.request(outboundId);
+                .createOutbound().request()
+                .issueWaybill().request();
 
         assertThat(outboundRepository.findById(1L).get().hasTrackingNumber()).isTrue();
     }
