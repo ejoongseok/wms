@@ -505,4 +505,22 @@ public class Outbound {
     public boolean isPackingInProgress() {
         return OutboundStatus.PACKING_IN_PROGRESS == outboundStatus;
     }
+
+    public void completePacking() {
+        validateCompletePacking();
+        outboundStatus = OutboundStatus.PACKING_COMPLETED;
+    }
+
+    private void validateCompletePacking() {
+        Assert.hasText(trackingNumber, "포장을 완료하기 위해서는 송장이 발행되어야합니다.");
+        if (!isPackingInProgress()) {
+            throw new IllegalStateException(
+                    "포장 완료 처리를 위해서는 포장 진행 상태여야 합니다. 현재 상태: %s".formatted(
+                            outboundStatus.getDescription()));
+        }
+    }
+
+    public boolean isCompletedPacking() {
+        return OutboundStatus.PACKING_COMPLETED == outboundStatus;
+    }
 }

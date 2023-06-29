@@ -14,7 +14,8 @@ public enum OutboundStatus {
     PICKING_IN_PROGRESS("피킹 중"),
     PICKING_COMPLETED("피킹 완료"),
     PACKING_IN_PROGRESS("포장 중"),
-    COMPLETE("출고 완료"),
-    STOPPED("출고 중지");
+    PACKING_COMPLETED("포장 완료"),
+    STOPPED("출고 중지"),
+    COMPLETE("출고 완료");
     private final String description;
 }

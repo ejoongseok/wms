@@ -503,6 +503,7 @@ class OutboundTest {
                 .ignore(Select.field(Outbound::getOutboundItems))
                 .ignore(Select.field(Outbound::getToteLocation))
                 .ignore(Select.field(Outbound::getRecommendedPackagingMaterial))
+                .ignore(Select.field(Outbound::getTrackingNumber))
                 .create();
     }
 
@@ -911,5 +912,39 @@ class OutboundTest {
             outbound.assignPacking(packagingMaterial, packagingWeightInGrams);
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("실중량과 토트에 담긴 상품의 총중량의 차이가 100g 이상입니다. 실중량: 1000, 상품의 포장예상 총중량: 600");
+    }
+
+    @Test
+    @DisplayName("포장을 완료한다.")
+    void completePacking() {
+        final Outbound outbound = createOutbound(OutboundStatus.PACKING_IN_PROGRESS);
+        outbound.assignTrackingNumber("trackingNumber");
+
+        outbound.completePacking();
+
+        assertThat(outbound.isCompletedPacking()).isTrue();
+    }
+
+    @Test
+    @DisplayName("포장을 완료한다. - 송장이 발행되지 않은 경우 예외 발생")
+    void completePacking_unissued_waybill() {
+        final Outbound outbound = createOutbound(OutboundStatus.PACKING_IN_PROGRESS);
+
+        assertThatThrownBy(() -> {
+            outbound.completePacking();
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("포장을 완료하기 위해서는 송장이 발행되어야합니다.");
+    }
+
+    @Test
+    @DisplayName("포장을 완료한다. - 포장을 완료할 수 없는 상태 (포장 중이어야함.)")
+    void completePacking_invalid_status() {
+        final Outbound outbound = createOutbound(OutboundStatus.PICKING_READY);
+        outbound.assignTrackingNumber("trackingNumber");
+
+        assertThatThrownBy(() -> {
+            outbound.completePacking();
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("포장 완료 처리를 위해서는 포장 진행 상태여야 합니다.");
     }
 }
