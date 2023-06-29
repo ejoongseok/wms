@@ -1,29 +1,39 @@
 package leejoongseok.wms.outbound.feature;
 
+import leejoongseok.wms.common.ApiTest;
+import leejoongseok.wms.common.Scenario;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
-import leejoongseok.wms.outbound.port.WaybillRequester;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-class IssueWaybillTest {
+import static org.assertj.core.api.Assertions.assertThat;
 
+class IssueWaybillTest extends ApiTest {
 
+    @Autowired
     private IssueWaybill issueWaybill;
+    @Autowired
     private OutboundRepository outboundRepository;
-    private WaybillRequester waybillRequester;
 
-    @BeforeEach
-    void setUp() {
-        outboundRepository = null;
-        waybillRequester = null;
-        issueWaybill = new IssueWaybill(outboundRepository, waybillRequester);
-    }
 
     @Test
     @DisplayName("출고에대한 운송장을 발행한다.")
     void issueWaybill() {
+        new Scenario()
+                .createItem().request()
+                .createInbound().request()
+                .confirmInspectedInbound().request()
+                .createLPN().request()
+                .createLocation().request()
+                .assignLPNToLocation().request(2)
+                .createPackagingMaterial().request()
+                .createOutbound().request();
+
         final Long outboundId = 1L;
+
         issueWaybill.request(outboundId);
+
+        assertThat(outboundRepository.findById(1L).get().hasTrackingNumber()).isTrue();
     }
 }

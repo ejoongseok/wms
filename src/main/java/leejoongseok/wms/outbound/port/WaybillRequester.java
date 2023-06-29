@@ -1,7 +1,9 @@
 package leejoongseok.wms.outbound.port;
 
 import leejoongseok.wms.outbound.domain.Outbound;
+import org.springframework.stereotype.Component;
 
+@Component
 public class WaybillRequester {
     public String request(final Outbound outbound) {
         validateWaybillRequest(outbound);
