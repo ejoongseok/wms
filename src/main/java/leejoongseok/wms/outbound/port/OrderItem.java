@@ -1,4 +1,4 @@
-package leejoongseok.wms.outbound.domain;
+package leejoongseok.wms.outbound.port;
 
 import leejoongseok.wms.item.domain.Item;
 import lombok.Getter;
@@ -44,14 +44,14 @@ public class OrderItem {
     /**
      * 주문 상품의 총 부피를 계산한다.
      */
-    long calculateTotalVolume() {
+    public long calculateTotalVolume() {
         return item.calculateVolume() * orderQuantity;
     }
 
     /**
      * 주문 상품의 총 무게를 계산한다.
      */
-    long calculateTotalWeightInGrams() {
+    public long calculateTotalWeightInGrams() {
         return (long) item.getWeightInGrams() * orderQuantity;
     }
 }

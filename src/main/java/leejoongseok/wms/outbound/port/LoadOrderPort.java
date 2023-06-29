@@ -1,8 +1,6 @@
 package leejoongseok.wms.outbound.port;
 
 import leejoongseok.wms.item.domain.ItemRepository;
-import leejoongseok.wms.outbound.domain.Order;
-import leejoongseok.wms.outbound.domain.OrderItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

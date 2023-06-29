@@ -1,4 +1,4 @@
-package leejoongseok.wms.outbound.domain;
+package leejoongseok.wms.outbound.port;
 
 import lombok.AccessLevel;
 import lombok.Getter;
