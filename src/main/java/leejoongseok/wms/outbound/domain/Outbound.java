@@ -398,7 +398,7 @@ public class Outbound {
                 .toList();
         final boolean isToteContainsItemPicked = pickings.stream()
                 .anyMatch(picking -> picking.hasPickedItem());
-        if (!isPickingReadyStatus() && isToteContainsItemPicked) {
+        if (!isPickingReadyStatus() || isToteContainsItemPicked) {
             throw new IllegalStateException(
                     ("Picking에 할당된 집품 수량만큼 LocationLPN의 재고 수량을 감소시키기 위해서는 " +
                             "집품 대기 상태여야 하고 토트에 집품한 상품이 없어야합니다. 현재 상태: %s").formatted(
