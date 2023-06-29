@@ -457,4 +457,10 @@ public class Outbound {
             throw new IllegalStateException("이미 할당된 송장번호가 존재합니다.");
         }
     }
+
+    public void assignPacking(
+            final PackagingMaterial packagingMaterial,
+            final Integer realWeightInGrams) {
+        throw new UnsupportedOperationException("Unsupported assignPacking");
+    }
 }

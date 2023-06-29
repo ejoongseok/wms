@@ -4,20 +4,32 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.outbound.domain.Outbound;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
+import leejoongseok.wms.outbound.domain.PackagingMaterial;
+import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
 import leejoongseok.wms.outbound.exception.OutboundIdNotFoundException;
+import leejoongseok.wms.outbound.exception.PackagingMaterialIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class AssignPacking {
     private final OutboundRepository outboundRepository;
+    private final PackagingMaterialRepository packagingMaterialRepository;
 
     public void request(final Request request) {
         final Outbound outbound = getOutbound(request.outboundId);
+        final PackagingMaterial packagingMaterial = getPackagingMaterial(request);
+
+        outbound.assignPacking(packagingMaterial, request.realWeightInGrams);
     }
 
     private Outbound getOutbound(final Long outboundId) {
         return outboundRepository.findById(outboundId)
                 .orElseThrow(() -> new OutboundIdNotFoundException(outboundId));
+    }
+
+    private PackagingMaterial getPackagingMaterial(final Request request) {
+        return packagingMaterialRepository.findById(request.packagingMaterialId)
+                .orElseThrow(() -> new PackagingMaterialIdNotFoundException(request.packagingMaterialId));
     }
 
     public record Request(
