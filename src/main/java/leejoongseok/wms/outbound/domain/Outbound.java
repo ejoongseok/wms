@@ -445,4 +445,16 @@ public class Outbound {
     public boolean hasTrackingNumber() {
         return null != trackingNumber;
     }
+
+    public void assignTrackingNumber(final String trackingNumber) {
+        validateAssignTrackingNumber(trackingNumber);
+        this.trackingNumber = trackingNumber;
+    }
+
+    private void validateAssignTrackingNumber(final String trackingNumber) {
+        Assert.hasText(trackingNumber, "송장번호는 필수입니다.");
+        if (hasTrackingNumber()) {
+            throw new IllegalStateException("이미 할당된 송장번호가 존재합니다.");
+        }
+    }
 }

@@ -6,6 +6,9 @@ import leejoongseok.wms.outbound.exception.OutboundIdNotFoundException;
 import leejoongseok.wms.outbound.port.WaybillRequester;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 출고에 대한 운송장을 발행하는 기능을 담당하는 핸들러
+ */
 @RequiredArgsConstructor
 public class IssueWaybill {
     private final OutboundRepository outboundRepository;
@@ -13,8 +16,10 @@ public class IssueWaybill {
 
     public void request(final Long outboundId) {
         final var outbound = getOutbound(outboundId);
+
         final String trackingNumber = waybillRequester.request(outbound);
 
+        outbound.assignTrackingNumber(trackingNumber);
     }
 
     private Outbound getOutbound(final Long outboundId) {
