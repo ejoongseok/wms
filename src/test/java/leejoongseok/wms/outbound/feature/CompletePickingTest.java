@@ -40,14 +40,8 @@ class CompletePickingTest extends ApiTest {
                 .request()
                 .assignPickingTote().request()
                 .allocatePicking().request()
-                .manualToPick().pickedQuantity(2).request();
-
-        final Long outboundId = 1L;
-        final CompletePicking.Request request = new CompletePicking.Request(
-                outboundId
-        );
-
-        completePicking.request(request);
+                .manualToPick().pickedQuantity(2).request()
+                .completePicking().request();
 
         assertThat(outboundRepository.findById(1L).get().isCompletedPicking()).isTrue();
     }
