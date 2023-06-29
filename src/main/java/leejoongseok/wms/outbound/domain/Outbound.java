@@ -88,6 +88,10 @@ public class Outbound {
     @ManyToOne(fetch = FetchType.LAZY)
     @Comment("토트 로케이션 ID")
     private Location toteLocation;
+    @Getter
+    @Column(name = "tracking_number", nullable = true)
+    @Comment("송장 번호")
+    private String trackingNumber;
 
     public Outbound(
             final Long orderId,
@@ -436,5 +440,21 @@ public class Outbound {
 
     public boolean isCompletedPicking() {
         return OutboundStatus.PICKING_COMPLETED == outboundStatus;
+    }
+
+    public boolean hasTrackingNumber() {
+        return null != trackingNumber;
+    }
+
+    public void assignTrackingNumber(final String trackingNumber) {
+        validateAssignTrackingNumber(trackingNumber);
+        this.trackingNumber = trackingNumber;
+    }
+
+    private void validateAssignTrackingNumber(final String trackingNumber) {
+        Assert.hasText(trackingNumber, "송장번호는 필수입니다.");
+        if (hasTrackingNumber()) {
+            throw new IllegalStateException("이미 할당된 송장번호가 존재합니다.");
+        }
     }
 }

@@ -760,4 +760,32 @@ class OutboundTest {
         }).isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("집품 완료 처리를 위해서는 모든 상품의 집품이 완료되어야 합니다.");
     }
+
+    @Test
+    @DisplayName("발행한 송장의 추적번호를 할당한다.")
+    void assignTrackingNumber() {
+        final Outbound outbound = Instancio.of(Outbound.class)
+                .ignore(Select.field(Outbound::getTrackingNumber))
+                .create();
+        final String trackingNumber = "trackingNumber";
+
+        outbound.assignTrackingNumber(trackingNumber);
+
+        assertThat(outbound.hasTrackingNumber()).isTrue();
+        assertThat(outbound.getTrackingNumber()).isEqualTo(trackingNumber);
+    }
+
+    @Test
+    @DisplayName("발행한 송장의 추적번호를 할당한다. - 이미 할당된 추적번호가 있을경우 예외 발생")
+    void assignTrackingNumber_exists_tracking_number() {
+        final Outbound outbound = Instancio.create(Outbound.class);
+        final String trackingNumber = "trackingNumber";
+
+        assertThatThrownBy(() -> {
+            outbound.assignTrackingNumber(trackingNumber);
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("이미 할당된 송장번호가 존재합니다.");
+
+
+    }
 }
