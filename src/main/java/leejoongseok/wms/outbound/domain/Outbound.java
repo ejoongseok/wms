@@ -93,6 +93,15 @@ public class Outbound {
     @Comment("송장 번호")
     private String trackingNumber;
 
+    @Getter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "real_packaging_material_id", nullable = true)
+    @Comment("실제 포장한 포장재 ID")
+    private PackagingMaterial realPackagingMaterial;
+    @Column(name = "real_packaging_weight_in_grams", nullable = true)
+    @Comment("실제 포장 중량")
+    private Integer realPackagingWeightInGrams;
+
     public Outbound(
             final Long orderId,
             final PackagingMaterial recommendedPackagingMaterial,
