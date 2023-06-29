@@ -5,10 +5,11 @@ import leejoongseok.wms.common.Scenario;
 import leejoongseok.wms.location.domain.StorageType;
 import leejoongseok.wms.location.domain.UsagePurpose;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
-import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class AssignPackingTest extends ApiTest {
 
@@ -16,8 +17,6 @@ class AssignPackingTest extends ApiTest {
     private AssignPacking assignPacking;
     @Autowired
     private OutboundRepository outboundRepository;
-    @Autowired
-    private PackagingMaterialRepository packagingMaterialRepository;
 
     @Test
     @DisplayName("패킹 정보를 등록한다.")
@@ -55,6 +54,6 @@ class AssignPackingTest extends ApiTest {
 
         assignPacking.request(request);
 
-        // outboundRepository.findById(1L).get().isPackingInProgress();
+        assertThat(outboundRepository.findById(1L).get().isPackingInProgress()).isTrue();
     }
 }
