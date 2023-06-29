@@ -2,10 +2,22 @@ package leejoongseok.wms.outbound.feature;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.outbound.domain.Outbound;
+import leejoongseok.wms.outbound.domain.OutboundRepository;
+import leejoongseok.wms.outbound.exception.OutboundIdNotFoundException;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class AssignPacking {
+    private final OutboundRepository outboundRepository;
+
     public void request(final Request request) {
-        throw new UnsupportedOperationException("Unsupported request");
+        final Outbound outbound = getOutbound(request.outboundId);
+    }
+
+    private Outbound getOutbound(final Long outboundId) {
+        return outboundRepository.findById(outboundId)
+                .orElseThrow(() -> new OutboundIdNotFoundException(outboundId));
     }
 
     public record Request(

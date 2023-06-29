@@ -1,5 +1,6 @@
 package leejoongseok.wms.outbound.feature;
 
+import leejoongseok.wms.outbound.domain.OutboundRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,10 +8,12 @@ import org.junit.jupiter.api.Test;
 class AssignPackingTest {
 
     private AssignPacking assignPacking;
+    private OutboundRepository outboundRepository;
 
     @BeforeEach
     void setUp() {
-        assignPacking = new AssignPacking();
+        outboundRepository = null;
+        assignPacking = new AssignPacking(outboundRepository);
     }
 
     @Test
