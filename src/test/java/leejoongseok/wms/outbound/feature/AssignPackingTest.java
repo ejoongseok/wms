@@ -16,6 +16,10 @@ class AssignPackingTest {
     @Test
     @DisplayName("패킹 정보를 등록한다.")
     void assignPacking() {
+        final AssignPacking.Request request = new AssignPacking.Request();
 
+        assignPacking.request(request);
+
+        // outboundRepository.findById(1L).get().isPackingInProgress();
     }
 }
