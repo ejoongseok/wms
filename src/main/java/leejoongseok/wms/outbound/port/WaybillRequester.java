@@ -3,6 +3,9 @@ package leejoongseok.wms.outbound.port;
 import leejoongseok.wms.outbound.domain.Outbound;
 import org.springframework.stereotype.Component;
 
+/**
+ * 출고의 정보로 운송장을 발행하는 기능을 담당
+ */
 @Component
 public class WaybillRequester {
     public String request(final Outbound outbound) {
