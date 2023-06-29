@@ -17,7 +17,7 @@ class AssignPackingTest extends ApiTest {
     private OutboundRepository outboundRepository;
 
     @Test
-    @DisplayName("패킹 정보를 등록한다.")
+    @DisplayName("출고를 포장한뒤 포장 정보를 입력한다.")
     void assignPacking() {
         new Scenario()
                 .createItem().request()
