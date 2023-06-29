@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class EfficiencyLocationLPNSorterTest {
 
     @Test
-    @DisplayName("효율적인 위치별 Lpn을 정렬한다." +
+    @DisplayName("집품하기 효율적인 로케이션 LPN 동선으로 정렬한다." +
             "1. 유통기한이 가장 짧은 순서 (선입선출)" +
             "2. 재고수량이 많은 순서 (그래야 하나의 로케이션 LPN으로 집품이 가능하니까)" +
             "3. 로케이션 바코드 명으로 정렬 (보통 로케이션 바코드는 A -> Z 순서로 정렬되어 있음)")
