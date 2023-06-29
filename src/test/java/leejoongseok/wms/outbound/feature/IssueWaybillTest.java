@@ -1,5 +1,7 @@
 package leejoongseok.wms.outbound.feature;
 
+import leejoongseok.wms.outbound.domain.OutboundRepository;
+import leejoongseok.wms.outbound.port.WaybillRequester;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,10 +10,14 @@ class IssueWaybillTest {
 
 
     private IssueWaybill issueWaybill;
+    private OutboundRepository outboundRepository;
+    private WaybillRequester waybillRequester;
 
     @BeforeEach
     void setUp() {
-        issueWaybill = new IssueWaybill();
+        outboundRepository = null;
+        waybillRequester = null;
+        issueWaybill = new IssueWaybill(outboundRepository, waybillRequester);
     }
 
     @Test

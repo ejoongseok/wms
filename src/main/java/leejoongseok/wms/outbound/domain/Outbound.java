@@ -88,6 +88,10 @@ public class Outbound {
     @ManyToOne(fetch = FetchType.LAZY)
     @Comment("토트 로케이션 ID")
     private Location toteLocation;
+    @Getter
+    @Column(name = "tracking_number", nullable = true)
+    @Comment("송장 번호")
+    private String trackingNumber;
 
     public Outbound(
             final Long orderId,
@@ -436,5 +440,9 @@ public class Outbound {
 
     public boolean isCompletedPicking() {
         return OutboundStatus.PICKING_COMPLETED == outboundStatus;
+    }
+
+    public boolean hasTrackingNumber() {
+        return null != trackingNumber;
     }
 }
