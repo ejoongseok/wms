@@ -469,8 +469,10 @@ public class Outbound {
 
     public void assignPacking(
             final PackagingMaterial packagingMaterial,
-            final Integer realWeightInGrams) {
-        validateAssignPacking(packagingMaterial, realWeightInGrams);
+            final Integer weightInGrams) {
+        validateAssignPacking(packagingMaterial, weightInGrams);
+        realPackagingMaterial = packagingMaterial;
+        realPackagingWeightInGrams = weightInGrams;
     }
 
     private void validateAssignPacking(

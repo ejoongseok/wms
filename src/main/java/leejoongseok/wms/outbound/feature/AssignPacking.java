@@ -22,7 +22,7 @@ public class AssignPacking {
         final PackagingMaterial packagingMaterial = getPackagingMaterial(request);
         compareActualAndRecommendedPackaging(packagingMaterial, outbound);
 
-        outbound.assignPacking(packagingMaterial, request.realWeightInGrams);
+        outbound.assignPacking(packagingMaterial, request.packagingWeightInGrams);
     }
 
     /**
@@ -55,6 +55,6 @@ public class AssignPacking {
             Long packagingMaterialId,
             @NotNull(message = "실중량은 필수 입니다.")
             @Min(value = 1, message = "실중량은 1g 이상이어야 합니다.")
-            Integer realWeightInGrams) {
+            Integer packagingWeightInGrams) {
     }
 }
