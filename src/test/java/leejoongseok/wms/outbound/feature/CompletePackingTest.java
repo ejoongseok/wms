@@ -44,13 +44,10 @@ class CompletePackingTest extends ApiTest {
                 .manualToPick().pickedQuantity(2).request()
                 .completePicking().request()
                 .assignPacking().request()
-                .issueWaybill().request();
+                .issueWaybill().request()
+                .completePacking().request();
 
-        final Long outboundId = 1L;
-
-        completePacking.request(outboundId);
-
-        final var outbound = outboundRepository.findById(outboundId).get();
+        final var outbound = outboundRepository.findById(1L).get();
         assertThat(outbound.isCompletedPacking()).isTrue();
     }
 }

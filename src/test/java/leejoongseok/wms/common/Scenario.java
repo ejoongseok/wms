@@ -11,6 +11,7 @@ import leejoongseok.wms.location.steps.CreateLocationSteps;
 import leejoongseok.wms.outbound.steps.AllocatePickingSteps;
 import leejoongseok.wms.outbound.steps.AssignPackingSteps;
 import leejoongseok.wms.outbound.steps.AssignPickingToteSteps;
+import leejoongseok.wms.outbound.steps.CompletePackingSteps;
 import leejoongseok.wms.outbound.steps.CompletePickingSteps;
 import leejoongseok.wms.outbound.steps.CreateOutboundSteps;
 import leejoongseok.wms.outbound.steps.CreatePackagingMaterialSteps;
@@ -148,5 +149,12 @@ public class Scenario {
      */
     public AssignPackingSteps.Request assignPacking() {
         return new AssignPackingSteps.Request();
+    }
+
+    /**
+     * 출고에 대한 포장을 완료한다.
+     */
+    public CompletePackingSteps.Request completePacking() {
+        return new CompletePackingSteps.Request();
     }
 }
