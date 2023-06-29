@@ -48,7 +48,7 @@ public class Outbound {
     @OneToMany(mappedBy = "outbound", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<OutboundItem> outboundItems = new ArrayList<>();
     @Id
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("출고 ID")
     private Long id;
@@ -92,6 +92,15 @@ public class Outbound {
     @Column(name = "tracking_number", nullable = true)
     @Comment("송장 번호")
     private String trackingNumber;
+
+    @Getter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "real_packaging_material_id", nullable = true)
+    @Comment("실제 포장한 포장재 ID")
+    private PackagingMaterial realPackagingMaterial;
+    @Column(name = "real_packaging_weight_in_grams", nullable = true)
+    @Comment("실제 포장 중량")
+    private Integer realPackagingWeightInGrams;
 
     public Outbound(
             final Long orderId,
@@ -456,5 +465,44 @@ public class Outbound {
         if (hasTrackingNumber()) {
             throw new IllegalStateException("이미 할당된 송장번호가 존재합니다.");
         }
+    }
+
+    /**
+     * 실제로 포장한 포장재와 실중량을 할당한다.
+     */
+    public void assignPacking(
+            final PackagingMaterial packagingMaterial,
+            final Integer packagingWeightInGrams) {
+        validateAssignPacking(packagingMaterial, packagingWeightInGrams);
+        realPackagingMaterial = packagingMaterial;
+        realPackagingWeightInGrams = packagingWeightInGrams;
+        outboundStatus = OutboundStatus.PACKING_IN_PROGRESS;
+    }
+
+    private void validateAssignPacking(
+            final PackagingMaterial packagingMaterial,
+            final Integer realWeightInGrams) {
+        Assert.notNull(packagingMaterial, "포장재는 필수입니다.");
+        Assert.notNull(realWeightInGrams, "실중량은 필수입니다.");
+        if (0 > realWeightInGrams) {
+            throw new IllegalArgumentException("실중량은 0보다 작을 수 없습니다.");
+        }
+        if (!isCompletedPicking()) {
+            throw new IllegalStateException(
+                    "포장을 위해서는 집품이 완료되어야 합니다.");
+        }
+        final Long totalWeightInGrams = calculateTotalWeightInGrams();
+        final Long diff = Math.abs(totalWeightInGrams - realWeightInGrams);
+        final Integer weightErrorTolerance = 100;
+        if (weightErrorTolerance < diff) {
+            throw new IllegalArgumentException(
+                    "실중량과 토트에 담긴 상품의 총중량의 차이가 100g 이상입니다. " +
+                            "실중량: %d, 상품의 포장예상 총중량: %d".formatted(
+                                    realWeightInGrams, totalWeightInGrams));
+        }
+    }
+
+    public boolean isPackingInProgress() {
+        return OutboundStatus.PACKING_IN_PROGRESS == outboundStatus;
     }
 }

@@ -13,6 +13,7 @@ public enum OutboundStatus {
     PICKING_READY("피킹 대기(토트만 할당된 상태)"),
     PICKING_IN_PROGRESS("피킹 중"),
     PICKING_COMPLETED("피킹 완료"),
+    PACKING_IN_PROGRESS("포장 중"),
     COMPLETE("출고 완료"),
     STOPPED("출고 중지");
     private final String description;
