@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 출고를 포장한뒤 포장 정보를 입력하는 기능.
+ */
 @Slf4j
 @RestController
 @RequiredArgsConstructor

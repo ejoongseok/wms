@@ -467,6 +467,9 @@ public class Outbound {
         }
     }
 
+    /**
+     * 실제로 포장한 포장재와 실중량을 할당한다.
+     */
     public void assignPacking(
             final PackagingMaterial packagingMaterial,
             final Integer packagingWeightInGrams) {
