@@ -14,8 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AssignPackingTest extends ApiTest {
 
     @Autowired
-    private AssignPacking assignPacking;
-    @Autowired
     private OutboundRepository outboundRepository;
 
     @Test
@@ -41,18 +39,8 @@ class AssignPackingTest extends ApiTest {
                 .assignPickingTote().request()
                 .allocatePicking().request()
                 .manualToPick().pickedQuantity(2).request()
-                .completePicking().request();
-
-        final Long outboundId = 1L;
-        final Long packagingMaterialId = 1L;
-        final Integer realWeightInGrams = 30;
-        final AssignPacking.Request request = new AssignPacking.Request(
-                outboundId,
-                packagingMaterialId,
-                realWeightInGrams
-        );
-
-        assignPacking.request(request);
+                .completePicking().request()
+                .assignPacking().request();
 
         assertThat(outboundRepository.findById(1L).get().isPackingInProgress()).isTrue();
     }

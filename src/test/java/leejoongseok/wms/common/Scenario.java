@@ -9,6 +9,7 @@ import leejoongseok.wms.location.steps.AddManualInventoryToLocationLPNSteps;
 import leejoongseok.wms.location.steps.AssignLPNToLocationSteps;
 import leejoongseok.wms.location.steps.CreateLocationSteps;
 import leejoongseok.wms.outbound.steps.AllocatePickingSteps;
+import leejoongseok.wms.outbound.steps.AssignPackingSteps;
 import leejoongseok.wms.outbound.steps.AssignPickingToteSteps;
 import leejoongseok.wms.outbound.steps.CompletePickingSteps;
 import leejoongseok.wms.outbound.steps.CreateOutboundSteps;
@@ -85,5 +86,9 @@ public class Scenario {
 
     public IssueWaybillSteps.Request issueWaybill() {
         return new IssueWaybillSteps.Request();
+    }
+
+    public AssignPackingSteps.Request assignPacking() {
+        return new AssignPackingSteps.Request();
     }
 }
