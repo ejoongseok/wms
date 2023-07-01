@@ -16,4 +16,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     @VisibleForTesting
     @Query("select l from Location l left join fetch l.parentLocation left join fetch l.childLocations where l.locationBarcode = :locationBarcode")
     Optional<Location> testingFindByLocationBarcode(String locationBarcode);
+
+    @Query("select l from Location l left join l.locationLPNList where l.locationBarcode = :locationBarcode")
+    Optional<Location> findByLocationBarcodeAndFetchJoinLocationLPNList(String locationBarcode);
 }
