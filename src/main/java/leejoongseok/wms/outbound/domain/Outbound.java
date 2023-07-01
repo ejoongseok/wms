@@ -101,6 +101,10 @@ public class Outbound {
     @Column(name = "real_packaging_weight_in_grams", nullable = true)
     @Comment("실제 포장 중량")
     private Integer realPackagingWeightInGrams;
+    @Getter
+    @Column(name = "stopped_reason", nullable = true)
+    @Comment("출고 중지 사유")
+    private String stoppedReason;
 
     public Outbound(
             final Long orderId,
@@ -538,5 +542,23 @@ public class Outbound {
 
     public boolean isPassedInspection() {
         return OutboundStatus.INSPECTION_PASSED == outboundStatus;
+    }
+
+    public void failInspection(final String stoppedReason) {
+        validateFailInspection(stoppedReason);
+        this.stoppedReason = stoppedReason;
+        outboundStatus = OutboundStatus.STOPPED;
+    }
+
+    private void validateFailInspection(final String stoppedReason) {
+        Assert.hasText(stoppedReason, "검수 불합격 사유는 필수입니다.");
+        if (!isCompletedPicking()) {
+            throw new IllegalStateException(
+                    "검수 불합격 처리를 위해서는 집품이 완료되어야 합니다.");
+        }
+    }
+
+    public boolean isStopped() {
+        return OutboundStatus.STOPPED == outboundStatus;
     }
 }

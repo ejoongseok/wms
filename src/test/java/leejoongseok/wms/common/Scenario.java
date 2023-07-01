@@ -17,6 +17,7 @@ import leejoongseok.wms.outbound.steps.CompletePackingSteps;
 import leejoongseok.wms.outbound.steps.CompletePickingSteps;
 import leejoongseok.wms.outbound.steps.CreateOutboundSteps;
 import leejoongseok.wms.outbound.steps.CreatePackagingMaterialSteps;
+import leejoongseok.wms.outbound.steps.FailInspectionSteps;
 import leejoongseok.wms.outbound.steps.IssueWaybillSteps;
 import leejoongseok.wms.outbound.steps.ManualToPickSteps;
 import leejoongseok.wms.outbound.steps.PassInspectionSteps;
@@ -180,5 +181,12 @@ public class Scenario {
      */
     public PassInspectionSteps.Request passInspection() {
         return new PassInspectionSteps.Request();
+    }
+
+    /**
+     * 집품한 출고상품의 검수를 불합격 처리한다.
+     */
+    public FailInspectionSteps.Request failInspection() {
+        return new FailInspectionSteps.Request();
     }
 }
