@@ -8,6 +8,7 @@ import leejoongseok.wms.item.steps.CreateItemSteps;
 import leejoongseok.wms.location.steps.AddManualInventoryToLocationLPNSteps;
 import leejoongseok.wms.location.steps.AssignLPNToLocationSteps;
 import leejoongseok.wms.location.steps.CreateLocationSteps;
+import leejoongseok.wms.location.steps.MoveToTargetChildLocationSteps;
 import leejoongseok.wms.outbound.steps.AllocatePickingSteps;
 import leejoongseok.wms.outbound.steps.AssignPackingSteps;
 import leejoongseok.wms.outbound.steps.AssignPickingToteSteps;
@@ -156,5 +157,9 @@ public class Scenario {
      */
     public CompletePackingSteps.Request completePacking() {
         return new CompletePackingSteps.Request();
+    }
+
+    public MoveToTargetChildLocationSteps.Request moveToTargetChildLocation() {
+        return new MoveToTargetChildLocationSteps.Request();
     }
 }

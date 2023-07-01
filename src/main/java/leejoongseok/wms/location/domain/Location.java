@@ -6,14 +6,18 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.location.exception.LocationLPNNotFoundException;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
@@ -33,6 +37,7 @@ import java.util.Optional;
 @Table(name = "location")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Comment("로케이션")
+@EqualsAndHashCode(of = "id")
 public class Location {
 
     @Id
@@ -56,6 +61,18 @@ public class Location {
     @Getter
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<LocationLPN> locationLPNList = new ArrayList<>();
+
+    // 하위 로케이션
+    @Getter
+    @OneToMany(mappedBy = "parentLocation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Location> childLocations = new ArrayList<>();
+    // 로케이션이 이동한다는 것은, 어느 로케이션의 하위에 속하게 된다는것. 부모로케이션만 변경됨.
+    // 부모 로케이션
+    @Getter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_location_id", nullable = true)
+    @Comment("부모 로케이션 ID")
+    private Location parentLocation;
 
     public Location(
             final String locationBarcode,
@@ -157,5 +174,49 @@ public class Location {
 
     public boolean isStow() {
         return UsagePurpose.STOW == usagePurpose;
+    }
+
+    /**
+     * childToAdd를 하위 로케이션으로 추가하는 역할을 수행합니다.
+     */
+    public void addChildLocation(final Location childToAdd) {
+        validateAddChildLocation(childToAdd);
+        final Location childToAddParentLocation = childToAdd.parentLocation;
+        // 추가하려는 하위 로케이션(childToAdd)의 부모 로케이션(childToAddParentLocation)이 이미 존재한다면
+        if (null != childToAddParentLocation) {
+            // 해당 부모 로케이션에서 하위 로케이션을 제거한다.
+            childToAddParentLocation.removeChildLocation(childToAdd);
+        }
+        // 하위 로케이션(childToAdd)에 부모 로케이션으로 현재 인스턴스(this)를 할당한다.
+        childToAdd.assignParentLocation(this);
+
+        // 할당된 하위 로케이션(childToAdd)을 하위 로케이션 리스트(childLocations)에 추가한다.
+        childLocations.add(childToAdd);
+    }
+
+    private void removeChildLocation(final Location location) {
+        childLocations.remove(location);
+    }
+
+    private void assignParentLocation(final Location location) {
+        parentLocation = location;
+    }
+
+    private void validateAddChildLocation(final Location location) {
+        Assert.notNull(location, "로케이션은 필수입니다.");
+        final boolean alreadyExists = childLocations.stream().anyMatch(
+                childLocation -> childLocation.equals(location));
+        if (alreadyExists) {
+            throw new IllegalArgumentException("이미 등록된 하위 로케이션입니다.");
+        }
+        if (location.equals(parentLocation)) {
+            throw new IllegalArgumentException("부모 로케이션은 자식으로 추가할 수 없습니다.");
+        }
+        if (!storageType.isCompatibleWith(location.storageType)) {
+            throw new IllegalArgumentException(
+                    "현재 로케이션의 하위 로케이션에 등록할 수 없습니다. " +
+                            "현재 로케이션 보관 타입: %s, 하위로 추가하려는 로케이션 보관 타입: %s"
+                                    .formatted(storageType, location.storageType));
+        }
     }
 }
