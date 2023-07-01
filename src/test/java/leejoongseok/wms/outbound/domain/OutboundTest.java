@@ -968,4 +968,27 @@ class OutboundTest {
         }).isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("검수 통과 처리를 위해서는 집품이 완료되어야 합니다.");
     }
+
+    @Test
+    @DisplayName("집품 완료한 출고건의 검수를 불통과한다.")
+    void failInspection() {
+        final Outbound outbound = createOutbound(OutboundStatus.PICKING_COMPLETED);
+        final String 품질불량 = "품질불량";
+
+        outbound.failInspection(품질불량);
+
+        assertThat(outbound.isStopped()).isTrue();
+    }
+
+    @Test
+    @DisplayName("집품 완료한 출고건의 검수를 불통과한다. - 검수를 불통과할 수 없는 상태 (집품 완료 상태여야함.)")
+    void failInspection_invalid_status() {
+        final Outbound outbound = createOutbound(OutboundStatus.PICKING_READY);
+        final String 품질불량 = "품질불량";
+
+        assertThatThrownBy(() -> {
+            outbound.failInspection(품질불량);
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("검수 불합격 처리를 위해서는 집품이 완료되어야 합니다");
+    }
 }
