@@ -187,4 +187,44 @@ class LocationTest {
 
         assertThat(isStow).isFalse();
     }
+
+    @Test
+    @DisplayName("하위 로케이션을 추가한다.")
+    void addChildLocation() {
+        final Location parentLocation = createLocation(StorageType.TOTE);
+        final Location childLocation = createLocation(StorageType.CELL);
+
+        parentLocation.addChildLocation(childLocation);
+
+        assertThat(parentLocation.getChildLocations()).hasSize(1);
+        assertThat(parentLocation.getChildLocations().get(0)).isEqualTo(childLocation);
+        assertThat(childLocation.getParentLocation()).isEqualTo(parentLocation);
+    }
+
+    @Test
+    @DisplayName("하위 로케이션을 추가한다. - 하위 로케이션이 이미 추가된 경우")
+    void addChildLocation_already_exists() {
+        final Location parentLocation = createLocation(StorageType.TOTE);
+        final Location childLocation = createLocation(StorageType.CELL);
+
+        parentLocation.addChildLocation(childLocation);
+        assertThatThrownBy(() -> {
+            parentLocation.addChildLocation(childLocation);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("이미 등록된 하위 로케이션입니다.");
+    }
+
+    @Test
+    @DisplayName("하위 로케이션을 추가한다. - 하위 로케이션의 크기가 부모 로케이션의 크기보다 큰 경우")
+    void addChildLocation_over_size() {
+        final Location parentLocation = createLocation(StorageType.CELL);
+        final Location childLocation = createLocation(StorageType.TOTE);
+
+        assertThatThrownBy(() -> {
+            parentLocation.addChildLocation(childLocation);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("현재 로케이션의 하위 로케이션에 등록할 수 없습니다. " +
+                        "현재 로케이션 보관 타입: CELL, 하위로 추가하려는 로케이션 보관 타입: TOTE");
+    }
+
 }

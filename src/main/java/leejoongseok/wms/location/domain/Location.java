@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.location.exception.LocationLPNNotFoundException;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
@@ -36,6 +37,7 @@ import java.util.Optional;
 @Table(name = "location")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Comment("로케이션")
+@EqualsAndHashCode(of = "id")
 public class Location {
 
     @Id
@@ -61,6 +63,7 @@ public class Location {
     private final List<LocationLPN> locationLPNList = new ArrayList<>();
 
     // 하위 로케이션
+    @Getter
     @OneToMany(mappedBy = "parentLocation", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Location> childLocations = new ArrayList<>();
     // 로케이션이 이동한다는 것은, 어느 로케이션의 하위에 속하게 된다는것. 부모로케이션만 변경됨.
@@ -201,10 +204,16 @@ public class Location {
 
     private void validateAddChildLocation(final Location location) {
         Assert.notNull(location, "로케이션은 필수입니다.");
+        final boolean alreadyExists = childLocations.stream().anyMatch(
+                childLocation -> childLocation.equals(location));
+        if (alreadyExists) {
+            throw new IllegalArgumentException("이미 등록된 하위 로케이션입니다.");
+        }
         if (!storageType.isCompatibleWith(location.storageType)) {
             throw new IllegalArgumentException(
-                    "현재 로케이션의 하위 로케이션에 등록할 수 없습니다." +
-                            "현재 로케이션 보관 타입: %s, 하위로 추가하려는 로케이션 보관 타입: %s");
+                    "현재 로케이션의 하위 로케이션에 등록할 수 없습니다. " +
+                            "현재 로케이션 보관 타입: %s, 하위로 추가하려는 로케이션 보관 타입: %s"
+                                    .formatted(storageType, location.storageType));
         }
     }
 }
