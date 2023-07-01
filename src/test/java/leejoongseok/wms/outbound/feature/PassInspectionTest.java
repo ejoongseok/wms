@@ -1,25 +1,52 @@
 package leejoongseok.wms.outbound.feature;
 
+import leejoongseok.wms.common.ApiTest;
+import leejoongseok.wms.common.Scenario;
+import leejoongseok.wms.location.domain.StorageType;
+import leejoongseok.wms.location.domain.UsagePurpose;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-class PassInspectionTest {
+import static org.assertj.core.api.Assertions.assertThat;
 
+class PassInspectionTest extends ApiTest {
+
+    @Autowired
     private PassInspection passInspection;
+    @Autowired
     private OutboundRepository outboundRepository;
 
-    @BeforeEach
-    void setUp() {
-        outboundRepository = null;
-        passInspection = new PassInspection(outboundRepository);
-    }
 
     @Test
     @DisplayName("집품 완료한 출고건의 검수를 통과한다.")
     void passInspection() {
+        new Scenario()
+                .createItem().request()
+                .createInbound().request()
+                .confirmInspectedInbound().request()
+                .createLPN().request()
+                .createLocation().request()
+                .assignLPNToLocation().request(3)
+                .createPackagingMaterial().request()
+                .createOutbound().request();
+
+        final String toteBarcode = "TOTE0001";
+        new Scenario()
+                .createLocation()
+                .locationBarcode(toteBarcode)
+                .storageType(StorageType.TOTE)
+                .usagePurpose(UsagePurpose.MOVE)
+                .request()
+                .assignPickingTote().request()
+                .allocatePicking().request()
+                .manualToPick().pickedQuantity(2).request()
+                .completePicking().request();
         final Long outboundId = 1L;
+
         passInspection.request(outboundId);
+
+        assertThat(outboundRepository.findById(outboundId).get().isPassedInspection()).isTrue();
     }
 }
