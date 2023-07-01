@@ -956,6 +956,7 @@ class OutboundTest {
         outbound.passInspection();
 
         assertThat(outbound.isPassedInspection()).isTrue();
+
     }
 
     @Test
@@ -978,6 +979,7 @@ class OutboundTest {
         outbound.failInspection(품질불량);
 
         assertThat(outbound.isStopped()).isTrue();
+        assertThat(outbound.getStoppedReason()).isEqualTo("품질불량");
     }
 
     @Test
