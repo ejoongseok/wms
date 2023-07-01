@@ -1,5 +1,6 @@
 package leejoongseok.wms.location.domain;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,4 +12,8 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
      */
     @Query("select l from Location l where l.locationBarcode = :locationBarcode")
     Optional<Location> findByLocationBarcode(String locationBarcode);
+
+    @VisibleForTesting
+    @Query("select l from Location l left join fetch l.parentLocation left join fetch l.childLocations where l.locationBarcode = :locationBarcode")
+    Optional<Location> testingFindByLocationBarcode(String locationBarcode);
 }

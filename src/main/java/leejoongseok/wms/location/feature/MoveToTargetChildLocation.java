@@ -1,12 +1,15 @@
 package leejoongseok.wms.location.feature;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationRepository;
 import leejoongseok.wms.location.exception.LocationBarcodeNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 대상 로케이션의 하위 로케이션으로 현재 로케이션을 이동하는 기능
@@ -18,13 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
  * 과일을 담은 바구니를 더 큰 바구니 혹은 어떤 선반같은데 올릴수 있음.
  * 더 큰 바구니도 로케이션이고 선반도 로케이션이다.
  */
-@Component
+@RestController
 @RequiredArgsConstructor
 public class MoveToTargetChildLocation {
     private final LocationRepository locationRepository;
 
     @Transactional
-    public void request(final Request request) {
+    @PostMapping("/locations/move-to-target-child-location")
+    public void request(@RequestBody @Valid final Request request) {
         final Location currentLocation = getLocation(request.currentLocationBarcode);
         final Location targetLocation = getLocation(request.targetLocationBarcode);
 
