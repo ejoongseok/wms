@@ -523,4 +523,20 @@ public class Outbound {
     public boolean isCompletedPacking() {
         return OutboundStatus.PACKING_COMPLETED == outboundStatus;
     }
+
+    public void passInspection() {
+        validatePassInspection();
+        outboundStatus = OutboundStatus.INSPECTION_PASSED;
+    }
+
+    private void validatePassInspection() {
+        if (!isCompletedPicking()) {
+            throw new IllegalStateException(
+                    "검수 통과 처리를 위해서는 집품이 완료되어야 합니다.");
+        }
+    }
+
+    public boolean isPassedInspection() {
+        return OutboundStatus.INSPECTION_PASSED == outboundStatus;
+    }
 }
