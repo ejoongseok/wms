@@ -158,4 +158,8 @@ public class Location {
     public boolean isStow() {
         return UsagePurpose.STOW == usagePurpose;
     }
+
+    public void addChildLocation(final Location location) {
+        Assert.notNull(location, "로케이션은 필수입니다.");
+    }
 }

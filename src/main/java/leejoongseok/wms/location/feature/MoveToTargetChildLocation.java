@@ -1,6 +1,10 @@
 package leejoongseok.wms.location.feature;
 
 import jakarta.validation.constraints.NotBlank;
+import leejoongseok.wms.location.domain.Location;
+import leejoongseok.wms.location.domain.LocationRepository;
+import leejoongseok.wms.location.exception.LocationBarcodeNotFoundException;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 대상 로케이션의 하위 로케이션으로 현재 로케이션을 이동하는 기능
@@ -12,9 +16,20 @@ import jakarta.validation.constraints.NotBlank;
  * 과일을 담은 바구니를 더 큰 바구니 혹은 어떤 선반같은데 올릴수 있음.
  * 더 큰 바구니도 로케이션이고 선반도 로케이션이다.
  */
+@RequiredArgsConstructor
 public class MoveToTargetChildLocation {
+    private final LocationRepository locationRepository;
+
     public void request(final Request request) {
-        throw new UnsupportedOperationException("Unsupported request");
+        final Location currentLocation = getLocation(request.currentLocationBarcode);
+        final Location targetLocation = getLocation(request.targetLocationBarcode);
+
+        targetLocation.addChildLocation(currentLocation);
+    }
+
+    private Location getLocation(final String locationBarcode) {
+        return locationRepository.findByLocationBarcode(locationBarcode)
+                .orElseThrow(() -> new LocationBarcodeNotFoundException(locationBarcode));
     }
 
     public record Request(

@@ -1,5 +1,6 @@
 package leejoongseok.wms.location.feature;
 
+import leejoongseok.wms.location.domain.LocationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,10 +8,12 @@ import org.junit.jupiter.api.Test;
 class MoveToTargetChildLocationTest {
 
     private MoveToTargetChildLocation moveToTargetChildLocation;
+    private LocationRepository locationRepository;
 
     @BeforeEach
     void setUp() {
-        moveToTargetChildLocation = new MoveToTargetChildLocation();
+        locationRepository = null;
+        moveToTargetChildLocation = new MoveToTargetChildLocation(locationRepository);
     }
 
     @Test
