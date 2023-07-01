@@ -7,15 +7,19 @@ import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationRepository;
 import leejoongseok.wms.location.exception.LocationBarcodeNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * A 로케이션에 재고 10개 중 5개를 B 로케이션으로 이동시키는 기능
  * ex) 진열구역에 집품해야할 재고를 보충하기 위해 보충구역에서 재고 일부를 진열구역으로 이동시킨다.
  */
+@Component
 @RequiredArgsConstructor
 public class TransferInventory {
     private final LocationRepository locationRepository;
 
+    @Transactional
     public void request(final Request request) {
         final Location fromLocation = getLocation(request.fromLocationBarcode);
         final Location toLocation = getLocation(request.toLocationBarcode);
