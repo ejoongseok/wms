@@ -42,11 +42,9 @@ class PassInspectionTest extends ApiTest {
                 .assignPickingTote().request()
                 .allocatePicking().request()
                 .manualToPick().pickedQuantity(2).request()
-                .completePicking().request();
-        final Long outboundId = 1L;
+                .completePicking().request()
+                .passInspection().request();
 
-        passInspection.request(outboundId);
-
-        assertThat(outboundRepository.findById(outboundId).get().isPassedInspection()).isTrue();
+        assertThat(outboundRepository.findById(1L).get().isPassedInspection()).isTrue();
     }
 }

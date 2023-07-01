@@ -19,6 +19,7 @@ import leejoongseok.wms.outbound.steps.CreateOutboundSteps;
 import leejoongseok.wms.outbound.steps.CreatePackagingMaterialSteps;
 import leejoongseok.wms.outbound.steps.IssueWaybillSteps;
 import leejoongseok.wms.outbound.steps.ManualToPickSteps;
+import leejoongseok.wms.outbound.steps.PassInspectionSteps;
 import leejoongseok.wms.outbound.steps.ScanToPickSteps;
 import leejoongseok.wms.outbound.steps.SplitToOutboundSteps;
 
@@ -172,5 +173,12 @@ public class Scenario {
      */
     public TransferInventorySteps.Request transferInventory() {
         return new TransferInventorySteps.Request();
+    }
+
+    /**
+     * 집품한 출고상품의 검수를 완료한다.
+     */
+    public PassInspectionSteps.Request passInspection() {
+        return new PassInspectionSteps.Request();
     }
 }
