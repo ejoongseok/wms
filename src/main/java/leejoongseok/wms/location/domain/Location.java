@@ -6,9 +6,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import leejoongseok.wms.inbound.domain.LPN;
@@ -56,6 +59,17 @@ public class Location {
     @Getter
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<LocationLPN> locationLPNList = new ArrayList<>();
+
+    // 로케이션이 이동한다는 것은, 어느 로케이션의 하위에 속하게 된다는것. 부모로케이션만 변경됨.
+    // 부모 로케이션
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_location_id", nullable = true)
+    @Comment("부모 로케이션 ID")
+    private Location parentLocation;
+
+    // 하위 로케이션
+    @OneToMany(mappedBy = "parentLocation", cascade = CascadeType.PERSIST)
+    private final List<Location> childLocations = new ArrayList<>();
 
     public Location(
             final String locationBarcode,
