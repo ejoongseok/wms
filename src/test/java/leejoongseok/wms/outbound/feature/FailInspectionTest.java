@@ -42,13 +42,9 @@ class FailInspectionTest extends ApiTest {
                 .assignPickingTote().request()
                 .allocatePicking().request()
                 .manualToPick().pickedQuantity(2).request()
-                .completePicking().request();
+                .completePicking().request()
+                .failInspection().request();
 
-        final Long outboundId = 1L;
-        final String stoppedReason = "품질 불량";
-        final FailInspection.Request request = new FailInspection.Request(outboundId, stoppedReason);
-
-        failInspection.request(request);
 
         assertThat(outboundRepository.findById(1L).get().isStopped()).isTrue();
     }
