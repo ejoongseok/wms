@@ -13,13 +13,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TransferInventoryTest extends ApiTest {
 
     @Autowired
-    private TransferInventory transferInventory;
-    @Autowired
     private LocationLPNRepository locationLPNRepository;
 
     @Test
     @DisplayName("A 로케이션에 재고 10개 중 5개를 B 로케이션으로 이동시키는 기능")
     void transferInventory() {
+        final String fromLocationBarcode = "A1-1-1";
+        final String toLocationBarcode = "toLocationBarcode";
         new Scenario()
                 .createItem().request()
                 .createInbound().request()
@@ -32,19 +32,13 @@ class TransferInventoryTest extends ApiTest {
                 .assignLPNToLocation().request()
                 .addManualInventoryToLocationLPN()
                 .inventoryQuantity(10)
+                .request()
+                .transferInventory()
+                .fromLocationBarcode(fromLocationBarcode)
+                .toLocationBarcode(toLocationBarcode)
+                .targetLPNId(1L)
+                .transferQuantity(5)
                 .request();
-
-        final String fromLocationBarcode = "A1-1-1";
-        final String toLocationBarcode = "toLocationBarcode";
-        final Long targetLPNId = 1L;
-        final Integer transferQuantity = 5;
-        final TransferInventory.Request request = new TransferInventory.Request(
-                fromLocationBarcode,
-                toLocationBarcode,
-                targetLPNId,
-                transferQuantity
-        );
-        transferInventory.request(request);
 
         final LocationLPN fromLocationLPN = getLocationLPN(fromLocationBarcode);
         assertThat(fromLocationLPN.getInventoryQuantity()).isEqualTo(6);
