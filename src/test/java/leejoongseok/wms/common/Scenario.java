@@ -9,6 +9,7 @@ import leejoongseok.wms.location.steps.AddManualInventoryToLocationLPNSteps;
 import leejoongseok.wms.location.steps.AssignLPNToLocationSteps;
 import leejoongseok.wms.location.steps.CreateLocationSteps;
 import leejoongseok.wms.location.steps.MoveToTargetChildLocationSteps;
+import leejoongseok.wms.location.steps.TransferInventorySteps;
 import leejoongseok.wms.outbound.steps.AllocatePickingSteps;
 import leejoongseok.wms.outbound.steps.AssignPackingSteps;
 import leejoongseok.wms.outbound.steps.AssignPickingToteSteps;
@@ -159,7 +160,17 @@ public class Scenario {
         return new CompletePackingSteps.Request();
     }
 
+    /**
+     * 로케이션을 다른 로케이션으로 이동한다.
+     */
     public MoveToTargetChildLocationSteps.Request moveToTargetChildLocation() {
         return new MoveToTargetChildLocationSteps.Request();
+    }
+
+    /**
+     * 로케이션에 있는 LPN의 재고를 이동한다.
+     */
+    public TransferInventorySteps.Request transferInventory() {
+        return new TransferInventorySteps.Request();
     }
 }

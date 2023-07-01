@@ -18,4 +18,7 @@ public interface LocationLPNRepository extends JpaRepository<LocationLPN, Long> 
 
     @Query("select l from LocationLPN  l join fetch l.lpn join fetch l.location where l.location.locationBarcode = :locationBarcode and l.lpn.lpnBarcode = :lpnBarcode")
     Optional<LocationLPN> findByLocationBarcodeAndLPNBarcode(String locationBarcode, String lpnBarcode);
+
+    @Query("select l from LocationLPN l join fetch l.lpn join fetch l.location where l.location.locationBarcode = :locationBarcode")
+    Optional<LocationLPN> testingFindByLocationBarcode(String locationBarcode);
 }
