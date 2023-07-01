@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import leejoongseok.wms.inbound.domain.LPN;
+import leejoongseok.wms.location.exception.LPNIdNotFoundException;
 import leejoongseok.wms.location.exception.LocationLPNNotFoundException;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -218,5 +219,26 @@ public class Location {
                             "현재 로케이션 보관 타입: %s, 하위로 추가하려는 로케이션 보관 타입: %s"
                                     .formatted(storageType, location.storageType));
         }
+    }
+
+    public void decreaseInventory(final Long lpnId, final Integer decreaseQuantity) {
+        validateDecreaseInventory(lpnId, decreaseQuantity);
+        final LocationLPN locationLPN = getLocationLPN(lpnId);
+        locationLPN.deductInventory(decreaseQuantity);
+    }
+
+    private void validateDecreaseInventory(final Long lpnId, final Integer decreaseQuantity) {
+        Assert.notNull(lpnId, "LPN ID는 필수입니다.");
+        Assert.notNull(decreaseQuantity, "감소할 재고 수량은 필수입니다.");
+        if (0 >= decreaseQuantity) {
+            throw new IllegalArgumentException("감소할 재고 수량은 1이상이어야 합니다.");
+        }
+    }
+
+    private LocationLPN getLocationLPN(final Long lpnId) {
+        return locationLPNList.stream()
+                .filter(locationLPN -> lpnId.equals(locationLPN.getLPNId()))
+                .findFirst()
+                .orElseThrow(() -> new LPNIdNotFoundException(lpnId));
     }
 }

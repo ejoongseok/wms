@@ -120,6 +120,11 @@ public class LocationLPN {
     }
 
     public void deductInventory(final Integer quantityRequiredForPick) {
+        validateDeductInventory(quantityRequiredForPick);
+        inventoryQuantity -= quantityRequiredForPick;
+    }
+
+    private void validateDeductInventory(final Integer quantityRequiredForPick) {
         Assert.notNull(quantityRequiredForPick, "차감할 재고 수량은 필수입니다.");
         if (0 >= quantityRequiredForPick) {
             throw new IllegalArgumentException("차감할 재고 수량은 1이상이어야 합니다.");
@@ -132,7 +137,5 @@ public class LocationLPN {
                                     quantityRequiredForPick
                             ));
         }
-
-        inventoryQuantity -= quantityRequiredForPick;
     }
 }

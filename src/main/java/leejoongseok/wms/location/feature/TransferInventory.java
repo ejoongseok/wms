@@ -32,8 +32,8 @@ public class TransferInventory {
             final Location toLocation,
             final Long targetLPNId,
             final Integer transferQuantity) {
-        toLocation.transferInventory(targetLPNId, transferQuantity);
         fromLocation.decreaseInventory(targetLPNId, transferQuantity);
+//        toLocation.transferInventory(targetLPNId, transferQuantity);
     }
 
     public record Request(
