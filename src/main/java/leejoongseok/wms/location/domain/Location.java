@@ -209,6 +209,9 @@ public class Location {
         if (alreadyExists) {
             throw new IllegalArgumentException("이미 등록된 하위 로케이션입니다.");
         }
+        if (location.equals(parentLocation)) {
+            throw new IllegalArgumentException("부모 로케이션은 자식으로 추가할 수 없습니다.");
+        }
         if (!storageType.isCompatibleWith(location.storageType)) {
             throw new IllegalArgumentException(
                     "현재 로케이션의 하위 로케이션에 등록할 수 없습니다. " +
