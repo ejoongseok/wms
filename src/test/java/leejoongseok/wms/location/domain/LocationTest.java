@@ -278,4 +278,41 @@ class LocationTest {
         }).isInstanceOf(LPNIdNotFoundException.class)
                 .hasMessageContaining("해당하는 LPN ID를 찾을 수 없습니다. lpnId=999");
     }
+
+    @Test
+    @DisplayName("입력한 수량만큼 LocationLPN의 재고를 추가한다.")
+    void increaseInventory() {
+        final Location fromLocation = createLocation();
+        final Location toLocation = createLocation();
+        final String lpnBarcode = "lpnBarcode";
+        final LPN lpn = createLPN(lpnBarcode);
+        fromLocation.assignLPN(lpn);
+        final int inventoryQuantity = 10;
+        fromLocation.addManualInventoryToLocationLPN(lpn, inventoryQuantity);
+        final int transferQuantity = 5;
+        final LocationLPN transferLocationLPN = fromLocation.testingGetLocationLPN(lpnBarcode);
+
+        toLocation.increaseInventory(transferLocationLPN, transferQuantity);
+
+        assertThat(toLocation.testingGetLocationLPN(lpnBarcode).getInventoryQuantity()).isEqualTo(5);
+    }
+
+    @Test
+    @DisplayName("입력한 수량만큼 LocationLPN의 재고를 추가한다. - 추가하려는 재고가 0이하")
+    void increaseInventory_zero_quantity() {
+        final Location fromLocation = createLocation();
+        final Location toLocation = createLocation();
+        final String lpnBarcode = "lpnBarcode";
+        final LPN lpn = createLPN(lpnBarcode);
+        fromLocation.assignLPN(lpn);
+        final int inventoryQuantity = 10;
+        fromLocation.addManualInventoryToLocationLPN(lpn, inventoryQuantity);
+        final int transferQuantity = 0;
+        final LocationLPN transferLocationLPN = fromLocation.testingGetLocationLPN(lpnBarcode);
+
+        assertThatThrownBy(() -> {
+            toLocation.increaseInventory(transferLocationLPN, transferQuantity);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("추가할 재고 수량은 1이상이어야 합니다.");
+    }
 }

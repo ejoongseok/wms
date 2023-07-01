@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.location.domain.Location;
+import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.LocationRepository;
 import leejoongseok.wms.location.exception.LocationBarcodeNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,8 @@ public class TransferInventory {
             final Long targetLPNId,
             final Integer transferQuantity) {
         fromLocation.decreaseInventory(targetLPNId, transferQuantity);
-//        toLocation.transferInventory(targetLPNId, transferQuantity);
+        final LocationLPN locationLPN = fromLocation.getLocationLPN(targetLPNId);
+        toLocation.increaseInventory(locationLPN, transferQuantity);
     }
 
     public record Request(

@@ -235,10 +235,45 @@ public class Location {
         }
     }
 
-    private LocationLPN getLocationLPN(final Long lpnId) {
+    public LocationLPN getLocationLPN(final Long lpnId) {
+        return findLocationLPN(lpnId)
+                .orElseThrow(() -> new LPNIdNotFoundException(lpnId));
+    }
+
+    private Optional<LocationLPN> findLocationLPN(final Long lpnId) {
         return locationLPNList.stream()
                 .filter(locationLPN -> lpnId.equals(locationLPN.getLPNId()))
-                .findFirst()
-                .orElseThrow(() -> new LPNIdNotFoundException(lpnId));
+                .findFirst();
+    }
+
+    public void increaseInventory(
+            final LocationLPN targetLocationLPN,
+            final Integer inventoryQuantity) {
+        validateIncreaseInventory(targetLocationLPN, inventoryQuantity);
+        findLocationLPNBy(targetLocationLPN).ifPresentOrElse(
+                locationLPN -> locationLPN.addManualInventoryQuantity(inventoryQuantity),
+                () -> {
+                    final LPN targetLPN = targetLocationLPN.getLpn();
+                    assignNewLocationLPN(targetLPN);
+                    final LocationLPN newLocationLPN = getLocationLPN(targetLPN);
+                    // 새로 생성한 LocationLPN의 재고수량은 기본값이 1이기 때문에 1을 빼준다.
+                    newLocationLPN.addManualInventoryQuantity(inventoryQuantity - 1);
+                });
+    }
+
+    private void validateIncreaseInventory(
+            final LocationLPN targetLocationLPN,
+            final Integer inventoryQuantity) {
+        Assert.notNull(targetLocationLPN, "재고 수량을 추가할 LPN은 필수입니다.");
+        Assert.notNull(inventoryQuantity, "추가할 재고 수량은 필수입니다.");
+        if (0 >= inventoryQuantity) {
+            throw new IllegalArgumentException("추가할 재고 수량은 1이상이어야 합니다.");
+        }
+    }
+
+    private Optional<LocationLPN> findLocationLPNBy(final LocationLPN locationLPN) {
+        return locationLPNList.stream()
+                .filter(l -> l.equals(locationLPN))
+                .findFirst();
     }
 }

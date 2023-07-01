@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import leejoongseok.wms.inbound.domain.LPN;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
@@ -27,6 +28,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "location_lpn")
 @Comment("로케이션 LPN")
+@EqualsAndHashCode(of = "id")
 public class LocationLPN {
     @Id
     @Getter
