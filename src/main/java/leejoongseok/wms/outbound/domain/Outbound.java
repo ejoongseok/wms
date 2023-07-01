@@ -513,6 +513,11 @@ public class Outbound {
     public void completePacking() {
         validateCompletePacking();
         outboundStatus = OutboundStatus.PACKING_COMPLETED;
+        unassignTote();
+    }
+
+    private void unassignTote() {
+        toteLocation = null;
     }
 
     private void validateCompletePacking() {
