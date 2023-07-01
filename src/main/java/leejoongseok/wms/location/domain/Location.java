@@ -125,7 +125,7 @@ public class Location {
     }
 
     @VisibleForTesting
-    LocationLPN testingGetLocationLPN(final String lpnBarcode) {
+    public LocationLPN testingGetLocationLPN(final String lpnBarcode) {
         return locationLPNList.stream()
                 .filter(locationLPN -> lpnBarcode.equals(
                         locationLPN.getLpnBarcode()))
