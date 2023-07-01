@@ -60,16 +60,16 @@ public class Location {
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<LocationLPN> locationLPNList = new ArrayList<>();
 
+    // 하위 로케이션
+    @OneToMany(mappedBy = "parentLocation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Location> childLocations = new ArrayList<>();
     // 로케이션이 이동한다는 것은, 어느 로케이션의 하위에 속하게 된다는것. 부모로케이션만 변경됨.
     // 부모 로케이션
+    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_location_id", nullable = true)
     @Comment("부모 로케이션 ID")
     private Location parentLocation;
-
-    // 하위 로케이션
-    @OneToMany(mappedBy = "parentLocation", cascade = CascadeType.PERSIST)
-    private final List<Location> childLocations = new ArrayList<>();
 
     public Location(
             final String locationBarcode,
@@ -173,8 +173,30 @@ public class Location {
         return UsagePurpose.STOW == usagePurpose;
     }
 
-    public void addChildLocation(final Location location) {
-        validateAddChildLocation(location);
+    /**
+     * childToAdd를 하위 로케이션으로 추가하는 역할을 수행합니다.
+     */
+    public void addChildLocation(final Location childToAdd) {
+        validateAddChildLocation(childToAdd);
+        final Location childToAddParentLocation = childToAdd.parentLocation;
+        // 추가하려는 하위 로케이션(childToAdd)의 부모 로케이션(childToAddParentLocation)이 이미 존재한다면
+        if (null != childToAddParentLocation) {
+            // 해당 부모 로케이션에서 하위 로케이션을 제거한다.
+            childToAddParentLocation.removeChildLocation(childToAdd);
+        }
+        // 하위 로케이션(childToAdd)에 부모 로케이션으로 현재 인스턴스(this)를 할당한다.
+        childToAdd.assignParentLocation(this);
+
+        // 할당된 하위 로케이션(childToAdd)을 하위 로케이션 리스트(childLocations)에 추가한다.
+        childLocations.add(childToAdd);
+    }
+
+    private void removeChildLocation(final Location location) {
+        childLocations.remove(location);
+    }
+
+    private void assignParentLocation(final Location location) {
+        parentLocation = location;
     }
 
     private void validateAddChildLocation(final Location location) {
