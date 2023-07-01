@@ -4,7 +4,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.location.domain.Location;
-import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.LocationRepository;
 import leejoongseok.wms.location.exception.LocationBarcodeNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,22 +19,16 @@ public class TransferInventory {
     public void request(final Request request) {
         final Location fromLocation = getLocation(request.fromLocationBarcode);
         final Location toLocation = getLocation(request.toLocationBarcode);
-        transfer(fromLocation, toLocation, request.targetLPNId, request.transferQuantity);
+        InventoryTransferManager.transfer(
+                fromLocation,
+                toLocation,
+                request.targetLPNId,
+                request.transferQuantity);
     }
 
     private Location getLocation(final String fromLocationBarcode) {
         return locationRepository.findByLocationBarcodeAndFetchJoinLocationLPNList(fromLocationBarcode)
                 .orElseThrow(() -> new LocationBarcodeNotFoundException(fromLocationBarcode));
-    }
-
-    private void transfer(
-            final Location fromLocation,
-            final Location toLocation,
-            final Long targetLPNId,
-            final Integer transferQuantity) {
-        fromLocation.decreaseInventory(targetLPNId, transferQuantity);
-        final LocationLPN locationLPN = fromLocation.getLocationLPN(targetLPNId);
-        toLocation.increaseInventory(locationLPN, transferQuantity);
     }
 
     public record Request(
