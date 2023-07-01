@@ -160,6 +160,15 @@ public class Location {
     }
 
     public void addChildLocation(final Location location) {
+        validateAddChildLocation(location);
+    }
+
+    private void validateAddChildLocation(final Location location) {
         Assert.notNull(location, "로케이션은 필수입니다.");
+        if (!storageType.isCompatibleWith(location.storageType)) {
+            throw new IllegalArgumentException(
+                    "현재 로케이션의 하위 로케이션에 등록할 수 없습니다." +
+                            "현재 로케이션 보관 타입: %s, 하위로 추가하려는 로케이션 보관 타입: %s");
+        }
     }
 }
