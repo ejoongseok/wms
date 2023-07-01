@@ -17,13 +17,23 @@ public class TransferInventory {
     private final LocationRepository locationRepository;
 
     public void request(final Request request) {
-        final Location location = getLocation(request);
-
+        final Location fromLocation = getLocation(request.fromLocationBarcode);
+        final Location toLocation = getLocation(request.toLocationBarcode);
+        transfer(fromLocation, toLocation, request.targetLPNId, request.transferQuantity);
     }
 
-    private Location getLocation(final Request request) {
-        return locationRepository.findByLocationBarcodeAndFetchJoinLocationLPNList(request.fromLocationBarcode)
-                .orElseThrow(() -> new LocationBarcodeNotFoundException(request.fromLocationBarcode));
+    private Location getLocation(final String fromLocationBarcode) {
+        return locationRepository.findByLocationBarcodeAndFetchJoinLocationLPNList(fromLocationBarcode)
+                .orElseThrow(() -> new LocationBarcodeNotFoundException(fromLocationBarcode));
+    }
+
+    private void transfer(
+            final Location fromLocation,
+            final Location toLocation,
+            final Long targetLPNId,
+            final Integer transferQuantity) {
+        toLocation.transferInventory(targetLPNId, transferQuantity);
+        fromLocation.decreaseInventory(targetLPNId, transferQuantity);
     }
 
     public record Request(
