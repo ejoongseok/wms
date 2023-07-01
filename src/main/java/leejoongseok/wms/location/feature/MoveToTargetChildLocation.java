@@ -1,5 +1,7 @@
 package leejoongseok.wms.location.feature;
 
+import jakarta.validation.constraints.NotBlank;
+
 /**
  * 대상 로케이션의 하위 로케이션으로 현재 로케이션을 이동하는 기능
  * ex) B 파레트에 A 토트를 올리는 행위.
@@ -11,4 +13,14 @@ package leejoongseok.wms.location.feature;
  * 더 큰 바구니도 로케이션이고 선반도 로케이션이다.
  */
 public class MoveToTargetChildLocation {
+    public void request(final Request request) {
+        throw new UnsupportedOperationException("Unsupported request");
+    }
+
+    public record Request(
+            @NotBlank(message = "현재 로케이션 바코드는 필수입니다.")
+            String currentLocationBarcode,
+            @NotBlank(message = "이동 대상 로케이션 바코드는 필수입니다.")
+            String targetLocationBarcode) {
+    }
 }

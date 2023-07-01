@@ -16,5 +16,10 @@ class MoveToTargetChildLocationTest {
     @Test
     @DisplayName("대상 로케이션의 하위 로케이션으로 현재 로케이션을 이동한다.")
     void moveToTargetChildLocation() {
+        final MoveToTargetChildLocation.Request request = new MoveToTargetChildLocation.Request(
+                "currentLocationBarcode",
+                "targetLocationBarcode"
+        );
+        moveToTargetChildLocation.request(request);
     }
 }
