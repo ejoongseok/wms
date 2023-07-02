@@ -36,7 +36,7 @@ public class AdjustInventoryHistory {
     @Column(name = "reason", nullable = false)
     @Comment("재고 변경 이유")
     private String reason;
-    @Column(name = "adjusted_at", nullable = false)
+    @Column(name = "adjusted_at", nullable = false, updatable = false)
     @Comment("재고 변경 일시")
     private final LocalDateTime adjustedAt = LocalDateTime.now();
 
