@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.common.retry.RetryOnOptimisticLockingFailure;
+import leejoongseok.wms.location.domain.InventoryTransferManager;
 import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationRepository;
 import leejoongseok.wms.location.exception.LocationBarcodeNotFoundException;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TransferInventory {
     private final LocationRepository locationRepository;
 
+    @RetryOnOptimisticLockingFailure
     @Transactional
     @PostMapping("/locations/location-lpns/transfer")
     public void request(@RequestBody @Valid final Request request) {

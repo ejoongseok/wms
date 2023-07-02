@@ -2,6 +2,7 @@ package leejoongseok.wms.outbound.feature;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.common.retry.RetryOnOptimisticLockingFailure;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.inbound.domain.LPNRepository;
 import leejoongseok.wms.location.domain.LocationLPN;
@@ -34,6 +35,7 @@ public class AllocatePicking {
      * 출고상품의 수량만큼 LocationLPN의 재고를 감소.
      * 출고의 진행상태를 집품준비로 변경
      */
+    @RetryOnOptimisticLockingFailure
     @PostMapping("/outbounds/allocate-picking")
     @Transactional
     public void request(@RequestBody @Valid final Request request) {

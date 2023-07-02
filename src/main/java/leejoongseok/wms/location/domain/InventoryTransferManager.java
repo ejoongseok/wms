@@ -1,7 +1,5 @@
-package leejoongseok.wms.location.feature;
+package leejoongseok.wms.location.domain;
 
-import leejoongseok.wms.location.domain.Location;
-import leejoongseok.wms.location.domain.LocationLPN;
 import org.springframework.util.Assert;
 
 public enum InventoryTransferManager {
@@ -15,7 +13,7 @@ public enum InventoryTransferManager {
      * @param targetLPNId
      * @param transferQuantity
      */
-    static void transfer(
+    public static void transfer(
             final Location fromLocation,
             final Location toLocation,
             final Long targetLPNId,

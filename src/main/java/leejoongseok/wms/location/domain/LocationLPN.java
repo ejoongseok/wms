@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import leejoongseok.wms.inbound.domain.LPN;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -53,6 +54,11 @@ public class LocationLPN {
     @Column(name = "item_id", nullable = false)
     @Comment("상품 ID")
     private Long itemId;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    @Comment("Optimistic Lock을 위한 버전")
+    private int version;
 
     public LocationLPN(
             final Location location,

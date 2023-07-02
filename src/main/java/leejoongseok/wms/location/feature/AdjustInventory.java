@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.common.retry.RetryOnOptimisticLockingFailure;
 import leejoongseok.wms.location.domain.AdjustInventoryHistory;
 import leejoongseok.wms.location.domain.AdjustInventoryHistoryRepository;
 import leejoongseok.wms.location.domain.LocationLPN;
@@ -24,6 +25,7 @@ public class AdjustInventory {
     private final LocationLPNRepository locationLPNRepository;
     private final AdjustInventoryHistoryRepository adjustInventoryHistoryRepository;
 
+    @RetryOnOptimisticLockingFailure
     @Transactional
     @PostMapping("/locations/adjust-inventory")
     public void request(@RequestBody @Valid final Request request) {

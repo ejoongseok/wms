@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import leejoongseok.wms.common.retry.RetryOnOptimisticLockingFailure;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.inbound.domain.LPNRepository;
 import leejoongseok.wms.location.domain.Location;
@@ -25,6 +26,7 @@ public class AddManualInventoryToLocationLPN {
     private final LocationRepository locationRepository;
     private final LPNRepository lpnRepository;
 
+    @RetryOnOptimisticLockingFailure
     @Transactional
     @PostMapping("/locations/location-lpns/add-manual-inventory")
     public void request(@RequestBody @Valid final Request request) {
