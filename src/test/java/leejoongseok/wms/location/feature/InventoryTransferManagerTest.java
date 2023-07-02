@@ -1,6 +1,7 @@
 package leejoongseok.wms.location.feature;
 
 import leejoongseok.wms.inbound.domain.LPN;
+import leejoongseok.wms.location.domain.InventoryTransferManager;
 import leejoongseok.wms.location.domain.Location;
 import org.instancio.Instancio;
 import org.instancio.Select;
