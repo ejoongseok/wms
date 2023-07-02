@@ -8,6 +8,10 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
+
+/**
+ * 작업량 측정을 위한 Aspect
+ */
 @Aspect
 @Component
 @RequiredArgsConstructor

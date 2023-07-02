@@ -8,6 +8,9 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
+/**
+ * 재고 변경같은 정합성 유지가 필요한 작업에서 OptimisticLockException이 발생하면 재시도하는 Aspect
+ */
 @Slf4j
 @Aspect
 @Component
