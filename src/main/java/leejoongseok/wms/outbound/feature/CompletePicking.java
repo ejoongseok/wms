@@ -1,5 +1,7 @@
 package leejoongseok.wms.outbound.feature;
 
+import leejoongseok.wms.common.workload.MeasureWorkLoad;
+import leejoongseok.wms.common.workload.WorkloadType;
 import leejoongseok.wms.outbound.domain.Outbound;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
 import leejoongseok.wms.outbound.exception.OutboundIdNotFoundException;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CompletePicking {
     private final OutboundRepository outboundRepository;
 
+    @MeasureWorkLoad(type = WorkloadType.PICKING)
     @Transactional
     @PostMapping("/outbounds/{outboundId}/complete-picking")
     public void request(@PathVariable final Long outboundId) {
