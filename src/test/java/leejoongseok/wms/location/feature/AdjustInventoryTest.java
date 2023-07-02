@@ -17,6 +17,16 @@ class AdjustInventoryTest {
     @Test
     @DisplayName("재고를 조정한다.")
     void adjustInventory() {
-
+        final String locationBarcode = "locationBarcode";
+        final String lpnBarcode = "lpnBarcode";
+        final Integer quantity = 5;
+        final String reason = "reason";
+        final AdjustInventory.Request request = new AdjustInventory.Request(
+                locationBarcode,
+                lpnBarcode,
+                quantity,
+                reason
+        );
+        adjustInventory.request(request);
     }
 }
