@@ -1,5 +1,6 @@
 package leejoongseok.wms.outbound.feature;
 
+import leejoongseok.wms.outbound.domain.OutboundRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,10 +8,12 @@ import org.junit.jupiter.api.Test;
 class StopOutboundTest {
 
     private StopOutbound stopOutbound;
+    private OutboundRepository outboundRepository;
 
     @BeforeEach
     void setUp() {
-        stopOutbound = new StopOutbound();
+        outboundRepository = null;
+        stopOutbound = new StopOutbound(outboundRepository);
     }
 
     @Test
