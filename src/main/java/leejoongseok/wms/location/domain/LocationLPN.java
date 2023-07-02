@@ -151,8 +151,8 @@ public class LocationLPN {
 
     private void validateAdjustQuantity(final Integer quantity) {
         Assert.notNull(quantity, "조정할 재고 수량은 필수입니다.");
-        if (0 >= quantity) {
-            throw new IllegalArgumentException("조정할 재고 수량은 1이상이어야 합니다.");
+        if (0 > quantity) {
+            throw new IllegalArgumentException("조정할 재고 수량은 0이상이어야 합니다.");
         }
     }
 }

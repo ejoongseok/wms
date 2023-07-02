@@ -6,6 +6,7 @@ import leejoongseok.wms.inbound.steps.CreateLPNSteps;
 import leejoongseok.wms.inbound.steps.RejectInboundSteps;
 import leejoongseok.wms.item.steps.CreateItemSteps;
 import leejoongseok.wms.location.steps.AddManualInventoryToLocationLPNSteps;
+import leejoongseok.wms.location.steps.AdjustInventorySteps;
 import leejoongseok.wms.location.steps.AssignLPNToLocationSteps;
 import leejoongseok.wms.location.steps.CreateLocationSteps;
 import leejoongseok.wms.location.steps.MoveToTargetChildLocationSteps;
@@ -198,5 +199,9 @@ public class Scenario {
 
     public ResetOutboundSteps.Request resetOutbound() {
         return new ResetOutboundSteps.Request();
+    }
+
+    public AdjustInventorySteps.Request adjustInventory() {
+        return new AdjustInventorySteps.Request();
     }
 }
