@@ -993,4 +993,26 @@ class OutboundTest {
         }).isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("검수 불합격 처리를 위해서는 집품이 완료되어야 합니다");
     }
+
+    @Test
+    @DisplayName("출고를 중지한다.")
+    void stop() {
+        final Outbound outbound = new Outbound();
+
+        outbound.stop("포장 파손");
+
+        assertThat(outbound.isStopped()).isTrue();
+    }
+
+    @Test
+    @DisplayName("출고를 중지한다. - 중지 사유가 없는 경우 예외 발생")
+    void stop_empty_reason() {
+        final Outbound outbound = new Outbound();
+        final String emptyReason = "";
+
+        assertThatThrownBy(() -> {
+            outbound.stop(emptyReason);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("중지 사유는 필수입니다.");
+    }
 }

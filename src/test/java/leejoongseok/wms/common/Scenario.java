@@ -23,6 +23,7 @@ import leejoongseok.wms.outbound.steps.ManualToPickSteps;
 import leejoongseok.wms.outbound.steps.PassInspectionSteps;
 import leejoongseok.wms.outbound.steps.ScanToPickSteps;
 import leejoongseok.wms.outbound.steps.SplitToOutboundSteps;
+import leejoongseok.wms.outbound.steps.StopOutboundSteps;
 
 public class Scenario {
     /**
@@ -188,5 +189,9 @@ public class Scenario {
      */
     public FailInspectionSteps.Request failInspection() {
         return new FailInspectionSteps.Request();
+    }
+
+    public StopOutboundSteps.Request stopOutbound() {
+        return new StopOutboundSteps.Request();
     }
 }

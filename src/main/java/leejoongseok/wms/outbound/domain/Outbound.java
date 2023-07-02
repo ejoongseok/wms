@@ -566,4 +566,10 @@ public class Outbound {
     public boolean isStopped() {
         return OutboundStatus.STOPPED == outboundStatus;
     }
+
+    public void stop(final String stoppedReason) {
+        Assert.hasText(stoppedReason, "중지 사유는 필수입니다.");
+        this.stoppedReason = stoppedReason;
+        outboundStatus = OutboundStatus.STOPPED;
+    }
 }
