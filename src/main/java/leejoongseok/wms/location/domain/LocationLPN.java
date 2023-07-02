@@ -140,4 +140,19 @@ public class LocationLPN {
                             ));
         }
     }
+
+    /**
+     * 재고 수량을 조정한다.
+     */
+    public void adjustQuantity(final Integer quantity) {
+        validateAdjustQuantity(quantity);
+        inventoryQuantity = quantity;
+    }
+
+    private void validateAdjustQuantity(final Integer quantity) {
+        Assert.notNull(quantity, "조정할 재고 수량은 필수입니다.");
+        if (0 >= quantity) {
+            throw new IllegalArgumentException("조정할 재고 수량은 1이상이어야 합니다.");
+        }
+    }
 }

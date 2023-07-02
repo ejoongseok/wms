@@ -212,4 +212,29 @@ class LocationLPNTest {
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("차감할 재고 수량이 재고 수량보다 많습니다. 재고 수량: 10, 차감할 재고 수량: 50");
     }
+
+    @Test
+    @DisplayName("로케이션 LPN의 재고 수량을 조정한다.")
+    void adjustQuantity() {
+        final LocationLPN locationLPN = new LocationLPN();
+        final Integer inventoryQuantity = locationLPN.getInventoryQuantity();
+        final int adjustQuantity = 10;
+
+        locationLPN.adjustQuantity(adjustQuantity);
+
+        assertThat(inventoryQuantity).isEqualTo(1);
+        assertThat(locationLPN.getInventoryQuantity()).isEqualTo(adjustQuantity);
+    }
+
+    @Test
+    @DisplayName("로케이션 LPN의 재고 수량을 조정한다. - 변경할 수량이 0 이하인 경우 예외 발생")
+    void adjustQuantity_invalid_quantity() {
+        final LocationLPN locationLPN = new LocationLPN();
+        final int adjustQuantity = -1;
+
+        assertThatThrownBy(() -> {
+            locationLPN.adjustQuantity(adjustQuantity);
+        }).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("조정할 재고 수량은 1이상이어야 합니다.");
+    }
 }
