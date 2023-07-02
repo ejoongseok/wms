@@ -20,6 +20,7 @@ class StopOutboundTest extends ApiTest {
     @Test
     @DisplayName("어떠한 이유로 출고를 중지한다.")
     void stopOutbound() {
+        final String stoppedReason = "오집품/상품불량/포장손상..";
         new Scenario()
                 .createItem().request()
                 .createInbound().request()
@@ -28,15 +29,11 @@ class StopOutboundTest extends ApiTest {
                 .createLocation().request()
                 .assignLPNToLocation().request(2)
                 .createPackagingMaterial().request()
-                .createOutbound().request();
+                .createOutbound().request()
+                .stopOutbound()
+                .stoppedReason(stoppedReason)
+                .request();
 
-        final Long outboundId = 1L;
-        final String stoppedReason = "오집품/상품불량/포장손상..";
-        final StopOutbound.Request request = new StopOutbound.Request(
-                stoppedReason
-        );
-
-        stopOutbound.request(outboundId, request);
 
         final Outbound outbound = outboundRepository.findById(1L).get();
         assertThat(outbound.isStopped()).isTrue();

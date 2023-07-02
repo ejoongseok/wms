@@ -1,21 +1,26 @@
 package leejoongseok.wms.outbound.feature;
 
+import jakarta.validation.Valid;
 import leejoongseok.wms.outbound.domain.Outbound;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
 import leejoongseok.wms.outbound.exception.OutboundIdNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Component
+@RestController
 @RequiredArgsConstructor
 public class StopOutbound {
     private final OutboundRepository outboundRepository;
 
     @Transactional
+    @PostMapping("/outbounds/{outboundId}/stop")
     public void request(
-            final Long outboundId,
-            final Request request) {
+            @PathVariable final Long outboundId,
+            @RequestBody @Valid final Request request) {
         final Outbound outbound = getOutbound(outboundId);
         outbound.stop(request.stoppedReason);
     }
