@@ -6,17 +6,22 @@ import leejoongseok.wms.user.domain.User;
 import leejoongseok.wms.user.domain.UserRepository;
 import leejoongseok.wms.user.exception.UserNameAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 
-@Component
+@RestController
 @RequiredArgsConstructor
 public class CreateUser {
     private final UserRepository userRepository;
 
     @Transactional
+    @PostMapping("/users")
+    @ResponseStatus(HttpStatus.CREATED)
     public void request(@RequestBody @Valid final Request request) {
         validateRequest(request.name);
         final User user = request.toEntity();
