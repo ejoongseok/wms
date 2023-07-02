@@ -26,6 +26,7 @@ import leejoongseok.wms.outbound.steps.ResetOutboundSteps;
 import leejoongseok.wms.outbound.steps.ScanToPickSteps;
 import leejoongseok.wms.outbound.steps.SplitToOutboundSteps;
 import leejoongseok.wms.outbound.steps.StopOutboundSteps;
+import leejoongseok.wms.user.steps.CreateUserSteps;
 
 public class Scenario {
     /**
@@ -203,5 +204,9 @@ public class Scenario {
 
     public AdjustInventorySteps.Request adjustInventory() {
         return new AdjustInventorySteps.Request();
+    }
+
+    public CreateUserSteps.Request createUser() {
+        return new CreateUserSteps.Request();
     }
 }
