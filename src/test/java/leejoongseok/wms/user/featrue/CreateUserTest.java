@@ -16,8 +16,9 @@ class CreateUserTest {
     @Test
     @DisplayName("사용자를 생성한다.")
     void createUser() {
+        final String name = "이중석";
         final CreateUser.Request request = new CreateUser.Request(
-
+                name
         );
         createUser.request(request);
     }
