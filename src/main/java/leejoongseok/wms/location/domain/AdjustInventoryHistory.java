@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
+import java.time.LocalDateTime;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AdjustInventoryHistory {
@@ -34,6 +36,9 @@ public class AdjustInventoryHistory {
     @Column(name = "reason", nullable = false)
     @Comment("재고 변경 이유")
     private String reason;
+    @Column(name = "adjusted_at", nullable = false)
+    @Comment("재고 변경 일시")
+    private final LocalDateTime adjustedAt = LocalDateTime.now();
 
     public AdjustInventoryHistory(
             final Long locationLPNId,
