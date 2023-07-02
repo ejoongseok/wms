@@ -84,12 +84,12 @@ public class Outbound {
     @Comment("주문 일시")
     private LocalDateTime orderedAt;
     @Getter
-    @JoinColumn(name = "tote_location_id", nullable = true)
+    @JoinColumn(name = "tote_location_id", nullable = true, unique = true)
     @ManyToOne(fetch = FetchType.LAZY)
     @Comment("토트 로케이션 ID")
     private Location toteLocation;
     @Getter
-    @Column(name = "tracking_number", nullable = true)
+    @Column(name = "tracking_number", nullable = true, unique = true)
     @Comment("송장 번호")
     private String trackingNumber;
 
