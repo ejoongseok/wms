@@ -8,6 +8,7 @@ import org.instancio.Select;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -272,5 +273,23 @@ class OutboundItemTest {
         final boolean isCompletedPicking = outboundItem.isCompletedPicking();
 
         assertThat(isCompletedPicking).isFalse();
+    }
+
+    @Test
+    @DisplayName("출고상품에 할당된 집품목록을 전부 제거한다.")
+    void resetPickings() {
+        final int inventoryQuantity = 10;
+        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
+        final int quantityRequiredForPick = 5;
+        final PickingStatus pickingStatus = PickingStatus.READY;
+        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final List<Picking> pickings = new ArrayList<>();
+        pickings.add(picking);
+        final OutboundItem outboundItem = createOutboundItem(pickings);
+        assertThat(outboundItem.getPickings()).hasSize(1);
+
+        outboundItem.resetPickings();
+
+        assertThat(outboundItem.getPickings()).isEmpty();
     }
 }

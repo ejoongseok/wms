@@ -572,4 +572,17 @@ public class Outbound {
         this.stoppedReason = stoppedReason;
         outboundStatus = OutboundStatus.STOPPED;
     }
+
+    public void reset() {
+        validateReset();
+        outboundItems.forEach(OutboundItem::resetPickings);
+        outboundStatus = OutboundStatus.READY;
+    }
+
+    private void validateReset() {
+        if (!isStopped()) {
+            throw new IllegalStateException(
+                    "중지된 출고만 초기화할 수 있습니다.");
+        }
+    }
 }

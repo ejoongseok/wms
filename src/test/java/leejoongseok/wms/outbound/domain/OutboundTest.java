@@ -11,6 +11,7 @@ import org.instancio.Select;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -1014,5 +1015,36 @@ class OutboundTest {
             outbound.stop(emptyReason);
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("중지 사유는 필수입니다.");
+    }
+
+    @Test
+    @DisplayName("출고를 초기화한다.")
+    void reset() {
+        final Outbound outbound = createOutbound(OutboundStatus.STOPPED);
+        final Picking picking = Instancio.create(Picking.class);
+        final List<Picking> pickings = new ArrayList<>();
+        pickings.add(picking);
+        final OutboundItem outboundItem = createOutboundItem(pickings);
+        outbound.addOutboundItem(outboundItem);
+
+        outbound.reset();
+
+        assertThat(outbound.isReadyStatus()).isTrue();
+    }
+
+    @Test
+    @DisplayName("출고를 초기화한다. - 출고건이 중지 상태가 아닌 경우 예외 발생")
+    void reset_invalid_status() {
+        final Outbound outbound = createOutbound(OutboundStatus.PACKING_IN_PROGRESS);
+        final Picking picking = Instancio.create(Picking.class);
+        final List<Picking> pickings = new ArrayList<>();
+        pickings.add(picking);
+        final OutboundItem outboundItem = createOutboundItem(pickings);
+        outbound.addOutboundItem(outboundItem);
+
+        assertThatThrownBy(() -> {
+            outbound.reset();
+        }).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("중지된 출고만 초기화할 수 있습니다.");
     }
 }

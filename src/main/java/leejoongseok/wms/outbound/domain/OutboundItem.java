@@ -167,4 +167,8 @@ public class OutboundItem {
         return pickings.stream()
                 .allMatch(Picking::isCompletedPicking);
     }
+
+    public void resetPickings() {
+        pickings.clear();
+    }
 }
