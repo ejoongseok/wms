@@ -41,8 +41,6 @@ import java.util.Optional;
 public class CreateOutbound {
     private final LoadOrderPort loadOrderPort;
     private final LocationLPNRepository locationLPNRepository;
-    private final LocationLPNFilterForOutbound locationLPNFilterForOutbound;
-    private final LocationLPNValidatorForOutbound locationLPNValidatorForOutbound;
     private final PackagingMaterialRepository packagingMaterialRepository;
     private final OutboundRepository outboundRepository;
     private final ItemRepository itemRepository;
@@ -80,11 +78,11 @@ public class CreateOutbound {
             // 출고 가능한 로케이션 LPN으로 필터링한다.
             final LocalDateTime thisDateTime = LocalDateTime.now();
             final List<LocationLPN> filteredLocationLPNList =
-                    locationLPNFilterForOutbound.filter(
+                    LocationLPNFilterForOutbound.filter(
                             locationLPNList,
                             thisDateTime);
             // 출고 가능한 로케이션 LPN이 충분한지 검증한다.
-            locationLPNValidatorForOutbound.validate(
+            LocationLPNValidatorForOutbound.validate(
                     filteredLocationLPNList,
                     orderItem.getOrderQuantity());
         }

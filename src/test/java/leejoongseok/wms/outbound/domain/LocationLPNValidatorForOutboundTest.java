@@ -3,7 +3,6 @@ package leejoongseok.wms.outbound.domain;
 import leejoongseok.wms.location.domain.LocationLPN;
 import org.instancio.Instancio;
 import org.instancio.Select;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,12 +12,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class LocationLPNValidatorForOutboundTest {
 
-    private LocationLPNValidatorForOutbound validatorForOutbound;
-
-    @BeforeEach
-    void setUp() {
-        validatorForOutbound = new LocationLPNValidatorForOutbound();
-    }
 
     @Test
     @DisplayName("출고 대상 LocationLPN 목록이 출고 수량을 충족하는지 검증한다. [예외발생]")
@@ -54,7 +47,7 @@ class LocationLPNValidatorForOutboundTest {
             final String errorMessage) {
 
         assertThatThrownBy(() -> {
-            validatorForOutbound.validate(locationLPNList, orderQuantity);
+            LocationLPNValidatorForOutbound.validate(locationLPNList, orderQuantity);
         }).isInstanceOf(exceptionClass)
                 .hasMessageContaining(errorMessage);
     }
@@ -72,7 +65,7 @@ class LocationLPNValidatorForOutboundTest {
         final List<LocationLPN> locationLPNList = createSufficientInventoryQuantityLocationLPNList();
         final int orderQuantity = 2;
 
-        validatorForOutbound.validate(locationLPNList, orderQuantity);
+        LocationLPNValidatorForOutbound.validate(locationLPNList, orderQuantity);
     }
 
     private List<LocationLPN> createSufficientInventoryQuantityLocationLPNList() {

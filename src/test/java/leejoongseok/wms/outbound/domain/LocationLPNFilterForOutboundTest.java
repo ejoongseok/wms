@@ -6,7 +6,6 @@ import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.StorageType;
 import leejoongseok.wms.location.domain.UsagePurpose;
 import net.datafaker.Faker;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,12 +15,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LocationLPNFilterForOutboundTest {
-    private LocationLPNFilterForOutbound filterForOutbound;
-
-    @BeforeEach
-    void setUp() {
-        filterForOutbound = new LocationLPNFilterForOutbound();
-    }
 
     @Test
     @DisplayName("출고 가능한 LocationLPN 목록으로 필터링한다.")
@@ -34,7 +27,7 @@ class LocationLPNFilterForOutboundTest {
                 createLocationLPN(2L, invalidExpirationAt, createdDateTime.minusDays(1)));
         final LocalDateTime filterAt = LocalDateTime.now();
 
-        final List<LocationLPN> avaliableLocationLPNList = filterForOutbound.filter(locationLPNList, filterAt);
+        final List<LocationLPN> avaliableLocationLPNList = LocationLPNFilterForOutbound.filter(locationLPNList, filterAt);
 
         assertThat(avaliableLocationLPNList).hasSize(1);
     }
@@ -73,7 +66,7 @@ class LocationLPNFilterForOutboundTest {
                 createLocationLPN(2L, invalidExpirationAt, createdDateTime.minusDays(2)));
         final LocalDateTime filterAt = LocalDateTime.now();
 
-        final List<LocationLPN> avaliableLocationLPNList = filterForOutbound.filter(locationLPNList, filterAt);
+        final List<LocationLPN> avaliableLocationLPNList = LocationLPNFilterForOutbound.filter(locationLPNList, filterAt);
 
         assertThat(avaliableLocationLPNList).isEmpty();
     }

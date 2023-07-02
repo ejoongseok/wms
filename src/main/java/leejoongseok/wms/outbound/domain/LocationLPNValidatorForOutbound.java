@@ -1,7 +1,6 @@
 package leejoongseok.wms.outbound.domain;
 
 import leejoongseok.wms.location.domain.LocationLPN;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -9,12 +8,13 @@ import java.util.List;
 /**
  * LocationLPN 재고 수량이 출고 요청 수량에 충분한지 검증하는 클래스
  */
-@Component
-public class LocationLPNValidatorForOutbound {
+public enum LocationLPNValidatorForOutbound {
+    ;
+
     /**
      * LocationLPN 목록 재고 수량이 출고 요청 수량에 충분한지 검증한다.
      */
-    public void validate(
+    public static void validate(
             final List<LocationLPN> locationLPNList,
             final Integer orderQuantity) {
         Assert.notEmpty(locationLPNList, "출고 가능한지 검증할 로케이션 LPN 목록이 비어있습니다.");
@@ -32,7 +32,7 @@ public class LocationLPNValidatorForOutbound {
         }
     }
 
-    private int calculateTotalInventoryQuantity(
+    private static int calculateTotalInventoryQuantity(
             final List<LocationLPN> locationLPNList) {
         return locationLPNList.stream()
                 .mapToInt(LocationLPN::getInventoryQuantity)
