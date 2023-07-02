@@ -2,6 +2,7 @@ package leejoongseok.wms.location.feature;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import leejoongseok.wms.common.retry.RetryOnOptimisticLockingFailure;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.inbound.domain.LPNRepository;
 import leejoongseok.wms.location.domain.Location;
@@ -23,6 +24,7 @@ public class AssignLPNToLocation {
     private final LocationRepository locationRepository;
     private final LPNRepository lpnRepository;
 
+    @RetryOnOptimisticLockingFailure
     @Transactional
     @PostMapping("/locations/assign-lpn")
     public void request(@RequestBody @Valid final Request request) {
