@@ -227,7 +227,7 @@ class LocationLPNTest {
     }
 
     @Test
-    @DisplayName("로케이션 LPN의 재고 수량을 조정한다. - 변경할 수량이 0 이하인 경우 예외 발생")
+    @DisplayName("로케이션 LPN의 재고 수량을 조정한다. - 변경할 수량이 0보다 작은 경우 예외 발생")
     void adjustQuantity_invalid_quantity() {
         final LocationLPN locationLPN = new LocationLPN();
         final int adjustQuantity = -1;
@@ -235,6 +235,6 @@ class LocationLPNTest {
         assertThatThrownBy(() -> {
             locationLPN.adjustQuantity(adjustQuantity);
         }).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("조정할 재고 수량은 1이상이어야 합니다.");
+                .hasMessageContaining("조정할 재고 수량은 0이상이어야 합니다.");
     }
 }
