@@ -3,6 +3,7 @@ package leejoongseok.wms.location.feature;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.location.domain.InventoryTransferManager;
 import leejoongseok.wms.location.domain.Location;
+import leejoongseok.wms.location.domain.LocationLPN;
 import org.instancio.Instancio;
 import org.instancio.Select;
 import org.junit.jupiter.api.DisplayName;
@@ -25,12 +26,12 @@ class InventoryTransferManagerTest {
         fromLocation.addManualInventoryToLocationLPN(lpn, inventoryQuantity);
         final Location toLocation = createLocation();
         final Integer transferQuantity = 5;
+        final LocationLPN targetLocationLPN = fromLocation.getLocationLPN(lpnId);
 
         // when
         InventoryTransferManager.transfer(
-                fromLocation,
                 toLocation,
-                lpnId,
+                targetLocationLPN,
                 transferQuantity);
 
         // then

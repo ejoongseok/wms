@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import leejoongseok.wms.common.retry.RetryOnOptimisticLockingFailure;
 import leejoongseok.wms.location.domain.InventoryTransferManager;
 import leejoongseok.wms.location.domain.Location;
+import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.LocationRepository;
 import leejoongseok.wms.location.exception.LocationBarcodeNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +30,12 @@ public class TransferInventory {
     @PostMapping("/locations/location-lpns/transfer")
     public void request(@RequestBody @Valid final Request request) {
         final Location fromLocation = getLocation(request.fromLocationBarcode);
+        final LocationLPN targetLocationLPN = fromLocation.getLocationLPN(request.targetLPNId);
         final Location toLocation = getLocation(request.toLocationBarcode);
 
         InventoryTransferManager.transfer(
-                fromLocation,
                 toLocation,
-                request.targetLPNId,
+                targetLocationLPN,
                 request.transferQuantity);
     }
 

@@ -8,27 +8,23 @@ public enum InventoryTransferManager {
     /**
      * A 로케이션에 재고 10개 중 5개를 B 로케이션으로 이동시키는 기능
      *
-     * @param fromLocation
      * @param toLocation
-     * @param targetLPNId
+     * @param targetLocationLPN
      * @param transferQuantity
      */
     public static void transfer(
-            final Location fromLocation,
             final Location toLocation,
-            final Long targetLPNId,
+            final LocationLPN targetLocationLPN,
             final Integer transferQuantity) {
-        validateTransfer(fromLocation, toLocation, targetLPNId, transferQuantity);
-        final LocationLPN locationLPN = fromLocation.getLocationLPN(targetLPNId);
+        validateTransfer(toLocation, targetLocationLPN, transferQuantity);
 
-        fromLocation.decreaseInventory(targetLPNId, transferQuantity);
-        toLocation.increaseInventory(locationLPN, transferQuantity);
+        targetLocationLPN.deductInventory(transferQuantity);
+        toLocation.increaseInventory(targetLocationLPN, transferQuantity);
     }
 
-    private static void validateTransfer(final Location fromLocation, final Location toLocation, final Long targetLPNId, final Integer transferQuantity) {
-        Assert.notNull(fromLocation, "출발지 로케이션은 필수 입니다.");
+    private static void validateTransfer(final Location toLocation, final LocationLPN targetLocationLPN, final Integer transferQuantity) {
         Assert.notNull(toLocation, "도착지 로케이션은 필수 입니다.");
-        Assert.notNull(targetLPNId, "이동할 재고의 LPN ID는 필수 입니다.");
+        Assert.notNull(targetLocationLPN, "이동할 재고의 LocationLPN은 필수 입니다.");
         Assert.notNull(transferQuantity, "이동할 재고의 수량은 필수 입니다.");
         if (0 >= transferQuantity) {
             throw new IllegalArgumentException("이동할 재고의 수량은 0보다 커야 합니다.");

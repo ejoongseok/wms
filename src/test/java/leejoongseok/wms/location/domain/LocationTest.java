@@ -1,7 +1,6 @@
 package leejoongseok.wms.location.domain;
 
 import leejoongseok.wms.inbound.domain.LPN;
-import leejoongseok.wms.location.exception.LPNIdNotFoundException;
 import leejoongseok.wms.location.exception.LocationLPNNotFoundException;
 import org.instancio.Instancio;
 import org.instancio.Select;
@@ -226,57 +225,6 @@ class LocationTest {
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("현재 로케이션의 하위 로케이션에 등록할 수 없습니다. " +
                         "현재 로케이션 보관 타입: CELL, 하위로 추가하려는 로케이션 보관 타입: TOTE");
-    }
-
-    @Test
-    @DisplayName("LocationLPN을 입력한 수량만큼 재고를 차감한다.")
-    void decreaseInventory() {
-        final Location location = createLocation();
-        final String lpnBarcode = "lpnBarcode";
-        final LPN lpn = createLPN(lpnBarcode);
-        location.assignLPN(lpn);
-        final int inventoryQuantity = 10;
-        location.addManualInventoryToLocationLPN(lpn, inventoryQuantity);
-
-        final int decreaseQuantity = 5;
-        location.decreaseInventory(lpn.getId(), decreaseQuantity);
-
-        assertThat(location.testingGetLocationLPN(lpnBarcode).getInventoryQuantity()).isEqualTo(6);
-    }
-
-    @Test
-    @DisplayName("LocationLPN을 입력한 수량만큼 재고를 차감한다. - 차감할 수량이 재고보다 많은 경우 예외 발생")
-    void decreaseInventory_over_decrease_quantity() {
-        final Location location = createLocation();
-        final String lpnBarcode = "lpnBarcode";
-        final LPN lpn = createLPN(lpnBarcode);
-        location.assignLPN(lpn);
-        final int inventoryQuantity = 5;
-        location.addManualInventoryToLocationLPN(lpn, inventoryQuantity);
-
-        final int decreaseQuantity = 10;
-        assertThatThrownBy(() -> {
-            location.decreaseInventory(lpn.getId(), decreaseQuantity);
-        }).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("차감할 재고 수량이 재고 수량보다 많습니다. 재고 수량: 6, 차감할 재고 수량: 10");
-    }
-
-    @Test
-    @DisplayName("LocationLPN을 입력한 수량만큼 재고를 차감한다. - 재고를 차감할 LPN이 없으면 예외 발생")
-    void decreaseInventory_not_found_lpn() {
-        final Location location = createLocation();
-        final String lpnBarcode = "lpnBarcode";
-        final LPN lpn = createLPN(lpnBarcode);
-        location.assignLPN(lpn);
-        final int inventoryQuantity = 10;
-        location.addManualInventoryToLocationLPN(lpn, inventoryQuantity);
-
-        final int decreaseQuantity = 5;
-        assertThatThrownBy(() -> {
-            final Long notFoundId = 999L;
-            location.decreaseInventory(notFoundId, decreaseQuantity);
-        }).isInstanceOf(LPNIdNotFoundException.class)
-                .hasMessageContaining("해당하는 LPN ID를 찾을 수 없습니다. lpnId=999");
     }
 
     @Test
