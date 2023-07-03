@@ -3,7 +3,7 @@ package leejoongseok.wms.outbound.feature;
 import leejoongseok.wms.outbound.domain.Outbound;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
 import leejoongseok.wms.outbound.exception.OutboundIdNotFoundException;
-import leejoongseok.wms.outbound.port.WaybillRequester;
+import leejoongseok.wms.outbound.port.WaybillPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class IssueWaybill {
     private final OutboundRepository outboundRepository;
-    private final WaybillRequester waybillRequester;
+    private final WaybillPort waybillPort;
 
     @Transactional
     @PostMapping("/outbounds/{outboundId}/issue-waybill")
     public void request(@PathVariable final Long outboundId) {
         final var outbound = getOutbound(outboundId);
 
-        final String trackingNumber = waybillRequester.request(outbound);
+        final String trackingNumber = waybillPort.request(outbound);
 
         outbound.assignTrackingNumber(trackingNumber);
     }

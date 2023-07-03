@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class WaybillRequesterTest {
+class WaybillPortTest {
 
-    private WaybillRequester waybillRequester;
+    private WaybillPort waybillPort;
 
     @BeforeEach
     void setUp() {
-        waybillRequester = new WaybillRequester();
+        waybillPort = new WaybillPort();
     }
 
     @Test
@@ -26,7 +26,7 @@ class WaybillRequesterTest {
                 .ignore(Select.field(Outbound::getTrackingNumber))
                 .create();
 
-        final String trackingNumber = waybillRequester.request(outbound);
+        final String trackingNumber = waybillPort.request(outbound);
 
         assertThat(trackingNumber).isNotNull();
     }
@@ -37,7 +37,7 @@ class WaybillRequesterTest {
         final Outbound outbound = Instancio.create(Outbound.class);
 
         assertThatThrownBy(() -> {
-            waybillRequester.request(outbound);
+            waybillPort.request(outbound);
         }).isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("이미 운송장이 발행되었습니다.");
     }
