@@ -1,15 +1,6 @@
 package leejoongseok.wms.location.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Version;
+import jakarta.persistence.*;
 import leejoongseok.wms.inbound.domain.LPN;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -105,8 +96,8 @@ public class LocationLPN {
         return lpn.isFreshBy(thisDateTime);
     }
 
-    public boolean isEmptyInventory() {
-        return 0 >= inventoryQuantity;
+    public boolean hasInventory() {
+        return 0 < inventoryQuantity;
     }
 
     public Long getLPNId() {

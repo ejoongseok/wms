@@ -81,26 +81,26 @@ class LocationLPNTest {
     }
 
     @Test
-    @DisplayName("로케이션 LPN의 재고 수량이 비어있는지 확인한다.")
-    void isEmptyIventory() {
+    @DisplayName("로케이션 LPN의 재고 수량이 존재하는지 확인한다.")
+    void hasInventory() {
+        final LocationLPN locationLPN = new LocationLPN();
+
+        final boolean hasInventory = locationLPN.hasInventory();
+
+        assertThat(hasInventory).isTrue();
+        assertThat(locationLPN.getInventoryQuantity()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("로케이션 LPN의 재고 수량이 존재하는지 확인한다. - 비어있음")
+    void hasInventory_empty() {
         final LocationLPN locationLPN = Instancio.of(LocationLPN.class)
                 .supply(Select.field(LocationLPN::getInventoryQuantity), () -> 0)
                 .create();
 
-        final boolean isEmpty = locationLPN.isEmptyInventory();
+        final boolean hasInventory = locationLPN.hasInventory();
 
-        assertThat(isEmpty).isTrue();
-    }
-
-    @Test
-    @DisplayName("로케이션 LPN의 재고 수량이 비어있는지 확인한다. [비어있지않음.]")
-    void fail_isEmptyIventory() {
-        final LocationLPN locationLPN = new LocationLPN();
-
-        final boolean isEmpty = locationLPN.isEmptyInventory();
-
-        assertThat(isEmpty).isFalse();
-        assertThat(locationLPN.getInventoryQuantity()).isEqualTo(1);
+        assertThat(hasInventory).isFalse();
     }
 
     @Test

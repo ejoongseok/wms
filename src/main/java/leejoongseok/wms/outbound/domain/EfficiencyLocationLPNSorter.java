@@ -27,10 +27,10 @@ public enum EfficiencyLocationLPNSorter {
 
     private static void validateParameter(final List<LocationLPN> locationLPNList) {
         Assert.notEmpty(locationLPNList, "정렬하려는 LocationLPN이 존재하지 않습니다.");
-        locationLPNList.stream()
-                .filter(locationLPN -> !locationLPN.isFreshLPNBy(LocalDateTime.now()))
-                .anyMatch(locationLPN -> {
-                    throw new IllegalArgumentException("유통기한이 지난 LPN이 존재합니다.");
-                });
+        final boolean isAllFreshLocationLPN = locationLPNList.stream()
+                .allMatch(locationLPN -> locationLPN.isFreshLPNBy(LocalDateTime.now()));
+        if (!isAllFreshLocationLPN) {
+            throw new IllegalArgumentException("유통기한이 지난 LPN이 존재합니다.");
+        }
     }
 }

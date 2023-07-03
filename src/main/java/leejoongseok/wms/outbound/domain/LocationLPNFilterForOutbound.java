@@ -22,7 +22,7 @@ public enum LocationLPNFilterForOutbound {
 
         return locationLPNList.stream()
                 .filter(locationLPN -> locationLPN.isFreshLPNBy(thisDateTime))
-                .filter(locationLPN -> !locationLPN.isEmptyInventory())
+                .filter(LocationLPN::hasInventory)
                 .toList();
     }
 }
