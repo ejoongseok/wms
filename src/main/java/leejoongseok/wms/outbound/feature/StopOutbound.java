@@ -22,6 +22,7 @@ public class StopOutbound {
             @PathVariable final Long outboundId,
             @RequestBody @Valid final Request request) {
         final Outbound outbound = getOutbound(outboundId);
+
         outbound.stop(request.stoppedReason);
     }
 

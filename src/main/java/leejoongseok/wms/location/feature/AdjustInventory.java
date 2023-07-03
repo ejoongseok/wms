@@ -31,12 +31,10 @@ public class AdjustInventory {
     public void request(@RequestBody @Valid final Request request) {
         final LocationLPN locationLPN = getLocationLPN(request.locationBarcode, request.lpnBarcode);
         final Integer beforeInventoryQuantity = locationLPN.getInventoryQuantity();
+
         locationLPN.adjustQuantity(request.quantity);
 
-        saveHistory(
-                locationLPN,
-                beforeInventoryQuantity,
-                request.reason);
+        saveHistory(locationLPN, beforeInventoryQuantity, request.reason);
     }
 
     private void saveHistory(

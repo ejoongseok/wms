@@ -1,12 +1,7 @@
 package leejoongseok.wms.inbound.feature;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import leejoongseok.wms.inbound.domain.Inbound;
 import leejoongseok.wms.inbound.domain.InboundItem;
 import leejoongseok.wms.inbound.domain.InboundRepository;
@@ -38,9 +33,9 @@ public class CreateInbound {
     @ResponseStatus(HttpStatus.CREATED)
     public void request(@RequestBody @Valid final Request request) {
         final Inbound inbound = request.toEntity();
-        final List<InboundItem> inboundItems = toInboundItems(
-                request.itemRequests);
+        final List<InboundItem> inboundItems = toInboundItems(request.itemRequests);
         inbound.addInboundItems(inboundItems);
+
         inboundRepository.save(inbound);
     }
 

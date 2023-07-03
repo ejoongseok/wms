@@ -29,6 +29,7 @@ public class CreatePackagingMaterial {
     @ResponseStatus(HttpStatus.CREATED)
     public void request(@RequestBody @Valid final Request request) {
         final PackagingMaterial packagingMaterial = request.toEntity();
+
         packagingMaterialRepository.save(packagingMaterial);
     }
 

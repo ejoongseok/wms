@@ -21,6 +21,7 @@ public class PassInspection {
     @PostMapping("/outbounds/{outboundId}/pass-inspection")
     public void request(@PathVariable final Long outboundId) {
         final Outbound outbound = getOutbound(outboundId);
+
         outbound.passInspection();
     }
 

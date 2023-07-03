@@ -43,7 +43,6 @@ public class AllocatePicking {
 
         allocatePicking(outbound);
         outbound.deductAllocatedInventory();
-
         outbound.startPickingProgress();
     }
 

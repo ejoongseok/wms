@@ -30,6 +30,7 @@ public class TransferInventory {
     public void request(@RequestBody @Valid final Request request) {
         final Location fromLocation = getLocation(request.fromLocationBarcode);
         final Location toLocation = getLocation(request.toLocationBarcode);
+
         InventoryTransferManager.transfer(
                 fromLocation,
                 toLocation,

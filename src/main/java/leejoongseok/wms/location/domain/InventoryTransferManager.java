@@ -19,8 +19,9 @@ public enum InventoryTransferManager {
             final Long targetLPNId,
             final Integer transferQuantity) {
         validateTransfer(fromLocation, toLocation, targetLPNId, transferQuantity);
-        fromLocation.decreaseInventory(targetLPNId, transferQuantity);
         final LocationLPN locationLPN = fromLocation.getLocationLPN(targetLPNId);
+
+        fromLocation.decreaseInventory(targetLPNId, transferQuantity);
         toLocation.increaseInventory(locationLPN, transferQuantity);
     }
 

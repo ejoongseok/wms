@@ -4,11 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import leejoongseok.wms.item.domain.Category;
-import leejoongseok.wms.item.domain.Item;
-import leejoongseok.wms.item.domain.ItemRepository;
-import leejoongseok.wms.item.domain.ItemSize;
-import leejoongseok.wms.item.domain.TemperatureZone;
+import leejoongseok.wms.item.domain.*;
 import leejoongseok.wms.item.exception.ItemBarcodeAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,6 +27,7 @@ public class CreateItem {
         validateItemBarcodeAlreadyExists(request.itemBarcode);
 
         final Item item = request.toEntity();
+
         itemRepository.save(item);
     }
 

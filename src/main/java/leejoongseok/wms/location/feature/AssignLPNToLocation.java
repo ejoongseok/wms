@@ -30,6 +30,7 @@ public class AssignLPNToLocation {
     public void request(@RequestBody @Valid final Request request) {
         final LPN lpn = getLPN(request.lpnBarcode);
         final Location location = getLocation(request.locationBarcode);
+
         location.assignLPN(lpn);
     }
 

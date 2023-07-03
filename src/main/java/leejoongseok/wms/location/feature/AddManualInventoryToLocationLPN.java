@@ -32,6 +32,7 @@ public class AddManualInventoryToLocationLPN {
     public void request(@RequestBody @Valid final Request request) {
         final LPN lpn = getLPN(request.lpnBarcode());
         final Location location = getLocation(request.locationBarcode());
+
         location.addManualInventoryToLocationLPN(lpn, request.inventoryQuantity());
     }
 

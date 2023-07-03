@@ -24,6 +24,7 @@ public class ResetOutbound {
     @PostMapping("/outbounds/{outboundId}/reset")
     public void request(@PathVariable final Long outboundId) {
         final Outbound outbound = getOutbound(outboundId);
+
         outbound.reset();
     }
 
