@@ -4,11 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import leejoongseok.wms.outbound.domain.Outbound;
-import leejoongseok.wms.outbound.domain.OutboundRepository;
-import leejoongseok.wms.outbound.domain.PackagingMaterialRecommender;
-import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
-import leejoongseok.wms.outbound.domain.SplittableOutboundItem;
+import leejoongseok.wms.outbound.domain.*;
 import leejoongseok.wms.outbound.exception.OutboundIdNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,14 +41,19 @@ public class SplitToOutbound {
     private void assignRecommendedPackagingMaterial(
             final Outbound outbound,
             final Outbound splittedOutbound) {
-        final var packagingMaterialRecommender =
-                new PackagingMaterialRecommender(
-                        packagingMaterialRepository.findAll());
-
+        final List<PackagingMaterial> packagingMaterials = packagingMaterialRepository.findAll();
         outbound.assignRecommendedPackagingMaterial(
-                packagingMaterialRecommender.recommend(outbound));
+                getPackagingMaterial(outbound, packagingMaterials));
         splittedOutbound.assignRecommendedPackagingMaterial(
-                packagingMaterialRecommender.recommend(splittedOutbound));
+                getPackagingMaterial(splittedOutbound, packagingMaterials));
+    }
+
+    private PackagingMaterial getPackagingMaterial(
+            final Outbound outbound,
+            final List<PackagingMaterial> packagingMaterials) {
+        return new OutboundPackagingMaterialRecommender(packagingMaterials, outbound)
+                .findPerfectPackagingMaterial()
+                .orElseThrow(() -> new IllegalArgumentException("포장 가능한 포장재가 없습니다."));
     }
 
     public record Request(

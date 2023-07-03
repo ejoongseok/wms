@@ -5,7 +5,6 @@ import leejoongseok.wms.item.domain.ItemSize;
 import leejoongseok.wms.outbound.port.OrderItem;
 import org.instancio.Instancio;
 import org.instancio.Select;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,8 +14,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PackagingMaterialRecommenderTest {
-
-    private PackagingMaterialRecommender packagingMaterialRecommender;
 
     private static OrderItem createOrderItem(
             final ItemSize itemSize,
@@ -37,31 +34,26 @@ class PackagingMaterialRecommenderTest {
                 .create();
     }
 
-    @BeforeEach
-    void setUp() {
-        final List<PackagingMaterial> packagingMaterials = List.of(
-                createPackagingMaterial(
-                        createPackagingMaterialDimension(
-                                100,
-                                100,
-                                100,
-                                1
-                        ),
-                        1000,
-                        "포장자재1(최대무게 1키로)"),
-                createPackagingMaterial(
-                        createPackagingMaterialDimension(
-                                200,
-                                200,
-                                200,
-                                10
-                        ),
-                        5000,
-                        "포장자재2(최대무게 5키로)")
-        );
-        packagingMaterialRecommender =
-                new PackagingMaterialRecommender(packagingMaterials);
-    }
+    final List<PackagingMaterial> packagingMaterials = List.of(
+            createPackagingMaterial(
+                    createPackagingMaterialDimension(
+                            100,
+                            100,
+                            100,
+                            1
+                    ),
+                    1000,
+                    "포장자재1(최대무게 1키로)"),
+            createPackagingMaterial(
+                    createPackagingMaterialDimension(
+                            200,
+                            200,
+                            200,
+                            10
+                    ),
+                    5000,
+                    "포장자재2(최대무게 5키로)")
+    );
 
     private PackagingMaterial createPackagingMaterial(
             final PackagingMaterialDimension packagingMaterialDimension,
@@ -116,12 +108,12 @@ class PackagingMaterialRecommenderTest {
         final Integer cushioningMaterialVolume = 0;
         final Integer cushioningMaterialWeightInGrams = 0;
 
-        final Optional<PackagingMaterial> packagingMaterial =
-                packagingMaterialRecommender.recommend(
-                        orderItems,
-                        cushioningMaterialVolume,
-                        cushioningMaterialWeightInGrams
-                );
+        final OrderPackagingMaterialRecommender recommender = new OrderPackagingMaterialRecommender(
+                packagingMaterials,
+                orderItems,
+                cushioningMaterialVolume,
+                cushioningMaterialWeightInGrams);
+        final Optional<PackagingMaterial> packagingMaterial = recommender.findPerfectPackagingMaterial();
 
         assertThat(packagingMaterial).isPresent();
         assertThat(packagingMaterial.get().getName()).isEqualTo("포장자재1(최대무게 1키로)");
@@ -160,12 +152,12 @@ class PackagingMaterialRecommenderTest {
         final Integer cushioningMaterialVolume = 0;
         final Integer cushioningMaterialWeightInGrams = 0;
 
-        final Optional<PackagingMaterial> packagingMaterial =
-                packagingMaterialRecommender.recommend(
-                        orderItems,
-                        cushioningMaterialVolume,
-                        cushioningMaterialWeightInGrams
-                );
+        final OrderPackagingMaterialRecommender recommender = new OrderPackagingMaterialRecommender(
+                packagingMaterials,
+                orderItems,
+                cushioningMaterialVolume,
+                cushioningMaterialWeightInGrams);
+        final Optional<PackagingMaterial> packagingMaterial = recommender.findPerfectPackagingMaterial();
 
         assertThat(packagingMaterial).isPresent();
         assertThat(packagingMaterial.get().getName()).isEqualTo("포장자재2(최대무게 5키로)");
@@ -193,12 +185,12 @@ class PackagingMaterialRecommenderTest {
         final Integer cushioningMaterialVolume = 0;
         final Integer cushioningMaterialWeightInGrams = 0;
 
-        final Optional<PackagingMaterial> packagingMaterial =
-                packagingMaterialRecommender.recommend(
-                        orderItems,
-                        cushioningMaterialVolume,
-                        cushioningMaterialWeightInGrams
-                );
+        final OrderPackagingMaterialRecommender recommender = new OrderPackagingMaterialRecommender(
+                packagingMaterials,
+                orderItems,
+                cushioningMaterialVolume,
+                cushioningMaterialWeightInGrams);
+        final Optional<PackagingMaterial> packagingMaterial = recommender.findPerfectPackagingMaterial();
 
         assertThat(packagingMaterial).isPresent();
         assertThat(packagingMaterial.get().getName()).isEqualTo("포장자재2(최대무게 5키로)");
@@ -226,12 +218,12 @@ class PackagingMaterialRecommenderTest {
         final Integer cushioningMaterialVolume = 0;
         final Integer cushioningMaterialWeightInGrams = 0;
 
-        final Optional<PackagingMaterial> packagingMaterial =
-                packagingMaterialRecommender.recommend(
-                        orderItems,
-                        cushioningMaterialVolume,
-                        cushioningMaterialWeightInGrams
-                );
+        final OrderPackagingMaterialRecommender recommender = new OrderPackagingMaterialRecommender(
+                packagingMaterials,
+                orderItems,
+                cushioningMaterialVolume,
+                cushioningMaterialWeightInGrams);
+        final Optional<PackagingMaterial> packagingMaterial = recommender.findPerfectPackagingMaterial();
 
         assertThat(packagingMaterial).isEmpty();
     }
@@ -258,12 +250,12 @@ class PackagingMaterialRecommenderTest {
         final Integer cushioningMaterialVolume = 0;
         final Integer cushioningMaterialWeightInGrams = 0;
 
-        final Optional<PackagingMaterial> packagingMaterial =
-                packagingMaterialRecommender.recommend(
-                        orderItems,
-                        cushioningMaterialVolume,
-                        cushioningMaterialWeightInGrams
-                );
+        final OrderPackagingMaterialRecommender recommender = new OrderPackagingMaterialRecommender(
+                packagingMaterials,
+                orderItems,
+                cushioningMaterialVolume,
+                cushioningMaterialWeightInGrams);
+        final Optional<PackagingMaterial> packagingMaterial = recommender.findPerfectPackagingMaterial();
 
         assertThat(packagingMaterial).isEmpty();
     }
@@ -291,7 +283,7 @@ class PackagingMaterialRecommenderTest {
         );
 
         final PackagingMaterial packagingMaterial =
-                packagingMaterialRecommender.recommend(outbound);
+                new OutboundPackagingMaterialRecommender(packagingMaterials, outbound).findPerfectPackagingMaterial().get();
 
         assertThat(packagingMaterial.getName()).isEqualTo("포장자재1(최대무게 1키로)");
     }
@@ -366,7 +358,7 @@ class PackagingMaterialRecommenderTest {
         );
 
         final PackagingMaterial packagingMaterial =
-                packagingMaterialRecommender.recommend(outbound);
+                new OutboundPackagingMaterialRecommender(packagingMaterials, outbound).findPerfectPackagingMaterial().get();
 
         assertThat(packagingMaterial.getName()).isEqualTo("포장자재2(최대무게 5키로)");
     }
