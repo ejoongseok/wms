@@ -244,9 +244,9 @@ public class Location {
                 locationLPN -> locationLPN.addManualInventoryQuantity(inventoryQuantity),
                 () -> {
                     final LPN targetLPN = targetLocationLPN.getLpn();
-                    final LocationLPN newLocationLPN = getLocationLPN(targetLPN);
 
                     assignNewLocationLPN(targetLPN);
+                    final LocationLPN newLocationLPN = getLocationLPN(targetLPN);
                     // 새로 생성한 LocationLPN의 재고수량은 기본값이 1이기 때문에 1을 빼준다.
                     newLocationLPN.addManualInventoryQuantity(inventoryQuantity - 1);
                 });
