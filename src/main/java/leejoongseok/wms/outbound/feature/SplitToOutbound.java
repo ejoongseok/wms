@@ -24,9 +24,9 @@ public class SplitToOutbound {
     @PostMapping("/outbounds/split")
     public void request(@RequestBody @Valid final Request request) {
         final Outbound outbound = getOutbound(request.outBoundIdToSplit);
+        final var splittableOutboundItems = request.listOfSplittableOutboundItem();
 
-        final Outbound splittedOutbound = outbound.split(
-                request.listOfSplittableOutboundItem());
+        final Outbound splittedOutbound = outbound.split(splittableOutboundItems);
         assignRecommendedPackagingMaterial(outbound, splittedOutbound);
 
         outboundRepository.save(splittedOutbound);
@@ -34,14 +34,14 @@ public class SplitToOutbound {
 
     private Outbound getOutbound(final Long outBoundIdToSplit) {
         return outboundRepository.findById(outBoundIdToSplit)
-                .orElseThrow(() -> new OutboundIdNotFoundException(
-                        outBoundIdToSplit));
+                .orElseThrow(() -> new OutboundIdNotFoundException(outBoundIdToSplit));
     }
 
     private void assignRecommendedPackagingMaterial(
             final Outbound outbound,
             final Outbound splittedOutbound) {
         final List<PackagingMaterial> packagingMaterials = packagingMaterialRepository.findAll();
+
         outbound.assignRecommendedPackagingMaterial(
                 getPackagingMaterial(outbound, packagingMaterials));
         splittedOutbound.assignRecommendedPackagingMaterial(
