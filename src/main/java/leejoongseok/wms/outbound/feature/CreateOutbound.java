@@ -81,11 +81,12 @@ public class CreateOutbound {
             final List<OrderItem> orderItems,
             final CushioningMaterial cushioningMaterial,
             final Integer cushioningMaterialQuantity) {
-        final PackagingMaterialRecommender packagingMaterialRecommender = new OrderPackagingMaterialRecommender(
-                packagingMaterialRepository.findAll(),
-                orderItems,
-                cushioningMaterial.calculateTotalVolume(cushioningMaterialQuantity),
-                cushioningMaterial.calculateTotalWeightInGrams(cushioningMaterialQuantity));
+        final PackagingMaterialRecommender packagingMaterialRecommender =
+                new OrderPackagingMaterialRecommender(
+                        packagingMaterialRepository.findAll(),
+                        orderItems,
+                        cushioningMaterial.calculateTotalVolume(cushioningMaterialQuantity),
+                        cushioningMaterial.calculateTotalWeightInGrams(cushioningMaterialQuantity));
         return packagingMaterialRecommender.findPerfectPackagingMaterial();
     }
 
