@@ -1,5 +1,6 @@
 package leejoongseok.wms.common.auth;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,7 +15,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final UserIdTokenProvider userIdTokenProvider;
+
     @Bean
     SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
         return http
@@ -26,7 +30,7 @@ public class SecurityConfig {
                 .sessionManagement((sessionManagement) ->
                         sessionManagement
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new WmsAuthenticationFiler(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new WmsAuthenticationFiler(userIdTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .logout((logout) -> logout
                         .logoutUrl("/auth/logout")
                         .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext()))
