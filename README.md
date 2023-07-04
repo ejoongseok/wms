@@ -2,3 +2,6 @@
 
 - Java 17
 - Spring boot 3.1
+
+## 기획
+- 구글 슬라이드: https://docs.google.com/presentation/d/14DmwOsJWyc5aY3ZDht3602IgHdcXZYJIKQJz44u13o4/edit?usp=sharing
