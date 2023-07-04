@@ -1,4 +1,4 @@
-# 강의용 예제(미완) WMS(Warehouse Management System) 
+# Feature Slice Architecture 로 MVP API 빠르게 개발하기(WMS)
 
 - Java 17
 - Spring boot 3.1
