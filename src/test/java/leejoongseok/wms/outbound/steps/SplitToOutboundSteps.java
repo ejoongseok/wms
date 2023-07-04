@@ -10,16 +10,11 @@ import java.util.List;
 
 public class SplitToOutboundSteps {
     public static class Request {
-        private Integer cushioningMaterialQuantity = 1;
         private Long outBoundIdToSplit = 1L;
         private List<SplitToOutbound.Request.Item> itemsToSplit = List.of(
                 new SplitToOutbound.Request.Item(1L, 1)
         );
 
-        public Request cushioningMaterialQuantity(final Integer cushioningMaterialQuantity) {
-            this.cushioningMaterialQuantity = cushioningMaterialQuantity;
-            return this;
-        }
 
         public Request outBoundIdToSplit(final Long outBoundIdToSplit) {
             this.outBoundIdToSplit = outBoundIdToSplit;
@@ -33,7 +28,6 @@ public class SplitToOutboundSteps {
 
         public Scenario request() {
             final SplitToOutbound.Request request = new SplitToOutbound.Request(
-                    cushioningMaterialQuantity,
                     outBoundIdToSplit,
                     itemsToSplit
             );
