@@ -2,6 +2,7 @@ package leejoongseok.wms.location.domain;
 
 import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.*;
+import leejoongseok.wms.common.user.BaseEntity;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.location.exception.LPNIdNotFoundException;
 import leejoongseok.wms.location.exception.LocationLPNNotFoundException;
@@ -27,7 +28,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Comment("로케이션")
 @EqualsAndHashCode(of = "id")
-public class Location {
+public class Location extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

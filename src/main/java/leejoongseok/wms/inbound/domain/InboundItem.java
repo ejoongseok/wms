@@ -1,14 +1,7 @@
 package leejoongseok.wms.inbound.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import leejoongseok.wms.common.user.BaseEntity;
 import leejoongseok.wms.item.domain.Item;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,7 +17,7 @@ import java.time.LocalDateTime;
 @Table(name = "inbound_item")
 @Comment("입고 상품")
 @Getter
-public class InboundItem {
+public class InboundItem extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("입고 상품 ID")
