@@ -1,14 +1,7 @@
 package leejoongseok.wms.item.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import leejoongseok.wms.common.user.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +16,7 @@ import org.springframework.util.Assert;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "item")
 @Comment("상품")
-public class Item {
+public class Item extends BaseEntity {
     @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

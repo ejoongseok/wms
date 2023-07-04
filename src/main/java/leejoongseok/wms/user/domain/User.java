@@ -1,10 +1,7 @@
 package leejoongseok.wms.user.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import leejoongseok.wms.common.user.BaseEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
@@ -13,7 +10,7 @@ import org.springframework.util.Assert;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;

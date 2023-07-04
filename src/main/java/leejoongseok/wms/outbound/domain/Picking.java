@@ -1,16 +1,7 @@
 package leejoongseok.wms.outbound.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import leejoongseok.wms.common.user.BaseEntity;
 import leejoongseok.wms.location.domain.LocationLPN;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,7 +13,7 @@ import org.springframework.util.Assert;
 @Table(name = "picking")
 @Comment("집품")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Picking {
+public class Picking extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

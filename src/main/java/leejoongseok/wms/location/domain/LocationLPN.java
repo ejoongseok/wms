@@ -1,6 +1,7 @@
 package leejoongseok.wms.location.domain;
 
 import jakarta.persistence.*;
+import leejoongseok.wms.common.user.BaseEntity;
 import leejoongseok.wms.inbound.domain.LPN;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -21,7 +22,7 @@ import java.time.LocalDateTime;
 @Table(name = "location_lpn")
 @Comment("로케이션 LPN")
 @EqualsAndHashCode(of = "id")
-public class LocationLPN {
+public class LocationLPN extends BaseEntity {
     @Id
     @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)

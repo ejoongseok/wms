@@ -1,20 +1,18 @@
 package leejoongseok.wms.location.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "adjust_inventory_history")
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AdjustInventoryHistory {
     @Id
@@ -41,6 +39,11 @@ public class AdjustInventoryHistory {
     @Column(name = "adjusted_at", nullable = false, updatable = false)
     @Comment("재고 변경 일시")
     private final LocalDateTime adjustedAt = LocalDateTime.now();
+
+    @Column(name = "adjusted_user_id", nullable = false, updatable = false)
+    @Comment("재고 변경 사용자 ID")
+    @CreatedBy
+    private Long adjusted_user_id;
 
     public AdjustInventoryHistory(
             final Long locationLPNId,

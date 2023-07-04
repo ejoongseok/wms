@@ -1,19 +1,7 @@
 package leejoongseok.wms.outbound.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import leejoongseok.wms.common.user.BaseEntity;
 import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.outbound.exception.OutboundItemIdNotFoundException;
 import lombok.AccessLevel;
@@ -35,7 +23,7 @@ import java.util.List;
 @Table(name = "outbound")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Comment("출고")
-public class Outbound {
+public class Outbound extends BaseEntity {
     @Getter
     @Enumerated(EnumType.STRING)
     @Column(name = "outbound_status", nullable = false)
