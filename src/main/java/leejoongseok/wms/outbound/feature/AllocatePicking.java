@@ -40,8 +40,10 @@ public class AllocatePicking {
     @Transactional
     public void request(@RequestBody @Valid final Request request) {
         final Outbound outbound = getOutbound(request);
+        final List<LocationLPN> locationLPNList = getLocationLPNList(
+                outbound.getItemIds());
 
-        allocatePicking(outbound);
+        PickingAllocator.allocate(outbound, locationLPNList);
         outbound.deductAllocatedInventory();
         outbound.startPickingProgress();
     }
@@ -49,12 +51,6 @@ public class AllocatePicking {
     private Outbound getOutbound(final Request request) {
         return outboundRepository.findByIdAndFetchJoinOutboundItems(request.outboundId)
                 .orElseThrow(() -> new IllegalArgumentException("출고 정보가 존재하지 않습니다."));
-    }
-
-    private void allocatePicking(final Outbound outbound) {
-        final List<LocationLPN> locationLPNList = getLocationLPNList(
-                outbound.getItemIds());
-        PickingAllocator.allocate(outbound, locationLPNList);
     }
 
     private List<LocationLPN> getLocationLPNList(final List<Long> itemIds) {
