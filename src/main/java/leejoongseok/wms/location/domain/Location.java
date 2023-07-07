@@ -39,7 +39,7 @@ import java.util.Optional;
 @Table(name = "location")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Comment("로케이션")
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class Location extends BaseEntity {
 
     @Id
