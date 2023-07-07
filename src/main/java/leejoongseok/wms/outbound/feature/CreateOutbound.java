@@ -7,7 +7,16 @@ import leejoongseok.wms.item.domain.Item;
 import leejoongseok.wms.item.domain.ItemRepository;
 import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.LocationLPNRepository;
-import leejoongseok.wms.outbound.domain.*;
+import leejoongseok.wms.outbound.domain.CushioningMaterial;
+import leejoongseok.wms.outbound.domain.LocationLPNFilterForOutbound;
+import leejoongseok.wms.outbound.domain.LocationLPNValidatorForOutbound;
+import leejoongseok.wms.outbound.domain.OrderPackagingMaterialRecommender;
+import leejoongseok.wms.outbound.domain.Outbound;
+import leejoongseok.wms.outbound.domain.OutboundItem;
+import leejoongseok.wms.outbound.domain.OutboundRepository;
+import leejoongseok.wms.outbound.domain.PackagingMaterial;
+import leejoongseok.wms.outbound.domain.PackagingMaterialRecommender;
+import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
 import leejoongseok.wms.outbound.exception.ItemIdNotFoundException;
 import leejoongseok.wms.outbound.port.LoadOrderPort;
 import leejoongseok.wms.outbound.port.Order;
@@ -87,7 +96,7 @@ public class CreateOutbound {
                         orderItems,
                         cushioningMaterial.calculateTotalVolume(cushioningMaterialQuantity),
                         cushioningMaterial.calculateTotalWeightInGrams(cushioningMaterialQuantity));
-        return packagingMaterialRecommender.findPerfectPackagingMaterial();
+        return packagingMaterialRecommender.recommendPackagingMaterial();
     }
 
     private Outbound createOutbound(

@@ -113,7 +113,7 @@ class PackagingMaterialRecommenderTest {
                 orderItems,
                 cushioningMaterialVolume,
                 cushioningMaterialWeightInGrams);
-        final Optional<PackagingMaterial> packagingMaterial = recommender.findPerfectPackagingMaterial();
+        final Optional<PackagingMaterial> packagingMaterial = recommender.recommendPackagingMaterial();
 
         assertThat(packagingMaterial).isPresent();
         assertThat(packagingMaterial.get().getName()).isEqualTo("포장자재1(최대무게 1키로)");
@@ -157,7 +157,7 @@ class PackagingMaterialRecommenderTest {
                 orderItems,
                 cushioningMaterialVolume,
                 cushioningMaterialWeightInGrams);
-        final Optional<PackagingMaterial> packagingMaterial = recommender.findPerfectPackagingMaterial();
+        final Optional<PackagingMaterial> packagingMaterial = recommender.recommendPackagingMaterial();
 
         assertThat(packagingMaterial).isPresent();
         assertThat(packagingMaterial.get().getName()).isEqualTo("포장자재2(최대무게 5키로)");
@@ -190,7 +190,7 @@ class PackagingMaterialRecommenderTest {
                 orderItems,
                 cushioningMaterialVolume,
                 cushioningMaterialWeightInGrams);
-        final Optional<PackagingMaterial> packagingMaterial = recommender.findPerfectPackagingMaterial();
+        final Optional<PackagingMaterial> packagingMaterial = recommender.recommendPackagingMaterial();
 
         assertThat(packagingMaterial).isPresent();
         assertThat(packagingMaterial.get().getName()).isEqualTo("포장자재2(최대무게 5키로)");
@@ -223,7 +223,7 @@ class PackagingMaterialRecommenderTest {
                 orderItems,
                 cushioningMaterialVolume,
                 cushioningMaterialWeightInGrams);
-        final Optional<PackagingMaterial> packagingMaterial = recommender.findPerfectPackagingMaterial();
+        final Optional<PackagingMaterial> packagingMaterial = recommender.recommendPackagingMaterial();
 
         assertThat(packagingMaterial).isEmpty();
     }
@@ -255,7 +255,7 @@ class PackagingMaterialRecommenderTest {
                 orderItems,
                 cushioningMaterialVolume,
                 cushioningMaterialWeightInGrams);
-        final Optional<PackagingMaterial> packagingMaterial = recommender.findPerfectPackagingMaterial();
+        final Optional<PackagingMaterial> packagingMaterial = recommender.recommendPackagingMaterial();
 
         assertThat(packagingMaterial).isEmpty();
     }
@@ -283,7 +283,7 @@ class PackagingMaterialRecommenderTest {
         );
 
         final PackagingMaterial packagingMaterial =
-                new OutboundPackagingMaterialRecommender(packagingMaterials, outbound).findPerfectPackagingMaterial().get();
+                new OutboundPackagingMaterialRecommender(packagingMaterials, outbound).recommendPackagingMaterial().get();
 
         assertThat(packagingMaterial.getName()).isEqualTo("포장자재1(최대무게 1키로)");
     }
@@ -358,7 +358,7 @@ class PackagingMaterialRecommenderTest {
         );
 
         final PackagingMaterial packagingMaterial =
-                new OutboundPackagingMaterialRecommender(packagingMaterials, outbound).findPerfectPackagingMaterial().get();
+                new OutboundPackagingMaterialRecommender(packagingMaterials, outbound).recommendPackagingMaterial().get();
 
         assertThat(packagingMaterial.getName()).isEqualTo("포장자재2(최대무게 5키로)");
     }

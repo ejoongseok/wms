@@ -25,7 +25,7 @@ public abstract class PackagingMaterialRecommender {
     /**
      * 포장 가능한 포장재 중 부피가 가장 작은것을 추천해줌.
      */
-    public Optional<PackagingMaterial> findPerfectPackagingMaterial() {
+    public Optional<PackagingMaterial> recommendPackagingMaterial() {
         return packagingMaterials.stream()
                 .filter(pm -> pm.isPackageable(calculateTotalVolume(), calculateTotalWeightInGrams()))
                 .min(Comparator.comparingLong(

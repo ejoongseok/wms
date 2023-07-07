@@ -57,7 +57,7 @@ public class SplitToOutbound {
             final Outbound outbound,
             final List<PackagingMaterial> packagingMaterials) {
         return new OutboundPackagingMaterialRecommender(packagingMaterials, outbound)
-                .findPerfectPackagingMaterial()
+                .recommendPackagingMaterial()
                 .orElseThrow(() -> new IllegalArgumentException("포장 가능한 포장재가 없습니다."));
     }
 
