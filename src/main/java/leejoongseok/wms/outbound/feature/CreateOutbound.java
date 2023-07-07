@@ -12,6 +12,7 @@ import leejoongseok.wms.outbound.domain.LocationLPNFilterForOutbound;
 import leejoongseok.wms.outbound.domain.LocationLPNValidatorForOutbound;
 import leejoongseok.wms.outbound.domain.OrderPackagingMaterialRecommender;
 import leejoongseok.wms.outbound.domain.Outbound;
+import leejoongseok.wms.outbound.domain.OutboundCustomer;
 import leejoongseok.wms.outbound.domain.OutboundItem;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
 import leejoongseok.wms.outbound.domain.PackagingMaterial;
@@ -123,18 +124,18 @@ public class CreateOutbound {
         return new Outbound(
                 order.getId(),
                 recommendedPackagingMaterial,
-                order.getCustomerAddress(),
-                order.getCustomerName(),
-                order.getCustomerEmail(),
-                order.getCustomerPhoneNumber(),
-                order.getCustomerZipCode(),
                 cushioningMaterial,
                 cushioningMaterialQuantity,
                 order.getIsPriorityDelivery(),
                 order.getDesiredDeliveryDate(),
                 order.getOutboundRequirements(),
                 order.getDeliveryRequirements(),
-                order.getOrderedAt()
+                order.getOrderedAt(), new OutboundCustomer(
+                order.getCustomerAddress(),
+                order.getCustomerName(),
+                order.getCustomerEmail(),
+                order.getCustomerPhoneNumber(),
+                order.getCustomerZipCode())
         );
     }
 
