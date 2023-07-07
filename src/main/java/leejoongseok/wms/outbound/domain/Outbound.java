@@ -124,7 +124,8 @@ public class Outbound extends BaseEntity {
                 cushioningMaterialQuantity,
                 priorityDelivery,
                 desiredDeliveryDate,
-                orderedAt);
+                orderedAt,
+                outboundCustomer);
         this.orderId = orderId;
         this.recommendedPackagingMaterial = recommendedPackagingMaterial;
         this.outboundCustomer = outboundCustomer;
@@ -144,10 +145,12 @@ public class Outbound extends BaseEntity {
             final Integer cushioningMaterialQuantity,
             final Boolean priorityDelivery,
             final LocalDate desiredDeliveryDate,
-            final LocalDateTime orderedAt) {
+            final LocalDateTime orderedAt,
+            final OutboundCustomer outboundCustomer) {
         Assert.notNull(orderId, "주문 ID는 필수입니다.");
         Assert.notNull(cushioningMaterial, "완충재는 필수입니다.");
         Assert.notNull(cushioningMaterialQuantity, "완충재 수량은 필수입니다.");
+        Assert.notNull(outboundCustomer, "출고 고객정보는 필수입니다.");
         if (0 > cushioningMaterialQuantity) {
             throw new IllegalArgumentException("완충재 수량은 0 이상이어야 합니다.");
         }
