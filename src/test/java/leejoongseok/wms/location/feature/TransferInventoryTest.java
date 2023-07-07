@@ -20,7 +20,7 @@ class TransferInventoryTest extends ApiTest {
     void transferInventory() {
         final String fromLocationBarcode = "A1-1-1";
         final String toLocationBarcode = "toLocationBarcode";
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()

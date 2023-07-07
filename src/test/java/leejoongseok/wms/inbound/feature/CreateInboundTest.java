@@ -18,7 +18,7 @@ class CreateInboundTest extends ApiTest {
     @Test
     @DisplayName("입고를 등록한다.")
     void createInbound() {
-        new Scenario().createItem().request()
+        Scenario.createItem().request()
                 .createInbound().request();
 
         final Inbound inbound = inboundRepository.findById(1L).get();

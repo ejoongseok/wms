@@ -18,7 +18,7 @@ class CreateUserTest extends ApiTest {
     @Test
     @DisplayName("사용자를 생성한다.")
     void createUser() {
-        new Scenario()
+        Scenario
                 .createUser().request();
 
         assertThat(userRepository.findAll()).hasSize(1);

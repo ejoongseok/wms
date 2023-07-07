@@ -25,7 +25,7 @@ class AdjustInventoryTest extends ApiTest {
         final String locationBarcode = "A1-1-1";
         final String lpnBarcode = "LPNBarcode";
 
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()
@@ -37,7 +37,7 @@ class AdjustInventoryTest extends ApiTest {
         assertThat(locationLPN.getInventoryQuantity()).isEqualTo(1);
 
         final int quantity = 5;
-        new Scenario().adjustInventory()
+        Scenario.adjustInventory()
                 .locationBarcode(locationBarcode)
                 .lpnBarcode(lpnBarcode)
                 .quantity(quantity)

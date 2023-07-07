@@ -17,7 +17,7 @@ class CreateItemTest extends ApiTest {
     @Test
     @DisplayName("상품을 등록한다.")
     void createItem() {
-        new Scenario().createItem().request();
+        Scenario.createItem().request();
 
         assertThat(itemRepository.findByItemBarcode("itemBarcode")).isPresent();
     }

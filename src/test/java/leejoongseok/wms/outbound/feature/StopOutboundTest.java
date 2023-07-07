@@ -21,7 +21,7 @@ class StopOutboundTest extends ApiTest {
     @DisplayName("어떠한 이유로 출고를 중지한다.")
     void stopOutbound() {
         final String stoppedReason = "오집품/상품불량/포장손상..";
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()

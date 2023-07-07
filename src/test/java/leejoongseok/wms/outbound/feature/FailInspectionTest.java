@@ -22,7 +22,7 @@ class FailInspectionTest extends ApiTest {
     @Test
     @DisplayName("출고 검수 불합격")
     void failInspection() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()
@@ -33,7 +33,7 @@ class FailInspectionTest extends ApiTest {
                 .createOutbound().request();
 
         final String toteBarcode = "TOTE0001";
-        new Scenario()
+        Scenario
                 .createLocation()
                 .locationBarcode(toteBarcode)
                 .storageType(StorageType.TOTE)

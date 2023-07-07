@@ -22,7 +22,7 @@ class PassInspectionTest extends ApiTest {
     @Test
     @DisplayName("집품 완료한 출고건의 검수를 통과한다.")
     void passInspection() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()
@@ -33,7 +33,7 @@ class PassInspectionTest extends ApiTest {
                 .createOutbound().request();
 
         final String toteBarcode = "TOTE0001";
-        new Scenario()
+        Scenario
                 .createLocation()
                 .locationBarcode(toteBarcode)
                 .storageType(StorageType.TOTE)

@@ -21,7 +21,7 @@ class CreateLPNTest extends ApiTest {
     @Test
     @DisplayName("입고 아이템의 LPN을 등록한다.")
     void createLPN() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()
@@ -36,7 +36,7 @@ class CreateLPNTest extends ApiTest {
     @Test
     @DisplayName("[실패] 입고 아이템의 LPN을 등록한다. - 동일한 LPN 바코드가 이미 존재하는 경우")
     void fail_duplicate_createLPN() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()

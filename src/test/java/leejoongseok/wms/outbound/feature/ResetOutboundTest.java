@@ -17,7 +17,7 @@ class ResetOutboundTest extends ApiTest {
     @Test
     @DisplayName("출고를 초기화한다.")
     void resetOutbound() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()

@@ -20,7 +20,7 @@ class ScanToPickTest extends ApiTest {
     @Test
     @DisplayName("집품정보를 확인한 뒤 집품할 장소에가서 LocationBarcode와 상품의 LPNBarcode를 스캔해서 집품한다.")
     void scanToPick() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()
@@ -31,7 +31,7 @@ class ScanToPickTest extends ApiTest {
                 .createOutbound().request();
 
         final String toteBarcode = "TOTE0001";
-        new Scenario()
+        Scenario
                 .createLocation()
                 .locationBarcode(toteBarcode)
                 .storageType(StorageType.TOTE)

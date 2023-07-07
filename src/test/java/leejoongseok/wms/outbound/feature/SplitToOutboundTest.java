@@ -24,7 +24,7 @@ class SplitToOutboundTest extends ApiTest {
     @Test
     @DisplayName("대기중인 출고건을 분할한다. (1개의 출고건을 2개로 분할)")
     void splitToOutbound() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()
@@ -40,7 +40,7 @@ class SplitToOutboundTest extends ApiTest {
                 .createOutbound().request();
         assertThat(outboundRepository.testingFindById(1L).get().getOutboundItems().get(0).getOutboundQuantity()).isEqualTo(2);
 
-        new Scenario()
+        Scenario
                 .splitToOutbound().request();
 
         final Outbound outbound = outboundRepository.testingFindById(1L).get();

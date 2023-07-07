@@ -17,7 +17,7 @@ class CreateOutboundTest extends ApiTest {
     @Test
     @DisplayName("출고를 생성한다.")
     void createOutbound() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()

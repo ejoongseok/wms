@@ -19,7 +19,7 @@ class CompletePickingTest extends ApiTest {
     @Test
     @DisplayName("출고해야할 상품의 집품이 모두 완료되면 집품완료를 할 수 있다.")
     void completePicking() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()
@@ -30,7 +30,7 @@ class CompletePickingTest extends ApiTest {
                 .createOutbound().request();
 
         final String toteBarcode = "TOTE0001";
-        new Scenario()
+        Scenario
                 .createLocation()
                 .locationBarcode(toteBarcode)
                 .storageType(StorageType.TOTE)

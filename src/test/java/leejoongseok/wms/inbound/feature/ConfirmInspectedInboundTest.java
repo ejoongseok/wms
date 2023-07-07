@@ -18,7 +18,7 @@ class ConfirmInspectedInboundTest extends ApiTest {
     @Test
     @DisplayName("입고를 확정한다.")
     void confirmInspectedInbound() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()

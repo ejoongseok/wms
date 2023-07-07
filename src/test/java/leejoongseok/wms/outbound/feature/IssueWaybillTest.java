@@ -18,7 +18,7 @@ class IssueWaybillTest extends ApiTest {
     @Test
     @DisplayName("출고에대한 운송장을 발행한다.")
     void issueWaybill() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()

@@ -21,7 +21,7 @@ class AddManualInventoryToLocationLPNTest extends ApiTest {
     @Transactional
     @DisplayName("로케이션 LPN에 재고 수량을 직접 추가한다.")
     void addManualInventoryToLocationLPN() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()

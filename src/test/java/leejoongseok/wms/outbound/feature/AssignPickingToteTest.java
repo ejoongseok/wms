@@ -21,7 +21,7 @@ class AssignPickingToteTest extends ApiTest {
     @Test
     @DisplayName("출고를 집품할 토트를 할당한다.")
     void assignPickingTote() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()
@@ -32,7 +32,7 @@ class AssignPickingToteTest extends ApiTest {
                 .createOutbound().request();
 
         final String toteBarcode = "TOTE0001";
-        new Scenario()
+        Scenario
                 .createLocation()
                 .locationBarcode(toteBarcode)
                 .storageType(StorageType.TOTE)

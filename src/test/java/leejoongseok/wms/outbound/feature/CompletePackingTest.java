@@ -22,7 +22,7 @@ class CompletePackingTest extends ApiTest {
     @Test
     @DisplayName("출고에대한 포장을 완료한다.")
     void completePacking() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()
@@ -33,7 +33,7 @@ class CompletePackingTest extends ApiTest {
                 .createOutbound().request();
 
         final String toteBarcode = "TOTE0001";
-        new Scenario()
+        Scenario
                 .createLocation()
                 .locationBarcode(toteBarcode)
                 .storageType(StorageType.TOTE)

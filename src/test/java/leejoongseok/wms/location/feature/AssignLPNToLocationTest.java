@@ -22,7 +22,7 @@ class AssignLPNToLocationTest extends ApiTest {
     void assignLPNToLocation() {
         final String locationBarcode = "A1-1-1";
 
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()

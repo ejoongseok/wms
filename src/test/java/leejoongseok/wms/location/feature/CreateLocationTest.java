@@ -16,7 +16,7 @@ class CreateLocationTest extends ApiTest {
     @Test
     @DisplayName("로케이션을 등록한다.")
     void createLocation() {
-        new Scenario()
+        Scenario
                 .createLocation().request();
 
         assertThat(locationRepository.findById(1L)).isPresent();

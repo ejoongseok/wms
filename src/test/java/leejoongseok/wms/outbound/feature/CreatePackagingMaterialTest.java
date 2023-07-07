@@ -17,7 +17,7 @@ class CreatePackagingMaterialTest extends ApiTest {
     @Test
     @DisplayName("포장재를 등록한다.")
     void createPackagingMaterial() {
-        new Scenario()
+        Scenario
                 .createPackagingMaterial().request();
 
         assertThat(packagingMaterialRepository.findById(1L)).isPresent();

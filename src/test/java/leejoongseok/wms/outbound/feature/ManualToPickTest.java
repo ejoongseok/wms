@@ -21,7 +21,7 @@ class ManualToPickTest extends ApiTest {
     @DisplayName("집품해야할 로케이션에 가서 LPN을 선택하고 토트에 담을 상품의 수량을 직접 입력합니다.")
     void manualToPick() {
 
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()
@@ -32,7 +32,7 @@ class ManualToPickTest extends ApiTest {
                 .createOutbound().request();
 
         final String toteBarcode = "TOTE0001";
-        new Scenario()
+        Scenario
                 .createLocation()
                 .locationBarcode(toteBarcode)
                 .storageType(StorageType.TOTE)

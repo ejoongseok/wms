@@ -28,7 +28,7 @@ public class AllocatePickingTest extends ApiTest {
     @DisplayName("출고 상품에 대한 집품 목록을 할당한다.")
     @Transactional
     void allocatePicking() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .confirmInspectedInbound().request()
@@ -39,7 +39,7 @@ public class AllocatePickingTest extends ApiTest {
                 .createOutbound().request();
 
         final String toteBarcode = "TOTE0001";
-        new Scenario()
+        Scenario
                 .createLocation()
                 .locationBarcode(toteBarcode)
                 .storageType(StorageType.TOTE)

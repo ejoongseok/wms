@@ -20,7 +20,7 @@ class RejectInboundTest extends ApiTest {
     @Test
     @DisplayName("입고를 거부한다.")
     void rejectInbound() {
-        new Scenario()
+        Scenario
                 .createItem().request()
                 .createInbound().request()
                 .rejectInbound().request();

@@ -19,7 +19,7 @@ class MoveToTargetChildLocationTest extends ApiTest {
     private static void createLocation(
             final String locationBarcode,
             final StorageType storageType) {
-        new Scenario()
+        Scenario
                 .createLocation()
                 .locationBarcode(locationBarcode)
                 .storageType(storageType)
@@ -36,7 +36,7 @@ class MoveToTargetChildLocationTest extends ApiTest {
         final String toteLocationBarcode2 = "TOTE-2";
         createLocation(toteLocationBarcode2, StorageType.TOTE);
 
-        new Scenario()
+        Scenario
                 .moveToTargetChildLocation()
                 .currentLocationBarcode(cellLocationBarcode)
                 .targetLocationBarcode(toteLocationBarcode)
@@ -47,7 +47,7 @@ class MoveToTargetChildLocationTest extends ApiTest {
         assertThat(cellLocation.getParentLocation()).isEqualTo(toteLocation);
         assertThat(toteLocation.getChildLocations()).hasSize(1);
 
-        new Scenario()
+        Scenario
                 .moveToTargetChildLocation()
                 .currentLocationBarcode(cellLocationBarcode)
                 .targetLocationBarcode(toteLocationBarcode2)
