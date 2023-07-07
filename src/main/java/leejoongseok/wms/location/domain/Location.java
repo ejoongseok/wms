@@ -47,7 +47,7 @@ public class Location extends BaseEntity {
     @Comment("로케이션 ID")
     private Long id;
     @Getter
-    @Column(name = "location_barcode", nullable = false)
+    @Column(name = "location_barcode", nullable = false, unique = true)
     @Comment("로케이션 바코드")
     private String locationBarcode;
     @Getter

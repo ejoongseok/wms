@@ -1,6 +1,14 @@
 package leejoongseok.wms.item.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import leejoongseok.wms.common.user.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,7 +33,7 @@ public class Item extends BaseEntity {
     @Column(name = "item_name", nullable = false)
     @Comment("상품명")
     private String itemName;
-    @Column(name = "item_barcode", nullable = false)
+    @Column(name = "item_barcode", nullable = false, unique = true)
     @Comment("상품 바코드")
     private String itemBarcode;
     @Column(name = "description")
