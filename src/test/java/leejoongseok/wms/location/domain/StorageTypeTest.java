@@ -14,7 +14,9 @@ class StorageTypeTest {
         final StorageType cell = StorageType.CELL;
         final StorageType tote = StorageType.TOTE;
 
-        assertTrue(cell.isCompatibleWith(cell));
+        assertTrue(tote.isCompatibleWith(cell));
+        assertFalse(cell.isCompatibleWith(cell));
         assertFalse(cell.isCompatibleWith(tote));
+        assertFalse(tote.isCompatibleWith(tote));
     }
 }

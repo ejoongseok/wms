@@ -18,6 +18,6 @@ public enum StorageType {
     private final Integer size;
 
     public boolean isCompatibleWith(final StorageType storageType) {
-        return size >= storageType.size;
+        return size > storageType.size;
     }
 }
