@@ -1,4 +1,4 @@
-package leejoongseok.wms.outbound.port;
+package leejoongseok.wms.outbound.waybill;
 
 import leejoongseok.wms.outbound.domain.Outbound;
 import org.springframework.stereotype.Component;

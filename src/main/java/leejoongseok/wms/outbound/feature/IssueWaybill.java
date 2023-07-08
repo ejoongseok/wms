@@ -3,7 +3,7 @@ package leejoongseok.wms.outbound.feature;
 import leejoongseok.wms.outbound.domain.Outbound;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
 import leejoongseok.wms.outbound.exception.OutboundIdNotFoundException;
-import leejoongseok.wms.outbound.port.Waybill;
+import leejoongseok.wms.outbound.waybill.Waybill;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;

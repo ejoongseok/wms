@@ -1,6 +1,7 @@
 package leejoongseok.wms.outbound.port;
 
 import leejoongseok.wms.outbound.domain.Outbound;
+import leejoongseok.wms.outbound.waybill.Waybill;
 import org.instancio.Instancio;
 import org.instancio.Select;
 import org.junit.jupiter.api.BeforeEach;
