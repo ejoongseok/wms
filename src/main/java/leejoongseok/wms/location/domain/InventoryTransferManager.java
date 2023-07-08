@@ -29,5 +29,8 @@ public enum InventoryTransferManager {
         if (0 >= transferQuantity) {
             throw new IllegalArgumentException("이동할 재고의 수량은 0보다 커야 합니다.");
         }
+        if (targetLocationLPN.getInventoryQuantity() < transferQuantity) {
+            throw new IllegalArgumentException("이동할 재고의 수량은 재고 수량보다 클 수 없습니다.");
+        }
     }
 }
