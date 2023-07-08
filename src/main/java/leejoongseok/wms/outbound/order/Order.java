@@ -1,4 +1,4 @@
-package leejoongseok.wms.outbound.port;
+package leejoongseok.wms.outbound.order;
 
 import lombok.AccessLevel;
 import lombok.Getter;

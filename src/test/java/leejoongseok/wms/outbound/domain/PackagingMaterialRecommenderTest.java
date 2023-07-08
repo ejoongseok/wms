@@ -2,7 +2,7 @@ package leejoongseok.wms.outbound.domain;
 
 import leejoongseok.wms.item.domain.Item;
 import leejoongseok.wms.item.domain.ItemSize;
-import leejoongseok.wms.outbound.port.OrderItem;
+import leejoongseok.wms.outbound.order.OrderItem;
 import org.instancio.Instancio;
 import org.instancio.Select;
 import org.junit.jupiter.api.DisplayName;

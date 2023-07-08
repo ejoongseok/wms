@@ -1,6 +1,6 @@
 package leejoongseok.wms.outbound.domain;
 
-import leejoongseok.wms.outbound.port.OrderItem;
+import leejoongseok.wms.outbound.order.OrderItem;
 import org.springframework.util.Assert;
 
 import java.util.List;
