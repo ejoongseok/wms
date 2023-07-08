@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Component
 @RequiredArgsConstructor
-public class LoadOrderPort {
+public class OrderLoader {
     private final ItemRepository itemRepository;
 
     public Order getBy(final Long orderId) {

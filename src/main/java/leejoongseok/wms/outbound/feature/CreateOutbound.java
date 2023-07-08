@@ -19,9 +19,9 @@ import leejoongseok.wms.outbound.domain.PackagingMaterial;
 import leejoongseok.wms.outbound.domain.PackagingMaterialRecommender;
 import leejoongseok.wms.outbound.domain.PackagingMaterialRepository;
 import leejoongseok.wms.outbound.exception.ItemIdNotFoundException;
-import leejoongseok.wms.outbound.port.LoadOrderPort;
 import leejoongseok.wms.outbound.port.Order;
 import leejoongseok.wms.outbound.port.OrderItem;
+import leejoongseok.wms.outbound.port.OrderLoader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +41,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 public class CreateOutbound {
-    private final LoadOrderPort loadOrderPort;
+    private final OrderLoader orderLoader;
     private final LocationLPNRepository locationLPNRepository;
     private final PackagingMaterialRepository packagingMaterialRepository;
     private final OutboundRepository outboundRepository;
@@ -51,7 +51,7 @@ public class CreateOutbound {
     @PostMapping("/outbounds")
     @ResponseStatus(HttpStatus.CREATED)
     public void request(@RequestBody @Valid final Request request) {
-        final Order order = loadOrderPort.getBy(request.orderId);
+        final Order order = orderLoader.getBy(request.orderId);
         final List<OrderItem> orderItems = order.getOrderItems();
         validateForOutboundCreation(orderItems);
 
