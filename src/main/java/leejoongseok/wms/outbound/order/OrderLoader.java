@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 주문을 조회하는 포트
+ * 주문을 조회 로더 클래스
  * 실제로는 주문을 조회하는 API를 호출하거나, DB에서 조회하는 등의 로직이 들어감.
  */
 @Component
