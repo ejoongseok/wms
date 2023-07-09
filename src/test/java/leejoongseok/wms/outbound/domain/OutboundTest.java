@@ -8,14 +8,11 @@ import leejoongseok.wms.common.fixture.OutboundFixture;
 import leejoongseok.wms.common.fixture.OutboundItemFixture;
 import leejoongseok.wms.common.fixture.PackagingMaterialFixture;
 import leejoongseok.wms.common.fixture.PickingFixture;
-import leejoongseok.wms.item.domain.Item;
-import leejoongseok.wms.item.domain.ItemSize;
 import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.StorageType;
 import leejoongseok.wms.outbound.exception.OutboundItemIdNotFoundException;
 import org.instancio.Instancio;
-import org.instancio.Select;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,15 +26,14 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 분할 한다.")
     void split() {
-        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
-                .withId(1L)
-                .withOutboundQuantity(2)
-                .build();
         final Outbound outbound = OutboundFixture.aOutboundWithNoCushionAndNoOutboundItemAndNoToteLocation()
                 .withId(1L)
                 .withOutboundStatus(OutboundStatus.READY)
                 .build();
-        outbound.addOutboundItem(outboundItem);
+        outbound.addOutboundItem(OutboundItemFixture.aOutboundItem()
+                .withId(1L)
+                .withOutboundQuantity(2)
+                .build());
 
         final Long outboundItemId = 1L;
         final Integer quantityToSplit = 1;
@@ -57,15 +53,14 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 분할 한다. [출고 상태가 READY가 아닌 경우]")
     void fail_split_invalid_outbound_status() {
-        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
-                .withId(1L)
-                .withOutboundQuantity(2)
-                .build();
         final Outbound invalidStatusOutbound = OutboundFixture.aOutboundWithNoCushionAndNoOutboundItemAndNoToteLocation()
                 .withId(1L)
                 .withOutboundStatus(OutboundStatus.PICKING_IN_PROGRESS)
                 .build();
-        invalidStatusOutbound.addOutboundItem(outboundItem);
+        invalidStatusOutbound.addOutboundItem(OutboundItemFixture.aOutboundItem()
+                .withId(1L)
+                .withOutboundQuantity(2)
+                .build());
 
         final Long outboundItemId = 1L;
         final Integer quantityToSplit = 1;
@@ -82,15 +77,14 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 분할 한다. [분할 하려는 출고 품목이 존재하지 않는 경우]")
     void fail_split_not_found_target_outbound_item_id() {
-        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
-                .withId(1L)
-                .withOutboundQuantity(2)
-                .build();
         final Outbound outbound = OutboundFixture.aOutboundWithNoCushionAndNoOutboundItemAndNoToteLocation()
                 .withId(1L)
                 .withOutboundStatus(OutboundStatus.READY)
                 .build();
-        outbound.addOutboundItem(outboundItem);
+        outbound.addOutboundItem(OutboundItemFixture.aOutboundItem()
+                .withId(1L)
+                .withOutboundQuantity(2)
+                .build());
 
         final Long outboundItemId = 2L;
         final Integer quantityToSplit = 1;
@@ -107,15 +101,14 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 분할 한다. [분할 하려는 출고 상품의 수량이 출고 상품의 수량보다 많은 경우]")
     void fail_split_over_split_quantity_target_outbound_item_quantity() {
-        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
-                .withId(1L)
-                .withOutboundQuantity(2)
-                .build();
         final Outbound outbound = OutboundFixture.aOutboundWithNoCushionAndNoOutboundItemAndNoToteLocation()
                 .withId(1L)
                 .withOutboundStatus(OutboundStatus.READY)
                 .build();
-        outbound.addOutboundItem(outboundItem);
+        outbound.addOutboundItem(OutboundItemFixture.aOutboundItem()
+                .withId(1L)
+                .withOutboundQuantity(2)
+                .build());
 
         final Long outboundItemId = 1L;
         final Integer quantityToSplit = 2;
@@ -133,20 +126,18 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 분할 한다. [출고 상품 두개 중 하나만 아예 분할하는 경우]")
     void split_1() {
-        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
-                .withId(1L)
-                .withOutboundQuantity(2)
-                .build();
-        final OutboundItem outboundItem2 = OutboundItemFixture.aOutboundItem()
-                .withId(2L)
-                .withOutboundQuantity(2)
-                .build();
         final Outbound outbound = OutboundFixture.aOutboundWithNoCushionAndNoOutboundItemAndNoToteLocation()
                 .withId(1L)
                 .withOutboundStatus(OutboundStatus.READY)
                 .build();
-        outbound.addOutboundItem(outboundItem);
-        outbound.addOutboundItem(outboundItem2);
+        outbound.addOutboundItem(OutboundItemFixture.aOutboundItem()
+                .withId(1L)
+                .withOutboundQuantity(2)
+                .build());
+        outbound.addOutboundItem(OutboundItemFixture.aOutboundItem()
+                .withId(2L)
+                .withOutboundQuantity(2)
+                .build());
 
         final Long outboundItemId = 1L;
         final Integer quantityToSplit = 2;
@@ -167,20 +158,18 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 분할 한다. [출고 상품 두개 중 하나의 일부 수량만 분할하는 경우]")
     void split_2() {
-        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
-                .withId(1L)
-                .withOutboundQuantity(2)
-                .build();
-        final OutboundItem outboundItem2 = OutboundItemFixture.aOutboundItem()
-                .withId(2L)
-                .withOutboundQuantity(2)
-                .build();
         final Outbound outbound = OutboundFixture.aOutboundWithNoCushionAndNoOutboundItemAndNoToteLocation()
                 .withId(1L)
                 .withOutboundStatus(OutboundStatus.READY)
                 .build();
-        outbound.addOutboundItem(outboundItem);
-        outbound.addOutboundItem(outboundItem2);
+        outbound.addOutboundItem(OutboundItemFixture.aOutboundItem()
+                .withId(1L)
+                .withOutboundQuantity(2)
+                .build());
+        outbound.addOutboundItem(OutboundItemFixture.aOutboundItem()
+                .withId(2L)
+                .withOutboundQuantity(2)
+                .build());
 
         final Long outboundItemIdToSplit = 1L;
         final Integer quantityToSplit = 1;
@@ -201,22 +190,19 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 총 부피를 계산한다. (출고의 부피 = 상품의 부피 * 상품의 수량 + 완충재의 부피 * 완충재의 수량)")
     void calculateTotalVolume() {
-        final ItemSize itemSize = ItemSizeFixture.aItemSize()
-                .withWidthInMillimeter(100)
-                .withHeightInMillimeter(100)
-                .withLengthInMillimeter(100)
-                .build();
-        final Item item = ItemFixture.aItem()
-                .withItemSize(itemSize)
-                .build();
-        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
-                .withItem(item)
-                .withOutboundQuantity(1)
-                .build();
         final Outbound outbound = OutboundFixture.aOutboundWithNoRecommendedPackagingMaterial()
                 .withCushioningMaterial(CushioningMaterial.BUBBLE_WRAP)
                 .withCushioningMaterialQuantity(1)
-                .withOutboundItems(List.of(outboundItem))
+                .withOutboundItems(List.of(OutboundItemFixture.aOutboundItem()
+                        .withItem(ItemFixture.aItem()
+                                .withItemSize(ItemSizeFixture.aItemSize()
+                                        .withWidthInMillimeter(100)
+                                        .withHeightInMillimeter(100)
+                                        .withLengthInMillimeter(100)
+                                        .build())
+                                .build())
+                        .withOutboundQuantity(1)
+                        .build()))
                 .build();
 
         final Long totalVolume = outbound.calculateTotalVolume();
@@ -231,17 +217,15 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 총 무게를 계산한다. (출고의 무게 = 상품의 무게 * 상품의 수량 + 완충재의 무게 * 완충재의 수량)")
     void calculateTotalWeightInGrams() {
-        final Item item = ItemFixture.aItem()
-                .withWeightInGrams(100)
-                .build();
-        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
-                .withItem(item)
-                .withOutboundQuantity(1)
-                .build();
         final Outbound outbound = OutboundFixture.aOutboundWithNoRecommendedPackagingMaterial()
                 .withCushioningMaterial(CushioningMaterial.BUBBLE_WRAP)
                 .withCushioningMaterialQuantity(1)
-                .withOutboundItems(List.of(outboundItem))
+                .withOutboundItems(List.of(OutboundItemFixture.aOutboundItem()
+                        .withItem(ItemFixture.aItem()
+                                .withWeightInGrams(100)
+                                .build())
+                        .withOutboundQuantity(1)
+                        .build()))
                 .build();
 
         final Long totalWeightInGrams = outbound.calculateTotalWeightInGrams();
@@ -394,18 +378,6 @@ class OutboundTest {
                 .hasMessageContaining("추천 포장재가 할당되지 않았습니다.");
     }
 
-    private Outbound createOutbound(final OutboundStatus status) {
-        return Instancio.of(Outbound.class)
-                .supply(Select.field(Outbound::getOutboundStatus), () -> status)
-                .supply(Select.field(Outbound::getCushioningMaterial), () -> CushioningMaterial.NONE)
-                .supply(Select.field(Outbound::getCushioningMaterialQuantity), () -> 0)
-                .ignore(Select.field(Outbound::getOutboundItems))
-                .ignore(Select.field(Outbound::getToteLocation))
-                .ignore(Select.field(Outbound::getRecommendedPackagingMaterial))
-                .ignore(Select.field(Outbound::getTrackingNumber))
-                .create();
-    }
-
     @Test
     @DisplayName("출고의 상태가 집품 중인지 확인한다.")
     void isPickingProgress() {
@@ -497,17 +469,15 @@ class OutboundTest {
         final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
                 .withInventoryQuantity(10)
                 .build();
-        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
-                .withQuantityRequiredForPick(5)
-                .withLocationLPN(locationLPN)
-                .build();
-        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
-                .withPickings(List.of(picking))
-                .build();
         final Outbound outbound = OutboundFixture.aOutboundWithPickingReadyStatus()
                 .withRecommendedPackagingMaterial(PackagingMaterialFixture.aPackagingMaterial().build())
                 .withToteLocation(LocationFixture.aLocationWithNoLocationLPNList().build())
-                .withOutboundItems(List.of(outboundItem))
+                .withOutboundItems(List.of(OutboundItemFixture.aOutboundItem()
+                        .withPickings(List.of(PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                                .withQuantityRequiredForPick(5)
+                                .withLocationLPN(locationLPN)
+                                .build()))
+                        .build()))
                 .build();
 
         outbound.deductAllocatedInventory();
@@ -531,11 +501,10 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 상태를 집품완료로 변경한다.")
     void completePicking() {
-        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
-                .withPickings(List.of(PickingFixture.aPickingWithCompletedPickingNoPickedQuantity().build()))
-                .build();
         final Outbound outbound = OutboundFixture.aOutboundWithPickingInProgress()
-                .withOutboundItems(List.of(outboundItem))
+                .withOutboundItems(List.of(OutboundItemFixture.aOutboundItem()
+                        .withPickings(List.of(PickingFixture.aPickingWithCompletedPickingNoPickedQuantity().build()))
+                        .build()))
                 .build();
 
         outbound.completePicking();
@@ -557,11 +526,10 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 상태를 집품완료로 변경한다. - 출고 상품별 집품이 완료되지 않은 경우 집품 완료할 수 없음.")
     void completePicking_not_completed_picked() {
-        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
-                .withPickings(List.of(PickingFixture.aPickingWithInProgressPickingNoPickedQuantity().build()))
-                .build();
         final Outbound outbound = OutboundFixture.aOutboundWithPickingInProgress()
-                .withOutboundItems(List.of(outboundItem))
+                .withOutboundItems(List.of(OutboundItemFixture.aOutboundItem()
+                        .withPickings(List.of(PickingFixture.aPickingWithInProgressPickingNoPickedQuantity().build()))
+                        .build()))
                 .build();
 
         assertThatThrownBy(() -> {

@@ -55,12 +55,11 @@ class PickingTest {
     @Test
     @DisplayName("집품에 필요한 수량만큼 LocationLPN 재고를 차감한다. - 집품의 상태가 READY가 아님")
     void deductAllocatedInventory_invalidStatus() {
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
-                .withInventoryQuantity(10)
-                .build();
         final Picking picking = PickingFixture.aPickingWithInProgressPickingNoPickedQuantity()
                 .withQuantityRequiredForPick(5)
-                .withLocationLPN(locationLPN)
+                .withLocationLPN(LocationLPNFixture.aLocationLPN()
+                        .withInventoryQuantity(10)
+                        .build())
                 .build();
 
         assertThatThrownBy(() -> {
@@ -72,12 +71,11 @@ class PickingTest {
     @Test
     @DisplayName("집품에 필요한 수량만큼 LocationLPN 재고를 차감한다. - 차감해야할 수량이 재고보다 많음")
     void deductAllocatedInventory_over_deduct_quantity() {
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
-                .withInventoryQuantity(10)
-                .build();
         final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
                 .withQuantityRequiredForPick(50)
-                .withLocationLPN(locationLPN)
+                .withLocationLPN(LocationLPNFixture.aLocationLPN()
+                        .withInventoryQuantity(10)
+                        .build())
                 .build();
 
         assertThatThrownBy(() -> {
@@ -90,7 +88,6 @@ class PickingTest {
     @DisplayName("집품한 수량을 증가시킨다.")
     void increasePickedQuantity() {
         final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN().build();
-        final PickingStatus pickingStatus = PickingStatus.READY;
         final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
                 .withQuantityRequiredForPick(2)
                 .withLocationLPN(locationLPN)
@@ -122,15 +119,13 @@ class PickingTest {
     @Test
     @DisplayName("집품한 수량을 증가시킨다. - 집품해야할 LocatinLPN이 아님")
     void increasePickedQuantity_not_match_locationLPN() {
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN().build();
-        final LocationLPN locationLPN2 = LocationLPNFixture.aLocationLPN().build();
         final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
                 .withQuantityRequiredForPick(1)
-                .withLocationLPN(locationLPN)
+                .withLocationLPN(LocationLPNFixture.aLocationLPN().build())
                 .build();
 
         assertThatThrownBy(() -> {
-            picking.increasePickedQuantity(locationLPN2);
+            picking.increasePickedQuantity(LocationLPNFixture.aLocationLPN().build());
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("집품에 할당된 LocationLPN이 아닌 LocationLPN의 수량을 증가시킬 수 없습니다.");
     }
@@ -214,15 +209,13 @@ class PickingTest {
     @Test
     @DisplayName("집품 수량을 직접 입력한 수량만큼 증가시킵니다. - 집품해야할 LocatinLPN이 아님")
     void addManualPickedQuantity_not_match_locationLPN() {
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN().build();
-        final LocationLPN locationLPN2 = LocationLPNFixture.aLocationLPN().build();
         final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
                 .withQuantityRequiredForPick(1)
-                .withLocationLPN(locationLPN)
+                .withLocationLPN(LocationLPNFixture.aLocationLPN().build())
                 .build();
 
         assertThatThrownBy(() -> {
-            picking.addManualPickedQuantity(locationLPN2, 1);
+            picking.addManualPickedQuantity(LocationLPNFixture.aLocationLPN().build(), 1);
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("집품에 할당된 LocationLPN이 아닌 LocationLPN의 수량을 증가시킬 수 없습니다.");
     }

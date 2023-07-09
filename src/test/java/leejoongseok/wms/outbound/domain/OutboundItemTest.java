@@ -5,8 +5,6 @@ import leejoongseok.wms.common.fixture.ItemSizeFixture;
 import leejoongseok.wms.common.fixture.LocationLPNFixture;
 import leejoongseok.wms.common.fixture.OutboundItemFixture;
 import leejoongseok.wms.common.fixture.PickingFixture;
-import leejoongseok.wms.item.domain.Item;
-import leejoongseok.wms.item.domain.ItemSize;
 import leejoongseok.wms.location.domain.LocationLPN;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,16 +62,14 @@ class OutboundItemTest {
     @Test
     @DisplayName("출고 상품의 부피를 계산한다. (출고 상품의 부피 = 상품의 부피 * 출고 수량)")
     void calculateVolume() {
-        final ItemSize itemSize = ItemSizeFixture.aItemSize()
-                .withWidthInMillimeter(100)
-                .withLengthInMillimeter(100)
-                .withHeightInMillimeter(100)
-                .build();
-        final Item item = ItemFixture.aItem()
-                .withItemSize(itemSize)
-                .build();
         final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
-                .withItem(item)
+                .withItem(ItemFixture.aItem()
+                        .withItemSize(ItemSizeFixture.aItemSize()
+                                .withWidthInMillimeter(100)
+                                .withLengthInMillimeter(100)
+                                .withHeightInMillimeter(100)
+                                .build())
+                        .build())
                 .withOutboundQuantity(1)
                 .build();
 
@@ -87,12 +83,11 @@ class OutboundItemTest {
     @Test
     @DisplayName("출고 상품의 무게를 계산한다. (출고 상품의 무게 = 상품의 무게 * 출고 수량)")
     void calculateWeightInGrams() {
-        final Item item = ItemFixture.aItem()
-                .withWeightInGrams(100)
-                .build();
         final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
                 .withOutboundQuantity(2)
-                .withItem(item)
+                .withItem(ItemFixture.aItem()
+                        .withWeightInGrams(100)
+                        .build())
                 .build();
 
         final Long outboundItemWeightInGrams = outboundItem.calculateWeightInGrams();
@@ -150,12 +145,12 @@ class OutboundItemTest {
         final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
                 .withInventoryQuantity(10)
                 .build();
-        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
-                .withQuantityRequiredForPick(5)
-                .withLocationLPN(locationLPN)
-                .build();
         final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
-                .withPickings(List.of(picking))
+                .withPickings(List.of(
+                        PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                                .withQuantityRequiredForPick(5)
+                                .withLocationLPN(locationLPN)
+                                .build()))
                 .build();
 
         outboundItem.deductAllocatedInventory();
@@ -184,12 +179,12 @@ class OutboundItemTest {
         final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
                 .withInventoryQuantity(10)
                 .build();
-        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
-                .withQuantityRequiredForPick(50)
-                .withLocationLPN(locationLPN)
-                .build();
         final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
-                .withPickings(List.of(picking))
+                .withPickings(List.of(
+                        PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                                .withQuantityRequiredForPick(50)
+                                .withLocationLPN(locationLPN)
+                                .build()))
                 .build();
 
         assertThatThrownBy(() -> {
@@ -241,15 +236,13 @@ class OutboundItemTest {
     @Test
     @DisplayName("출고상품에 할당된 집품목록을 전부 제거한다.")
     void resetPickings() {
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
-                .withInventoryQuantity(10)
-                .build();
-        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
-                .withQuantityRequiredForPick(5)
-                .withLocationLPN(locationLPN)
-                .build();
         final List<Picking> pickings = new ArrayList<>();
-        pickings.add(picking);
+        pickings.add(PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(5)
+                .withLocationLPN(LocationLPNFixture.aLocationLPN()
+                        .withInventoryQuantity(10)
+                        .build())
+                .build());
         final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
                 .withPickings(pickings)
                 .build();

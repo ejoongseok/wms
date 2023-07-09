@@ -1,9 +1,7 @@
-package leejoongseok.wms.outbound.port;
+package leejoongseok.wms.outbound.waybill;
 
+import leejoongseok.wms.common.fixture.OutboundFixture;
 import leejoongseok.wms.outbound.domain.Outbound;
-import leejoongseok.wms.outbound.waybill.Waybill;
-import org.instancio.Instancio;
-import org.instancio.Select;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,9 +21,7 @@ class WaybillTest {
     @Test
     @DisplayName("출고에대한 운송장을 발행한다.")
     void request() {
-        final Outbound outbound = Instancio.of(Outbound.class)
-                .ignore(Select.field(Outbound::getTrackingNumber))
-                .create();
+        final Outbound outbound = OutboundFixture.aOutboundWithNoTrackingNumber().build();
 
         final String trackingNumber = waybill.request(outbound);
 
@@ -35,7 +31,7 @@ class WaybillTest {
     @Test
     @DisplayName("출고에대한 운송장을 발행한다. - 이미 운송장이 발행된 경우 예외가 발생한다.")
     void request_exists_trackingNumber() {
-        final Outbound outbound = Instancio.create(Outbound.class);
+        final Outbound outbound = OutboundFixture.aOutbound().build();
 
         assertThatThrownBy(() -> {
             waybill.request(outbound);

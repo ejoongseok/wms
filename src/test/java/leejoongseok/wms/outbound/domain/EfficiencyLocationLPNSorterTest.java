@@ -3,8 +3,6 @@ package leejoongseok.wms.outbound.domain;
 import leejoongseok.wms.common.fixture.LPNFixture;
 import leejoongseok.wms.common.fixture.LocationFixture;
 import leejoongseok.wms.common.fixture.LocationLPNFixture;
-import leejoongseok.wms.inbound.domain.LPN;
-import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationLPN;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,16 +43,14 @@ class EfficiencyLocationLPNSorterTest {
             final String locationBarcode,
             final int inventoryQuantity,
             final LocalDateTime expirationAt) {
-        final LPN lpn = LPNFixture.aLPN()
-                .withExpirationAt(expirationAt)
-                .build();
-        final Location location = LocationFixture.aLocation()
-                .withLocationBarcode(locationBarcode)
-                .build();
         return LocationLPNFixture.aLocationLPN()
                 .withId(locationLPNId)
-                .withLPN(lpn)
-                .withLocation(location)
+                .withLPN(LPNFixture.aLPN()
+                        .withExpirationAt(expirationAt)
+                        .build())
+                .withLocation(LocationFixture.aLocation()
+                        .withLocationBarcode(locationBarcode)
+                        .build())
                 .withInventoryQuantity(inventoryQuantity)
                 .build();
 
