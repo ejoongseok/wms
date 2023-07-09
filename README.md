@@ -1,5 +1,6 @@
-MVP API 빠르게 개발하기(WMS 편)
+# MVP API 빠르게 개발하기(WMS 편)
 
+## 스펙
 - Java 17
 - Spring boot 3.1
 
