@@ -1,6 +1,7 @@
 package leejoongseok.wms.inbound.domain;
 
-import org.instancio.Instancio;
+import leejoongseok.wms.common.fixture.InboundItemFixture;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -11,10 +12,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class InboundItemTest {
 
+    private InboundItem inboundItem;
+
+    @BeforeEach
+    void setUp() {
+        inboundItem = InboundItemFixture.aInboundItem().build();
+    }
+
     @Test
     @DisplayName("입고 아이템의 LPN을 생성한다.")
     void createLPN() {
-        final InboundItem inboundItem = Instancio.create(InboundItem.class);
         final String lpnBarcode = "lpnBarcode";
         final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
 
@@ -27,7 +34,6 @@ class InboundItemTest {
     @Test
     @DisplayName("[실패] 입고 아이템의 LPN을 생성한다. - LPN 바코드가 null")
     void fail_null_lpn_barcode_createLPN() {
-        final InboundItem inboundItem = Instancio.create(InboundItem.class);
         final String invalid_lpnBarcode = null;
         final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
 
@@ -43,7 +49,6 @@ class InboundItemTest {
     @Test
     @DisplayName("[실패] 입고 아이템의 LPN을 생성한다. - 유통기한이 null")
     void fail_null_expirationAt_createLPN() {
-        final InboundItem inboundItem = Instancio.create(InboundItem.class);
         final String lpnBarcode = "lpnBarcode";
         final LocalDateTime invalid_expirationAt = null;
 
@@ -59,7 +64,6 @@ class InboundItemTest {
     @Test
     @DisplayName("[실패] 입고 아이템의 LPN을 생성한다. - 유통기한이 지난 경우")
     void fail_expired_createLPN() {
-        final InboundItem inboundItem = Instancio.create(InboundItem.class);
         final String lpnBarcode = "lpnBarcode";
         final LocalDateTime expiredLPN = LocalDateTime.now().minusDays(1);
 

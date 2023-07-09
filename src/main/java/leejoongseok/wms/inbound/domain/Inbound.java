@@ -1,6 +1,17 @@
 package leejoongseok.wms.inbound.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import leejoongseok.wms.common.user.BaseEntity;
 import leejoongseok.wms.inbound.exception.InboundItemIdNotFoundException;
 import leejoongseok.wms.inbound.exception.UnconfirmedInboundException;
@@ -28,18 +39,21 @@ public class Inbound extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("입고 ID")
     private Long id;
+    @Getter
+    @OneToMany(mappedBy = "inbound", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private final List<InboundItem> inboundItems = new ArrayList<>();
+    @Getter
     @Column(name = "order_request_at", nullable = false)
     @Comment("발주 요청일시")
     private LocalDateTime orderRequestAt;
-    @Column(name = "estimated_arrival_at", nullable = false)
-    @Comment("예상 도착일시")
-    private LocalDateTime estimatedArrivalAt;
     @Getter
     @Column(name = "total_amount", nullable = false)
     @Comment("입고 총액")
     private BigDecimal totalAmount;
-    @OneToMany(mappedBy = "inbound", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private final List<InboundItem> inboundItems = new ArrayList<>();
+    @Getter
+    @Column(name = "estimated_arrival_at", nullable = false)
+    @Comment("예상 도착일시")
+    private LocalDateTime estimatedArrivalAt;
     @Getter
     @Column(name = "status", nullable = false)
     @Comment("입고 진행 상태")

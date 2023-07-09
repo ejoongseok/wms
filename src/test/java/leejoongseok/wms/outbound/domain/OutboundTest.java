@@ -1,5 +1,13 @@
 package leejoongseok.wms.outbound.domain;
 
+import leejoongseok.wms.common.fixture.ItemFixture;
+import leejoongseok.wms.common.fixture.ItemSizeFixture;
+import leejoongseok.wms.common.fixture.LocationFixture;
+import leejoongseok.wms.common.fixture.LocationLPNFixture;
+import leejoongseok.wms.common.fixture.OutboundFixture;
+import leejoongseok.wms.common.fixture.OutboundItemFixture;
+import leejoongseok.wms.common.fixture.PackagingMaterialFixture;
+import leejoongseok.wms.common.fixture.PickingFixture;
 import leejoongseok.wms.item.domain.Item;
 import leejoongseok.wms.item.domain.ItemSize;
 import leejoongseok.wms.location.domain.Location;
@@ -11,7 +19,6 @@ import org.instancio.Select;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,20 +29,20 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 분할 한다.")
     void split() {
-        final long outboundId = 1L;
-        final long outboundItemId = 1L;
-        final int outboundItemQuantity = 2;
-        final OutboundStatus readyStatus = OutboundStatus.READY;
-        final Outbound outbound = createSplitTargetOutbound(
-                outboundId,
-                outboundItemId,
-                outboundItemQuantity,
-                readyStatus);
+        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
+                .withId(1L)
+                .withOutboundQuantity(2)
+                .build();
+        final Outbound outbound = OutboundFixture.aOutboundWithNoCushionAndNoOutboundItemAndNoToteLocation()
+                .withId(1L)
+                .withOutboundStatus(OutboundStatus.READY)
+                .build();
+        outbound.addOutboundItem(outboundItem);
 
-        final Long outboundItemIdToSplit = 1L;
+        final Long outboundItemId = 1L;
         final Integer quantityToSplit = 1;
-        final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
-                outboundItemIdToSplit,
+        final SplittableOutboundItem splittableOutboundItem = new SplittableOutboundItem(
+                outboundItemId,
                 quantityToSplit);
 
         final Outbound splittedOutbound = outbound.split(
@@ -47,72 +54,27 @@ class OutboundTest {
         assertThat(outbound.getOutboundItems().get(0).getOutboundQuantity()).isEqualTo(1);
     }
 
-    private Outbound createSplitTargetOutbound(
-            final Long outboundId,
-            final Long outboundItemId,
-            final Integer outboundItemQuantity,
-            final OutboundStatus outboundStatus) {
-        final OutboundItem outboundItem = createOutboundItem(
-                outboundItemId,
-                outboundItemQuantity);
-        final Outbound outbound = createOutbound(
-                outboundStatus,
-                outboundId);
-        outbound.addOutboundItem(outboundItem);
-        return outbound;
-    }
-
-    private Outbound createOutbound(
-            final OutboundStatus status,
-            final Long outboundId) {
-        return Instancio.of(Outbound.class)
-                .supply(Select.field(Outbound::getOutboundStatus), () -> status)
-                .supply(Select.field(Outbound::getId), () -> outboundId)
-                .supply(Select.field(Outbound::getCushioningMaterial), () -> CushioningMaterial.NONE)
-                .supply(Select.field(Outbound::getCushioningMaterialQuantity), () -> 0)
-                .ignore(Select.field(Outbound::getOutboundItems))
-                .ignore(Select.field(Outbound::getToteLocation))
-                .create();
-    }
-
-    private OutboundItem createOutboundItem(
-            final Long outboundItemId,
-            final Integer outboundItemQuantity) {
-        return Instancio.of(OutboundItem.class)
-                .supply(Select.field(OutboundItem::getId), () -> outboundItemId)
-                .supply(Select.field(OutboundItem::getOutboundQuantity), () -> outboundItemQuantity)
-                .create();
-    }
-
-    private SplittableOutboundItem createSplittableOutboundItem(
-            final Long outboundItemIdToSplit,
-            final Integer quantityToSplit) {
-        return new SplittableOutboundItem(
-                outboundItemIdToSplit,
-                quantityToSplit);
-    }
-
     @Test
     @DisplayName("출고를 분할 한다. [출고 상태가 READY가 아닌 경우]")
     void fail_split_invalid_outbound_status() {
-        final long outboundId = 1L;
-        final long outboundItemId = 1L;
-        final int outboundItemQuantity = 2;
-        final OutboundStatus invalidStatus = OutboundStatus.PICKING_IN_PROGRESS;
-        final Outbound outbound = createSplitTargetOutbound(
-                outboundId,
-                outboundItemId,
-                outboundItemQuantity,
-                invalidStatus);
+        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
+                .withId(1L)
+                .withOutboundQuantity(2)
+                .build();
+        final Outbound invalidStatusOutbound = OutboundFixture.aOutboundWithNoCushionAndNoOutboundItemAndNoToteLocation()
+                .withId(1L)
+                .withOutboundStatus(OutboundStatus.PICKING_IN_PROGRESS)
+                .build();
+        invalidStatusOutbound.addOutboundItem(outboundItem);
 
-        final Long outboundItemIdToSplit = 1L;
+        final Long outboundItemId = 1L;
         final Integer quantityToSplit = 1;
-        final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
-                outboundItemIdToSplit,
+        final SplittableOutboundItem splittableOutboundItem = new SplittableOutboundItem(
+                outboundItemId,
                 quantityToSplit);
 
         assertThatThrownBy(() -> {
-            outbound.split(List.of(splittableOutboundItem));
+            invalidStatusOutbound.split(List.of(splittableOutboundItem));
         }).isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("출고는 대기 상태에서만 분할 할 수 있습니다.");
     }
@@ -120,20 +82,20 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 분할 한다. [분할 하려는 출고 품목이 존재하지 않는 경우]")
     void fail_split_not_found_target_outbound_item_id() {
-        final long outboundId = 1L;
-        final long outboundItemId = 1L;
-        final int outboundItemQuantity = 2;
-        final OutboundStatus readyStatus = OutboundStatus.READY;
-        final Outbound outbound = createSplitTargetOutbound(
-                outboundId,
-                outboundItemId,
-                outboundItemQuantity,
-                readyStatus);
+        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
+                .withId(1L)
+                .withOutboundQuantity(2)
+                .build();
+        final Outbound outbound = OutboundFixture.aOutboundWithNoCushionAndNoOutboundItemAndNoToteLocation()
+                .withId(1L)
+                .withOutboundStatus(OutboundStatus.READY)
+                .build();
+        outbound.addOutboundItem(outboundItem);
 
-        final Long outboundItemIdToSplit = 2L;
+        final Long outboundItemId = 2L;
         final Integer quantityToSplit = 1;
-        final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
-                outboundItemIdToSplit,
+        final SplittableOutboundItem splittableOutboundItem = new SplittableOutboundItem(
+                outboundItemId,
                 quantityToSplit);
 
         assertThatThrownBy(() -> {
@@ -145,20 +107,20 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 분할 한다. [분할 하려는 출고 상품의 수량이 출고 상품의 수량보다 많은 경우]")
     void fail_split_over_split_quantity_target_outbound_item_quantity() {
-        final long outboundId = 1L;
-        final long outboundItemId = 1L;
-        final int outboundItemQuantity = 2;
-        final OutboundStatus readyStatus = OutboundStatus.READY;
-        final Outbound outbound = createSplitTargetOutbound(
-                outboundId,
-                outboundItemId,
-                outboundItemQuantity,
-                readyStatus);
+        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
+                .withId(1L)
+                .withOutboundQuantity(2)
+                .build();
+        final Outbound outbound = OutboundFixture.aOutboundWithNoCushionAndNoOutboundItemAndNoToteLocation()
+                .withId(1L)
+                .withOutboundStatus(OutboundStatus.READY)
+                .build();
+        outbound.addOutboundItem(outboundItem);
 
-        final Long outboundItemIdToSplit = 1L;
+        final Long outboundItemId = 1L;
         final Integer quantityToSplit = 2;
-        final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
-                outboundItemIdToSplit,
+        final SplittableOutboundItem splittableOutboundItem = new SplittableOutboundItem(
+                outboundItemId,
                 quantityToSplit);
 
         assertThatThrownBy(() -> {
@@ -171,24 +133,25 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 분할 한다. [출고 상품 두개 중 하나만 아예 분할하는 경우]")
     void split_1() {
-        final long outboundId = 1L;
-        final OutboundStatus readyStatus = OutboundStatus.READY;
-        final OutboundItem outboundItem = createOutboundItem(
-                1L,
-                2);
-        final OutboundItem outboundItem2 = createOutboundItem(
-                2L,
-                2);
-        final Outbound outbound = createOutbound(
-                readyStatus,
-                outboundId);
+        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
+                .withId(1L)
+                .withOutboundQuantity(2)
+                .build();
+        final OutboundItem outboundItem2 = OutboundItemFixture.aOutboundItem()
+                .withId(2L)
+                .withOutboundQuantity(2)
+                .build();
+        final Outbound outbound = OutboundFixture.aOutboundWithNoCushionAndNoOutboundItemAndNoToteLocation()
+                .withId(1L)
+                .withOutboundStatus(OutboundStatus.READY)
+                .build();
         outbound.addOutboundItem(outboundItem);
         outbound.addOutboundItem(outboundItem2);
 
-        final Long outboundItemIdToSplit = 1L;
+        final Long outboundItemId = 1L;
         final Integer quantityToSplit = 2;
-        final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
-                outboundItemIdToSplit,
+        final SplittableOutboundItem splittableOutboundItem = new SplittableOutboundItem(
+                outboundItemId,
                 quantityToSplit);
 
         final Outbound splittedOutbound = outbound.split(
@@ -204,23 +167,24 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 분할 한다. [출고 상품 두개 중 하나의 일부 수량만 분할하는 경우]")
     void split_2() {
-        final long outboundId = 1L;
-        final OutboundStatus readyStatus = OutboundStatus.READY;
-        final OutboundItem outboundItem = createOutboundItem(
-                1L,
-                2);
-        final OutboundItem outboundItem2 = createOutboundItem(
-                2L,
-                2);
-        final Outbound outbound = createOutbound(
-                readyStatus,
-                outboundId);
+        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
+                .withId(1L)
+                .withOutboundQuantity(2)
+                .build();
+        final OutboundItem outboundItem2 = OutboundItemFixture.aOutboundItem()
+                .withId(2L)
+                .withOutboundQuantity(2)
+                .build();
+        final Outbound outbound = OutboundFixture.aOutboundWithNoCushionAndNoOutboundItemAndNoToteLocation()
+                .withId(1L)
+                .withOutboundStatus(OutboundStatus.READY)
+                .build();
         outbound.addOutboundItem(outboundItem);
         outbound.addOutboundItem(outboundItem2);
 
         final Long outboundItemIdToSplit = 1L;
         final Integer quantityToSplit = 1;
-        final SplittableOutboundItem splittableOutboundItem = createSplittableOutboundItem(
+        final SplittableOutboundItem splittableOutboundItem = new SplittableOutboundItem(
                 outboundItemIdToSplit,
                 quantityToSplit);
 
@@ -237,23 +201,23 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 총 부피를 계산한다. (출고의 부피 = 상품의 부피 * 상품의 수량 + 완충재의 부피 * 완충재의 수량)")
     void calculateTotalVolume() {
-        final Integer itemLengthInMillimeter = 100;
-        final Integer itemWidthInMillimeter = 100;
-        final Integer itemHeightInMillimeter = 100;
-        final Item item = createItemWithItemSize(
-                itemLengthInMillimeter,
-                itemWidthInMillimeter,
-                itemHeightInMillimeter);
-        final Integer outboundQuantity = 1;
-        final OutboundItem outboundItem = createOutboundWithItemOrQuantity(
-                item,
-                outboundQuantity);
-        final CushioningMaterial cushioningMaterial = CushioningMaterial.BUBBLE_WRAP;
-        final Integer cushioningMaterialQuantity = 1;
-        final Outbound outbound = createOutboundWithCushioningMaterial(
-                cushioningMaterial,
-                cushioningMaterialQuantity,
-                outboundItem);
+        final ItemSize itemSize = ItemSizeFixture.aItemSize()
+                .withWidthInMillimeter(100)
+                .withHeightInMillimeter(100)
+                .withLengthInMillimeter(100)
+                .build();
+        final Item item = ItemFixture.aItem()
+                .withItemSize(itemSize)
+                .build();
+        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
+                .withItem(item)
+                .withOutboundQuantity(1)
+                .build();
+        final Outbound outbound = OutboundFixture.aOutboundWithNoRecommendedPackagingMaterial()
+                .withCushioningMaterial(CushioningMaterial.BUBBLE_WRAP)
+                .withCushioningMaterialQuantity(1)
+                .withOutboundItems(List.of(outboundItem))
+                .build();
 
         final Long totalVolume = outbound.calculateTotalVolume();
 
@@ -264,59 +228,21 @@ class OutboundTest {
 
     }
 
-    private Item createItemWithItemSize(
-            final Integer itemLengthInMillimeter,
-            final Integer itemWidthInMillimeter,
-            final Integer itemHeightInMillimeter) {
-        final ItemSize itemSize = Instancio.of(ItemSize.class)
-                .supply(Select.field(ItemSize::getLengthInMillimeters), () -> itemLengthInMillimeter)
-                .supply(Select.field(ItemSize::getWidthInMillimeters), () -> itemWidthInMillimeter)
-                .supply(Select.field(ItemSize::getHeightInMillimeters), () -> itemHeightInMillimeter)
-                .create();
-        return Instancio.of(Item.class)
-                .supply(Select.field(Item::getItemSize), () -> itemSize)
-                .create();
-    }
-
-    private OutboundItem createOutboundWithItemOrQuantity(
-            final Item item,
-            final Integer outboundQuantity) {
-        return Instancio.of(OutboundItem.class)
-                .supply(Select.field(OutboundItem::getOutboundQuantity), () -> outboundQuantity)
-                .supply(Select.field(OutboundItem::getItem), () -> item)
-                .create();
-    }
-
-    private Outbound createOutboundWithCushioningMaterial(
-            final CushioningMaterial cushioningMaterial,
-            final Integer cushioningMaterialQuantity,
-            final OutboundItem outboundItem) {
-        return Instancio.of(Outbound.class)
-                .supply(Select.field(Outbound::getCushioningMaterial),
-                        () -> cushioningMaterial)
-                .supply(Select.field(Outbound::getCushioningMaterialQuantity),
-                        () -> cushioningMaterialQuantity)
-                .supply(Select.field(Outbound::getOutboundItems),
-                        () -> List.of(outboundItem))
-                .ignore(Select.field(Outbound::getRecommendedPackagingMaterial))
-                .create();
-    }
-
     @Test
     @DisplayName("출고의 총 무게를 계산한다. (출고의 무게 = 상품의 무게 * 상품의 수량 + 완충재의 무게 * 완충재의 수량)")
     void calculateTotalWeightInGrams() {
-        final Integer itemWeightInGrams = 100;
-        final Item item = createItemWithItemWeight(itemWeightInGrams);
-        final Integer outboundQuantity = 1;
-        final OutboundItem outboundItem = createOutboundWithItemOrQuantity(
-                item,
-                outboundQuantity);
-        final CushioningMaterial cushioningMaterial = CushioningMaterial.BUBBLE_WRAP;
-        final Integer cushioningMaterialQuantity = 1;
-        final Outbound outbound = createOutboundWithCushioningMaterial(
-                cushioningMaterial,
-                cushioningMaterialQuantity,
-                outboundItem);
+        final Item item = ItemFixture.aItem()
+                .withWeightInGrams(100)
+                .build();
+        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
+                .withItem(item)
+                .withOutboundQuantity(1)
+                .build();
+        final Outbound outbound = OutboundFixture.aOutboundWithNoRecommendedPackagingMaterial()
+                .withCushioningMaterial(CushioningMaterial.BUBBLE_WRAP)
+                .withCushioningMaterialQuantity(1)
+                .withOutboundItems(List.of(outboundItem))
+                .build();
 
         final Long totalWeightInGrams = outbound.calculateTotalWeightInGrams();
 
@@ -327,19 +253,11 @@ class OutboundTest {
         assertThat(totalWeightInGrams).isEqualTo(outboundTotalWeightInGrams);
     }
 
-    private Item createItemWithItemWeight(
-            final Integer itemWeightInGrams) {
-        return Instancio.of(Item.class)
-                .supply(Select.field(Item::getWeightInGrams), () -> itemWeightInGrams)
-                .create();
-    }
-
     @Test
     @DisplayName("출고의 상태가 출고 대기 인지 확인한다.")
     void isReadyStatus() {
-        final long outboundId = 1L;
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status, outboundId);
+        final Outbound outbound = OutboundFixture.aOutboundWithReady()
+                .build();
 
         final boolean isReadyStatus = outbound.isReadyStatus();
 
@@ -349,9 +267,8 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 상태가 출고 대기 인지 확인한다. - 출고 대기가 아닌 경우 isReadyStatus는 false를 반환한다.")
     void isNotReadyStatus() {
-        final long outboundId = 1L;
-        final OutboundStatus status = OutboundStatus.PICKING_IN_PROGRESS;
-        final Outbound outbound = createOutbound(status, outboundId);
+        final Outbound outbound = OutboundFixture.aOutboundWithPickingInProgress()
+                .build();
 
         final boolean isReadyStatus = outbound.isReadyStatus();
 
@@ -361,25 +278,21 @@ class OutboundTest {
     @Test
     @DisplayName("출고에 토트가 배정되어 있는 상태인지 확인한다.")
     void hasAssignedTote() {
-        final Location toteLocation = Instancio.create(Location.class);
-        final Outbound outbound = createOutbound(toteLocation);
+        final Outbound outbound = OutboundFixture.aOutbound()
+                .withToteLocation(LocationFixture.aLocationWithTote().build())
+                .build();
 
         final boolean hasAssignedTote = outbound.hasAssignedTote();
 
         assertThat(hasAssignedTote).isTrue();
     }
 
-    private Outbound createOutbound(final Location toteLocation) {
-        return Instancio.of(Outbound.class)
-                .supply(Select.field(Outbound::getToteLocation), () -> toteLocation)
-                .create();
-    }
-
     @Test
     @DisplayName("출고에 토트가 배정되어 있는 상태인지 확인한다. - 토트가 배정되어 있지 않은 경우 hasAssignedTote는 false를 반환한다.")
     void hasAssignedTote_false() {
-        final Location toteLocation = null;
-        final Outbound outbound = createOutbound(toteLocation);
+        final Outbound outbound = OutboundFixture.aOutbound()
+                .withToteLocation(null)
+                .build();
 
         final boolean hasAssignedTote = outbound.hasAssignedTote();
 
@@ -389,41 +302,30 @@ class OutboundTest {
     @Test
     @DisplayName("출고에 집품할 토트를 배정한다.")
     void assignPickingTote() {
-        final long outboundId = 1L;
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status, outboundId);
-        final List<LocationLPN> locationLPNList = List.of();
-        final Location toteLocation = createToteLocation(
-                locationLPNList,
-                StorageType.TOTE);
+        final Outbound outbound = OutboundFixture.aOutboundWithReady()
+                .ignoreToteLocation()
+                .build();
+        final Location toteLocation = LocationFixture.aLocationWithNoLocationLPNList()
+                .withStorageType(StorageType.TOTE)
+                .build();
 
         outbound.assignPickingTote(toteLocation);
 
         assertThat(outbound.hasAssignedTote()).isTrue();
     }
 
-    private Location createToteLocation(
-            final List<LocationLPN> locationLPNList,
-            final StorageType storageType) {
-        return Instancio.of(Location.class)
-                .supply(Select.field(Location::getStorageType), () -> storageType)
-                .supply(Select.field(Location::getLocationLPNList), () -> locationLPNList)
-                .create();
-    }
-
     @Test
     @DisplayName("출고에 집품할 토트를 배정한다. - 로케이션이 토트가 아닌 경우 IllegalArgumentException이 발생한다.")
     void assignPickingTote_isNotTote() {
-        final long outboundId = 1L;
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status, outboundId);
-        final List<LocationLPN> locationLPNList = List.of();
-        final Location toteLocation = createToteLocation(
-                locationLPNList,
-                StorageType.CELL);
+        final Outbound outbound = OutboundFixture.aOutboundWithReady()
+                .ignoreToteLocation()
+                .build();
+        final Location cellLocation = LocationFixture.aLocationWithNoLocationLPNList()
+                .withStorageType(StorageType.CELL)
+                .build();
 
         assertThatThrownBy(() -> {
-            outbound.assignPickingTote(toteLocation);
+            outbound.assignPickingTote(cellLocation);
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("토트가 아닙니다.");
     }
@@ -431,13 +333,12 @@ class OutboundTest {
     @Test
     @DisplayName("출고에 집품할 토트를 배정한다. - 로케이션에 LPN이 존재하는 경우 IllegalArgumentException이 발생한다.")
     void assignPickingTote_alreadyExistsLocationLPN() {
-        final long outboundId = 1L;
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status, outboundId);
-        final List<LocationLPN> locationLPNList = List.of(Instancio.create(LocationLPN.class));
-        final Location toteLocation = createToteLocation(
-                locationLPNList,
-                StorageType.TOTE);
+        final Outbound outbound = OutboundFixture.aOutboundWithReady()
+                .ignoreToteLocation()
+                .build();
+        final Location toteLocation = LocationFixture.aLocationWithTote()
+                .withLocationLPNList(List.of(Instancio.create(LocationLPN.class)))
+                .build();
 
         assertThatThrownBy(() -> {
             outbound.assignPickingTote(toteLocation);
@@ -448,16 +349,15 @@ class OutboundTest {
     @Test
     @DisplayName("출고에 집품할 토트를 배정한다. - 출고의 상태가 출고 대기가 아닌 경우 IllegalArgumentException이 발생한다.")
     void assignPickingTote_invalidStatus() {
-        final long outboundId = 1L;
-        final OutboundStatus status = OutboundStatus.PICKING_IN_PROGRESS;
-        final Outbound outbound = createOutbound(status, outboundId);
-        final List<LocationLPN> locationLPNList = List.of();
-        final Location toteLocation = createToteLocation(
-                locationLPNList,
-                StorageType.TOTE);
+        final Outbound invalidStatusOutbound = OutboundFixture.aOutboundWithPickingInProgress()
+                .ignoreToteLocation()
+                .build();
+        final Location toteLocation = LocationFixture.aLocationWithNoLocationLPNList()
+                .withStorageType(StorageType.TOTE)
+                .build();
 
         assertThatThrownBy(() -> {
-            outbound.assignPickingTote(toteLocation);
+            invalidStatusOutbound.assignPickingTote(toteLocation);
         }).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("집품할 토트 할당은 출고 대기상태에만 가능합니다.");
     }
@@ -465,14 +365,11 @@ class OutboundTest {
     @Test
     @DisplayName("출고에 집품할 토트를 배정한다. - 출고에 이미 토트가 배정되어 있는 경우 IllegalStateException이 발생한다.")
     void assignPickingTote_alreadyAssignedTote() {
-        final long outboundId = 1L;
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status, outboundId);
-        final List<LocationLPN> locationLPNList = List.of();
-        final Location toteLocation = createToteLocation(
-                locationLPNList,
-                StorageType.TOTE);
-        outbound.assignPickingTote(toteLocation);
+        final Outbound outbound = OutboundFixture.aOutboundWithReady()
+                .build();
+        final Location toteLocation = LocationFixture.aLocationWithNoLocationLPNList()
+                .withStorageType(StorageType.TOTE)
+                .build();
 
         assertThatThrownBy(() -> {
             outbound.assignPickingTote(toteLocation);
@@ -483,12 +380,13 @@ class OutboundTest {
     @Test
     @DisplayName("출고에 집품할 토트를 배정한다. - 포장재가 할당되지 않은 경우 IllegalStateException이 발생한다.")
     void assignPickingTote_unassignedPackagingMaterial() {
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status);
-        final List<LocationLPN> locationLPNList = List.of();
-        final Location toteLocation = createToteLocation(
-                locationLPNList,
-                StorageType.TOTE);
+        final Outbound outbound = OutboundFixture.aOutboundWithReady()
+                .ignoreRecommendedPackagingMaterial()
+                .ignoreToteLocation()
+                .build();
+        final Location toteLocation = LocationFixture.aLocationWithNoLocationLPNList()
+                .withStorageType(StorageType.TOTE)
+                .build();
 
         assertThatThrownBy(() -> {
             outbound.assignPickingTote(toteLocation);
@@ -511,8 +409,7 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 상태가 집품 중인지 확인한다.")
     void isPickingProgress() {
-        final OutboundStatus status = OutboundStatus.PICKING_IN_PROGRESS;
-        final Outbound outbound = createOutbound(status);
+        final Outbound outbound = OutboundFixture.aOutboundWithPickingInProgress().build();
 
         final boolean isPickingProgress = outbound.isPickingInProgress();
 
@@ -522,8 +419,7 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 상태가 집품 중인지 확인한다. - 출고의 상태가 집품 중이 아닌 경우 false를 반환한다.")
     void isPickingProgress_false() {
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status);
+        final Outbound outbound = OutboundFixture.aOutboundWithReady().build();
 
         final boolean isPickingProgress = outbound.isPickingInProgress();
 
@@ -534,14 +430,10 @@ class OutboundTest {
     @DisplayName("출고의 상태를 집품 대기 상태로 변경한다." +
             "집품 대기 상태가 되기 위해서는 출고의 상태가 대기여야 하고 토트가 할당되어 있어야 한다.")
     void startPickingReady() {
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status);
-        final PackagingMaterial packagingMaterial = Instancio.create(PackagingMaterial.class);
-        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
-        final Location toteLocation = createToteLocation(
-                List.of(),
-                StorageType.TOTE);
-        outbound.assignPickingTote(toteLocation);
+        final Outbound outbound = OutboundFixture.aOutboundWithReady()
+                .withRecommendedPackagingMaterial(PackagingMaterialFixture.aPackagingMaterial().build())
+                .withToteLocation(LocationFixture.aLocationWithTote().build())
+                .build();
 
         outbound.startPickingReady();
 
@@ -551,8 +443,9 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 상태를 집품 대기 상태로 변경한다. - 토트가 할당되어 있지 않은 경우 IllegalStateException이 발생한다.")
     void startPickingReady_fail_unassigned_tote() {
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status);
+        final Outbound outbound = OutboundFixture.aOutboundWithReady()
+                .ignoreToteLocation()
+                .build();
 
         assertThatThrownBy(() -> {
             outbound.startPickingReady();
@@ -563,8 +456,7 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 상태를 집품 대기 상태로 변경한다. - 출고의 상태가 출고 대기가 아닌 경우 IllegalStateException이 발생한다.")
     void startPickingReady_invalid_status() {
-        final OutboundStatus status = OutboundStatus.PICKING_IN_PROGRESS;
-        final Outbound outbound = createOutbound(status);
+        final Outbound outbound = OutboundFixture.aOutboundWithPickingInProgress().build();
 
         assertThatThrownBy(() -> {
             outbound.startPickingReady();
@@ -577,15 +469,11 @@ class OutboundTest {
     @DisplayName("집품의 상태를 집품 중으로 변경한다." +
             "집품중 상태가 되기 위해서는 출고의 상태가 집품 대기여야 하고 토트가 할당되어 있어야 한다.")
     void startPickingProgress() {
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status);
-        final PackagingMaterial packagingMaterial = Instancio.create(PackagingMaterial.class);
-        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
-        final Location toteLocation = createToteLocation(
-                List.of(),
-                StorageType.TOTE);
-        outbound.assignPickingTote(toteLocation);
-        outbound.startPickingReady();
+        final Outbound outbound = OutboundFixture.aOutboundWithPickingReadyStatus()
+                .withToteLocation(LocationFixture.aLocationWithTote()
+                        .build())
+                .withRecommendedPackagingMaterial(PackagingMaterialFixture.aPackagingMaterial().build())
+                .build();
 
         outbound.startPickingProgress();
 
@@ -595,8 +483,7 @@ class OutboundTest {
     @Test
     @DisplayName("집품의 상태를 집품 중으로 변경한다. - 출고의 상태가 집품 대기가 아닌 경우 IllegalStateException이 발생한다.")
     void startPickingProgress_invalid_status() {
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status);
+        final Outbound outbound = OutboundFixture.aOutboundWithReady().build();
 
         assertThatThrownBy(() -> {
             outbound.startPickingProgress();
@@ -607,72 +494,31 @@ class OutboundTest {
     @Test
     @DisplayName("집품에 할당된 출고 상품의 수량만큼 재고를 차감한다.")
     void deductAllocatedInventory() {
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status);
-        final PackagingMaterial packagingMaterial = Instancio.create(PackagingMaterial.class);
-        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
-        final Location toteLocation = createToteLocation(
-                List.of(),
-                StorageType.TOTE);
-        outbound.assignPickingTote(toteLocation);
-        outbound.startPickingReady();
-        final int inventoryQuantity = 10;
-        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
-        final int quantityRequiredForPick = 5;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
-        final OutboundItem outboundItem = createOutboundItem(List.of(picking));
-        outbound.addOutboundItem(outboundItem);
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
+                .withInventoryQuantity(10)
+                .build();
+        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(5)
+                .withLocationLPN(locationLPN)
+                .build();
+        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
+                .withPickings(List.of(picking))
+                .build();
+        final Outbound outbound = OutboundFixture.aOutboundWithPickingReadyStatus()
+                .withRecommendedPackagingMaterial(PackagingMaterialFixture.aPackagingMaterial().build())
+                .withToteLocation(LocationFixture.aLocationWithNoLocationLPNList().build())
+                .withOutboundItems(List.of(outboundItem))
+                .build();
 
         outbound.deductAllocatedInventory();
 
-        assertThat(locationLPN.getInventoryQuantity()).isEqualTo(inventoryQuantity - quantityRequiredForPick);
-    }
-
-    private LocationLPN createLocationLPN(final int inventoryQuantity) {
-        return Instancio.of(LocationLPN.class)
-                .supply(Select.field(LocationLPN::getInventoryQuantity), () -> inventoryQuantity)
-                .create();
-    }
-
-    private Picking createPicking(
-            final int quantityRequiredForPick,
-            final LocationLPN locationLPN,
-            final PickingStatus pickingStatus) {
-        return Instancio.of(Picking.class)
-                .supply(Select.field(Picking::getQuantityRequiredForPick), () -> quantityRequiredForPick)
-                .supply(Select.field(Picking::getStatus), () -> pickingStatus)
-                .supply(Select.field(Picking::getLocationLPN), () -> locationLPN)
-                .ignore(Select.field(Picking::getPickedQuantity))
-                .create();
-    }
-
-    private OutboundItem createOutboundItem(final List<Picking> pickings) {
-        return Instancio.of(OutboundItem.class)
-                .supply(Select.field(OutboundItem::getPickings), () -> pickings)
-                .create();
+        assertThat(locationLPN.getInventoryQuantity()).isEqualTo(10 - 5);
     }
 
     @Test
     @DisplayName("집품에 할당된 출고 상품의 수량만큼 재고를 차감한다. - 집품의 상태가 집품 대기가 아님")
     void deductAllocatedInventory_invalidStatus() {
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status);
-        final PackagingMaterial packagingMaterial = Instancio.create(PackagingMaterial.class);
-        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
-        final Location toteLocation = createToteLocation(
-                List.of(),
-                StorageType.TOTE);
-        outbound.assignPickingTote(toteLocation);
-        outbound.startPickingReady();
-        final int inventoryQuantity = 10;
-        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
-        final int quantityRequiredForPick = 5;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
-        final OutboundItem outboundItem = createOutboundItem(List.of(picking));
-        outbound.addOutboundItem(outboundItem);
-        outbound.startPickingProgress();
+        final Outbound outbound = OutboundFixture.aOutboundWithPickingInProgress().build();
 
         assertThatThrownBy(() -> {
             outbound.deductAllocatedInventory();
@@ -685,24 +531,12 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 상태를 집품완료로 변경한다.")
     void completePicking() {
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status);
-        final PackagingMaterial packagingMaterial = Instancio.create(PackagingMaterial.class);
-        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
-        final Location toteLocation = createToteLocation(
-                List.of(),
-                StorageType.TOTE);
-        outbound.assignPickingTote(toteLocation);
-        outbound.startPickingReady();
-        final int inventoryQuantity = 10;
-        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
-        final int quantityRequiredForPick = 5;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
-        final OutboundItem outboundItem = createOutboundItem(List.of(picking));
-        outbound.addOutboundItem(outboundItem);
-        outbound.startPickingProgress();
-        picking.addManualPickedQuantity(locationLPN, 5);
+        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
+                .withPickings(List.of(PickingFixture.aPickingWithCompletedPickingNoPickedQuantity().build()))
+                .build();
+        final Outbound outbound = OutboundFixture.aOutboundWithPickingInProgress()
+                .withOutboundItems(List.of(outboundItem))
+                .build();
 
         outbound.completePicking();
 
@@ -712,25 +546,10 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 상태를 집품완료로 변경한다. - 집품 진행상태가 아닌경우 짐품 완료할 수 없음.")
     void completePicking_invalid_status() {
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status);
-        final PackagingMaterial packagingMaterial = Instancio.create(PackagingMaterial.class);
-        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
-        final Location toteLocation = createToteLocation(
-                List.of(),
-                StorageType.TOTE);
-        outbound.assignPickingTote(toteLocation);
-        outbound.startPickingReady();
-        final int inventoryQuantity = 10;
-        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
-        final int quantityRequiredForPick = 5;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
-        final OutboundItem outboundItem = createOutboundItem(List.of(picking));
-        outbound.addOutboundItem(outboundItem);
+        final Outbound invalidStatusOutbound = OutboundFixture.aOutboundWithPickingReadyStatus().build();
 
         assertThatThrownBy(() -> {
-            outbound.completePicking();
+            invalidStatusOutbound.completePicking();
         }).isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("집품 완료 처리를 위해서는 집품 진행 상태여야 합니다. 현재 상태: 피킹 대기(토트만 할당된 상태)");
     }
@@ -738,24 +557,12 @@ class OutboundTest {
     @Test
     @DisplayName("출고의 상태를 집품완료로 변경한다. - 출고 상품별 집품이 완료되지 않은 경우 집품 완료할 수 없음.")
     void completePicking_not_completed_picked() {
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status);
-        final PackagingMaterial packagingMaterial = Instancio.create(PackagingMaterial.class);
-        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
-        final Location toteLocation = createToteLocation(
-                List.of(),
-                StorageType.TOTE);
-        outbound.assignPickingTote(toteLocation);
-        outbound.startPickingReady();
-        final int inventoryQuantity = 10;
-        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
-        final int quantityRequiredForPick = 5;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
-        final OutboundItem outboundItem = createOutboundItem(List.of(picking));
-        outbound.addOutboundItem(outboundItem);
-        outbound.startPickingProgress();
-        picking.addManualPickedQuantity(locationLPN, 4);
+        final OutboundItem outboundItem = OutboundItemFixture.aOutboundItem()
+                .withPickings(List.of(PickingFixture.aPickingWithInProgressPickingNoPickedQuantity().build()))
+                .build();
+        final Outbound outbound = OutboundFixture.aOutboundWithPickingInProgress()
+                .withOutboundItems(List.of(outboundItem))
+                .build();
 
         assertThatThrownBy(() -> {
             outbound.completePicking();
@@ -766,25 +573,21 @@ class OutboundTest {
     @Test
     @DisplayName("발행한 송장의 추적번호를 할당한다.")
     void assignTrackingNumber() {
-        final Outbound outbound = Instancio.of(Outbound.class)
-                .ignore(Select.field(Outbound::getTrackingNumber))
-                .create();
-        final String trackingNumber = "trackingNumber";
+        final Outbound outbound = OutboundFixture.aOutboundWithNoTrackingNumber().build();
 
-        outbound.assignTrackingNumber(trackingNumber);
+        outbound.assignTrackingNumber("trackingNumber");
 
         assertThat(outbound.hasTrackingNumber()).isTrue();
-        assertThat(outbound.getTrackingNumber()).isEqualTo(trackingNumber);
+        assertThat(outbound.getTrackingNumber()).isEqualTo("trackingNumber");
     }
 
     @Test
     @DisplayName("발행한 송장의 추적번호를 할당한다. - 이미 할당된 추적번호가 있을경우 예외 발생")
     void assignTrackingNumber_exists_tracking_number() {
-        final Outbound outbound = Instancio.create(Outbound.class);
-        final String trackingNumber = "trackingNumber";
+        final Outbound outbound = OutboundFixture.aOutbound().build();
 
         assertThatThrownBy(() -> {
-            outbound.assignTrackingNumber(trackingNumber);
+            outbound.assignTrackingNumber("trackingNumber");
         }).isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("이미 할당된 송장번호가 존재합니다.");
     }
@@ -792,85 +595,39 @@ class OutboundTest {
     @Test
     @DisplayName("포장 정보를 등록한다.")
     void assignPacking() {
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status);
-        final int weightInGrams = 100;
-        final PackagingMaterial packagingMaterial = createPackagingMaterial(weightInGrams);
-        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
-        final Location toteLocation = createToteLocation(
-                List.of(),
-                StorageType.TOTE);
-        outbound.assignPickingTote(toteLocation);
-        outbound.startPickingReady();
-        final int inventoryQuantity = 10;
-        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
-        final int quantityRequiredForPick = 5;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
-        final Integer itemWeightInGrams = 100;
-        final Integer outboundQuantity = 5;
-        final OutboundItem outboundItem = createOutboundItem(
-                itemWeightInGrams,
-                outboundQuantity,
-                List.of(picking));
-        outbound.addOutboundItem(outboundItem);
-        outbound.startPickingProgress();
-        picking.addManualPickedQuantity(locationLPN, 5);
-        outbound.completePicking();
-
+        final Outbound outbound = OutboundFixture.aOutboundWithNoCushion()
+                .withOutboundStatus(OutboundStatus.PICKING_COMPLETED)
+                .withOutboundItems(List.of(
+                        OutboundItemFixture.aOutboundItem()
+                                .withPickings(List.of(PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                                        .withQuantityRequiredForPick(5)
+                                        .withLocationLPN(LocationLPNFixture.aLocationLPN()
+                                                .withInventoryQuantity(10)
+                                                .build())
+                                        .build()))
+                                .withItem(ItemFixture.aItem()
+                                        .withWeightInGrams(100)
+                                        .build())
+                                .withOutboundQuantity(5)
+                                .build()))
+                .ignoreRecommendedPackagingMaterial()
+                .build();
+        final PackagingMaterial packagingMaterial = PackagingMaterialFixture.aPackagingMaterial()
+                .withMaxWeightInGrams(100)
+                .build();
         final int packagingWeightInGrams = 600;
+
         outbound.assignPacking(packagingMaterial, packagingWeightInGrams);
 
         assertThat(outbound.isPackingInProgress()).isTrue();
     }
 
-    private PackagingMaterial createPackagingMaterial(final int weightInGrams) {
-        return Instancio.of(PackagingMaterial.class)
-                .supply(Select.field(PackagingMaterial::getWeightInGrams), () -> weightInGrams)
-                .create();
-    }
-
-    private OutboundItem createOutboundItem(
-            final Integer itemWeightInGrams,
-            final Integer outboundQuantity,
-            final List<Picking> pickings) {
-        final Item item = Instancio.of(Item.class)
-                .supply(Select.field(Item::getWeightInGrams), () -> itemWeightInGrams)
-                .create();
-        return Instancio.of(OutboundItem.class)
-                .supply(Select.field(OutboundItem::getPickings), () -> pickings)
-                .supply(Select.field(OutboundItem::getItem), () -> item)
-                .supply(Select.field(OutboundItem::getOutboundQuantity), () -> outboundQuantity)
-                .create();
-    }
-
     @Test
     @DisplayName("포장 정보를 등록한다. - 집품이 완료되지 않은 경우 예외 발생")
     void assignPacking_invalid_status() {
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status);
-        final int weightInGrams = 100;
-        final PackagingMaterial packagingMaterial = createPackagingMaterial(weightInGrams);
-        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
-        final Location toteLocation = createToteLocation(
-                List.of(),
-                StorageType.TOTE);
-        outbound.assignPickingTote(toteLocation);
-        outbound.startPickingReady();
-        final int inventoryQuantity = 10;
-        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
-        final int quantityRequiredForPick = 5;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
-        final Integer itemWeightInGrams = 100;
-        final Integer outboundQuantity = 5;
-        final OutboundItem outboundItem = createOutboundItem(
-                itemWeightInGrams,
-                outboundQuantity,
-                List.of(picking));
-        outbound.addOutboundItem(outboundItem);
-        outbound.startPickingProgress();
-        picking.addManualPickedQuantity(locationLPN, 5);
+        final Outbound outbound = OutboundFixture.aOutboundWithPickingInProgress()
+                .build();
+        final PackagingMaterial packagingMaterial = PackagingMaterialFixture.aPackagingMaterial().build();
 
         final int packagingWeightInGrams = 600;
         assertThatThrownBy(() -> {
@@ -882,44 +639,38 @@ class OutboundTest {
     @Test
     @DisplayName("포장 정보를 등록한다. - 무게가 100g 이상 차이날경우 예외 발생")
     void assignPacking_diff_weight() {
-        final OutboundStatus status = OutboundStatus.READY;
-        final Outbound outbound = createOutbound(status);
-        final int weightInGrams = 100;
-        final PackagingMaterial packagingMaterial = createPackagingMaterial(weightInGrams);
-        outbound.assignRecommendedPackagingMaterial(packagingMaterial);
-        final Location toteLocation = createToteLocation(
-                List.of(),
-                StorageType.TOTE);
-        outbound.assignPickingTote(toteLocation);
-        outbound.startPickingReady();
-        final int inventoryQuantity = 10;
-        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
-        final int quantityRequiredForPick = 5;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
-        final Integer itemWeightInGrams = 100;
-        final Integer outboundQuantity = 5;
-        final OutboundItem outboundItem = createOutboundItem(
-                itemWeightInGrams,
-                outboundQuantity,
-                List.of(picking));
-        outbound.addOutboundItem(outboundItem);
-        outbound.startPickingProgress();
-        picking.addManualPickedQuantity(locationLPN, 5);
-        outbound.completePicking();
-
+        final Outbound outbound = OutboundFixture.aOutboundWithNoCushion()
+                .withOutboundStatus(OutboundStatus.PICKING_COMPLETED)
+                .withOutboundItems(List.of(
+                        OutboundItemFixture.aOutboundItem()
+                                .withPickings(List.of(PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                                        .withQuantityRequiredForPick(5)
+                                        .withLocationLPN(LocationLPNFixture.aLocationLPN()
+                                                .withInventoryQuantity(10)
+                                                .build())
+                                        .build()))
+                                .withItem(ItemFixture.aItem()
+                                        .withWeightInGrams(100)
+                                        .build())
+                                .withOutboundQuantity(5)
+                                .build()))
+                .ignoreRecommendedPackagingMaterial()
+                .build();
+        final PackagingMaterial packagingMaterial = PackagingMaterialFixture.aPackagingMaterial()
+                .withMaxWeightInGrams(100)
+                .build();
         final int packagingWeightInGrams = 1000;
+
         assertThatThrownBy(() -> {
             outbound.assignPacking(packagingMaterial, packagingWeightInGrams);
         }).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("실중량과 상품의 포장예상 총중량의 차이가 100g 이상입니다. 실중량: 1000, 상품의 포장예상 총중량: 600");
+                .hasMessageContaining("실중량과 상품의 포장예상 총중량의 차이가 100g 이상입니다. 실중량: 1000, 상품의 포장예상 총중량: 500");
     }
 
     @Test
     @DisplayName("포장을 완료한다.")
     void completePacking() {
-        final Outbound outbound = createOutbound(OutboundStatus.PACKING_IN_PROGRESS);
-        outbound.assignTrackingNumber("trackingNumber");
+        final Outbound outbound = OutboundFixture.withPackingInProgress().build();
 
         outbound.completePacking();
 
@@ -929,7 +680,9 @@ class OutboundTest {
     @Test
     @DisplayName("포장을 완료한다. - 송장이 발행되지 않은 경우 예외 발생")
     void completePacking_unissued_waybill() {
-        final Outbound outbound = createOutbound(OutboundStatus.PACKING_IN_PROGRESS);
+        final Outbound outbound = OutboundFixture.withPackingInProgress()
+                .ignoreTrackingNumber()
+                .build();
 
         assertThatThrownBy(() -> {
             outbound.completePacking();
@@ -940,8 +693,7 @@ class OutboundTest {
     @Test
     @DisplayName("포장을 완료한다. - 포장을 완료할 수 없는 상태 (포장 중이어야함.)")
     void completePacking_invalid_status() {
-        final Outbound outbound = createOutbound(OutboundStatus.PICKING_READY);
-        outbound.assignTrackingNumber("trackingNumber");
+        final Outbound outbound = OutboundFixture.aOutboundWithReady().build();
 
         assertThatThrownBy(() -> {
             outbound.completePacking();
@@ -952,7 +704,7 @@ class OutboundTest {
     @Test
     @DisplayName("집품 완료한 출고건의 검수를 통과한다.")
     void passInspection() {
-        final Outbound outbound = createOutbound(OutboundStatus.PICKING_COMPLETED);
+        final Outbound outbound = OutboundFixture.withCompletedPicking().build();
 
         outbound.passInspection();
 
@@ -963,7 +715,7 @@ class OutboundTest {
     @Test
     @DisplayName("집품 완료한 출고건의 검수를 통과한다. - 검수를 통과할 수 없는 상태 (집품 완료 상태여야함.)")
     void passInspection_invalid_status() {
-        final Outbound outbound = createOutbound(OutboundStatus.PACKING_IN_PROGRESS);
+        final Outbound outbound = OutboundFixture.withPackingInProgress().build();
 
         assertThatThrownBy(() -> {
             outbound.passInspection();
@@ -974,7 +726,7 @@ class OutboundTest {
     @Test
     @DisplayName("집품 완료한 출고건의 검수를 불통과한다.")
     void failInspection() {
-        final Outbound outbound = createOutbound(OutboundStatus.PICKING_COMPLETED);
+        final Outbound outbound = OutboundFixture.withCompletedPicking().build();
         final String 품질불량 = "품질불량";
 
         outbound.failInspection(품질불량);
@@ -986,7 +738,7 @@ class OutboundTest {
     @Test
     @DisplayName("집품 완료한 출고건의 검수를 불통과한다. - 검수를 불통과할 수 없는 상태 (집품 완료 상태여야함.)")
     void failInspection_invalid_status() {
-        final Outbound outbound = createOutbound(OutboundStatus.PICKING_READY);
+        final Outbound outbound = OutboundFixture.aOutboundWithPickingReadyStatus().build();
         final String 품질불량 = "품질불량";
 
         assertThatThrownBy(() -> {
@@ -998,7 +750,7 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 중지한다.")
     void stop() {
-        final Outbound outbound = new Outbound();
+        final Outbound outbound = OutboundFixture.aOutbound().build();
 
         outbound.stop("포장 파손");
 
@@ -1008,7 +760,7 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 중지한다. - 중지 사유가 없는 경우 예외 발생")
     void stop_empty_reason() {
-        final Outbound outbound = new Outbound();
+        final Outbound outbound = OutboundFixture.aOutbound().build();
         final String emptyReason = "";
 
         assertThatThrownBy(() -> {
@@ -1020,12 +772,7 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 초기화한다.")
     void reset() {
-        final Outbound outbound = createOutbound(OutboundStatus.STOPPED);
-        final Picking picking = Instancio.create(Picking.class);
-        final List<Picking> pickings = new ArrayList<>();
-        pickings.add(picking);
-        final OutboundItem outboundItem = createOutboundItem(pickings);
-        outbound.addOutboundItem(outboundItem);
+        final Outbound outbound = OutboundFixture.aOutboundWithStopped().build();
 
         outbound.reset();
 
@@ -1035,12 +782,7 @@ class OutboundTest {
     @Test
     @DisplayName("출고를 초기화한다. - 출고건이 중지 상태가 아닌 경우 예외 발생")
     void reset_invalid_status() {
-        final Outbound outbound = createOutbound(OutboundStatus.PACKING_IN_PROGRESS);
-        final Picking picking = Instancio.create(Picking.class);
-        final List<Picking> pickings = new ArrayList<>();
-        pickings.add(picking);
-        final OutboundItem outboundItem = createOutboundItem(pickings);
-        outbound.addOutboundItem(outboundItem);
+        final Outbound outbound = OutboundFixture.aOutboundWithReady().build();
 
         assertThatThrownBy(() -> {
             outbound.reset();

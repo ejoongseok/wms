@@ -1,7 +1,7 @@
 package leejoongseok.wms.inbound.domain;
 
-import org.instancio.Instancio;
-import org.instancio.Select;
+import leejoongseok.wms.common.fixture.LPNFixture;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,30 +10,22 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LPNTest {
+    private LPN lpn;
+    private LocalDateTime today;
+
+    @BeforeEach
+    void setUp() {
+        today = LocalDateTime.now();
+        lpn = LPNFixture.aLPN()
+                .withExpirationAt(today)
+                .build();
+    }
 
     @Test
-    @DisplayName("LPN의 유통기한이 입력한 날짜보다 남았는지 확인한다. [해당일자는 유통기한 전임.]")
+    @DisplayName("LPN의 유통기한이 입력한 날짜보다 남았는지 확인한다.")
     void isFreshBy() {
-        final LocalDateTime today = LocalDateTime.now();
-        final LPN lpn = Instancio.of(LPN.class)
-                .supply(Select.field(LPN::getExpirationAt), () -> today)
-                .create();
-
-        final boolean isFresh = lpn.isFreshBy(today.minusDays(1));
-
-        assertThat(isFresh).isTrue();
+        assertThat(lpn.isFreshBy(today.minusDays(1))).isTrue();
+        assertThat(lpn.isFreshBy(today.plusDays(1))).isFalse();
     }
 
-    @Test
-    @DisplayName("LPN의 유통기한이 입력한 날짜보다 남았는지 확인한다. [해당일자는 유통기한 후임.]")
-    void isFreshBy2() {
-        final LocalDateTime today = LocalDateTime.now();
-        final LPN lpn = Instancio.of(LPN.class)
-                .supply(Select.field(LPN::getExpirationAt), () -> today)
-                .create();
-
-        final boolean isFresh = lpn.isFreshBy(today.plusDays(1));
-
-        assertThat(isFresh).isFalse();
-    }
 }

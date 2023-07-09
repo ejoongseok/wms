@@ -1,8 +1,10 @@
 package leejoongseok.wms.location.domain;
 
+import leejoongseok.wms.common.fixture.LPNFixture;
+import leejoongseok.wms.common.fixture.LocationFixture;
+import leejoongseok.wms.common.fixture.LocationLPNFixture;
 import leejoongseok.wms.inbound.domain.LPN;
-import org.instancio.Instancio;
-import org.instancio.Select;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,10 +15,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class LocationLPNTest {
 
+    private LocationLPN locationLPN;
+
+    @BeforeEach
+    void setUp() {
+        locationLPN = new LocationLPN();
+    }
+
     @Test
     @DisplayName("로케이션 LPN의 재고 수량을 1씩 증가시킨다.")
     void incrementInventoryQuantity() {
-        final LocationLPN locationLPN = new LocationLPN();
         final Integer inventoryQuantity = locationLPN.getInventoryQuantity();
 
         locationLPN.incrementInventoryQuantity();
@@ -28,7 +36,6 @@ class LocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN의 재고 수량을 입력한 숫자만큼 증가시킨다.")
     void addManualInventoryQuantity() {
-        final LocationLPN locationLPN = new LocationLPN();
         final Integer inventoryQuantity = locationLPN.getInventoryQuantity();
 
         locationLPN.addManualInventoryQuantity(10);
@@ -40,7 +47,6 @@ class LocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN의 재고 수량을 입력한 숫자만큼 증가시킨다. [실패 - 증가시키려는 재고 수량이 0 이하]")
     void fail_invalid_quantity_addManualInventoryQuantity() {
-        final LocationLPN locationLPN = new LocationLPN();
 
         assertThatThrownBy(() -> {
             locationLPN.addManualInventoryQuantity(0);
@@ -52,7 +58,10 @@ class LocationLPNTest {
     @Test
     @DisplayName("LPN의 유통기한이 입력한 날짜보다 남았는지 확인한다. [해당일자는 유통기한 전임.]")
     void isFreshBy() {
-        final LocationLPN locationLPN = createLocationLPN();
+        final LPN validLPN = createLPN(LocalDateTime.now());
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
+                .withLPN(validLPN)
+                .build();
         final LocalDateTime thisDateTime = LocalDateTime.now().minusDays(1);
 
         final boolean isFresh = locationLPN.isFreshLPNBy(thisDateTime);
@@ -60,19 +69,13 @@ class LocationLPNTest {
         assertThat(isFresh).isTrue();
     }
 
-    private LocationLPN createLocationLPN() {
-        final LPN validLPN = Instancio.of(LPN.class)
-                .supply(Select.field(LPN::getExpirationAt), () -> LocalDateTime.now())
-                .create();
-        return Instancio.of(LocationLPN.class)
-                .supply(Select.field(LocationLPN::getLpn), () -> validLPN)
-                .create();
-    }
-
     @Test
     @DisplayName("LPN의 유통기한이 입력한 날짜보다 남았는지 확인한다. [해당 일자는 유통기한을 지남.]")
     void isExpired() {
-        final LocationLPN locationLPN = createLocationLPN();
+        final LPN validLPN = createLPN(LocalDateTime.now());
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
+                .withLPN(validLPN)
+                .build();
         final LocalDateTime thisDateTime = LocalDateTime.now().plusDays(1);
 
         final boolean isFresh = locationLPN.isFreshLPNBy(thisDateTime);
@@ -83,7 +86,6 @@ class LocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN의 재고 수량이 존재하는지 확인한다.")
     void hasInventory() {
-        final LocationLPN locationLPN = new LocationLPN();
 
         final boolean hasInventory = locationLPN.hasInventory();
 
@@ -94,9 +96,9 @@ class LocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN의 재고 수량이 존재하는지 확인한다. - 비어있음")
     void hasInventory_empty() {
-        final LocationLPN locationLPN = Instancio.of(LocationLPN.class)
-                .supply(Select.field(LocationLPN::getInventoryQuantity), () -> 0)
-                .create();
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
+                .withInventoryQuantity(0)
+                .build();
 
         final boolean hasInventory = locationLPN.hasInventory();
 
@@ -106,50 +108,44 @@ class LocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN이 집품 가능한지 확인한다.")
     void isPickingAllocatable() {
-        final UsagePurpose usagePurpose = UsagePurpose.STOW;
-        final Location location = createLocation(usagePurpose);
-        final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
-        final LPN lpn = createLPN(expirationAt);
         final Integer inventoryQuantity = 1;
-        final LocationLPN locationLPN = createLocationLPN(location, lpn, inventoryQuantity);
+        final LocationLPN locationLPN = createLocationLPN(
+                LocationFixture.aLocationWithStow()
+                        .build(),
+                createLPN(LocalDateTime.now().plusDays(1)),
+                inventoryQuantity);
 
         final boolean isPickingAllocatable = locationLPN.isPickingAllocatable(LocalDateTime.now());
 
         assertThat(isPickingAllocatable).isTrue();
     }
 
-    private Location createLocation(final UsagePurpose usagePurpose) {
-        return Instancio.of(Location.class)
-                .supply(Select.field(Location::getUsagePurpose), () -> usagePurpose)
-                .create();
-    }
-
     private LPN createLPN(final LocalDateTime expirationAt) {
-        return Instancio.of(LPN.class)
-                .supply(Select.field(LPN::getExpirationAt), () -> expirationAt)
-                .create();
+        return LPNFixture.aLPN()
+                .withExpirationAt(expirationAt)
+                .build();
     }
 
     private LocationLPN createLocationLPN(
             final Location location,
             final LPN lpn,
             final Integer inventoryQuantity) {
-        return Instancio.of(LocationLPN.class)
-                .supply(Select.field(LocationLPN::getLpn), () -> lpn)
-                .supply(Select.field(LocationLPN::getLocation), () -> location)
-                .supply(Select.field(LocationLPN::getInventoryQuantity), () -> inventoryQuantity)
-                .create();
+        return LocationLPNFixture.aLocationLPN()
+                .withLPN(lpn)
+                .withLocation(location)
+                .withInventoryQuantity(inventoryQuantity)
+                .build();
     }
 
     @Test
     @DisplayName("로케이션 LPN이 집품 가능한지 확인한다. - 유통기한 지남")
     void isPickingAllocatable_expiredLPN() {
-        final UsagePurpose usagePurpose = UsagePurpose.STOW;
-        final Location location = createLocation(usagePurpose);
-        final LocalDateTime expirationAt = LocalDateTime.now().minusDays(1);
-        final LPN lpn = createLPN(expirationAt);
         final Integer inventoryQuantity = 1;
-        final LocationLPN locationLPN = createLocationLPN(location, lpn, inventoryQuantity);
+        final LocationLPN locationLPN = createLocationLPN(
+                LocationFixture.aLocationWithStow()
+                        .build(),
+                createLPN(LocalDateTime.now().minusDays(1)),
+                inventoryQuantity);
 
         final boolean isPickingAllocatable = locationLPN.isPickingAllocatable(LocalDateTime.now());
 
@@ -159,12 +155,12 @@ class LocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN이 집품 가능한지 확인한다. - 사용 용도가 진열이 아님")
     void isPickingAllocatable_invalidUsagePurpose() {
-        final UsagePurpose usagePurpose = UsagePurpose.MOVE;
-        final Location location = createLocation(usagePurpose);
-        final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
-        final LPN lpn = createLPN(expirationAt);
         final Integer inventoryQuantity = 1;
-        final LocationLPN locationLPN = createLocationLPN(location, lpn, inventoryQuantity);
+        final LocationLPN locationLPN = createLocationLPN(
+                LocationFixture.aLocationWithMove()
+                        .build(),
+                createLPN(LocalDateTime.now().plusDays(1)),
+                inventoryQuantity);
 
         final boolean isPickingAllocatable = locationLPN.isPickingAllocatable(LocalDateTime.now());
 
@@ -174,12 +170,12 @@ class LocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN이 집품 가능한지 확인한다. - 재고 수량이 0")
     void isPickingAllocatable_inventoryQuantity() {
-        final UsagePurpose usagePurpose = UsagePurpose.STOW;
-        final Location location = createLocation(usagePurpose);
-        final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
-        final LPN lpn = createLPN(expirationAt);
         final Integer inventoryQuantity = 0;
-        final LocationLPN locationLPN = createLocationLPN(location, lpn, inventoryQuantity);
+        final LocationLPN locationLPN = createLocationLPN(
+                LocationFixture.aLocationWithMove()
+                        .build(),
+                createLPN(LocalDateTime.now().plusDays(1)),
+                inventoryQuantity);
 
         final boolean isPickingAllocatable = locationLPN.isPickingAllocatable(LocalDateTime.now());
 
@@ -189,9 +185,9 @@ class LocationLPNTest {
     @Test
     @DisplayName("집품에 필요한 수량만큼 재고를 차감한다.")
     void deductInventory() {
-        final LocationLPN locationLPN = Instancio.of(LocationLPN.class)
-                .supply(Select.field(LocationLPN::getInventoryQuantity), () -> 10)
-                .create();
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
+                .withInventoryQuantity(10)
+                .build();
         final int quantityRequiredForPick = 5;
 
         locationLPN.deductInventory(quantityRequiredForPick);
@@ -202,9 +198,9 @@ class LocationLPNTest {
     @Test
     @DisplayName("집품에 필요한 수량만큼 재고를 차감한다. - 차감할 수량이 재고 수량보다 많음")
     void deductInventory_over_pick_quantity() {
-        final LocationLPN locationLPN = Instancio.of(LocationLPN.class)
-                .supply(Select.field(LocationLPN::getInventoryQuantity), () -> 10)
-                .create();
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
+                .withInventoryQuantity(10)
+                .build();
         final int quantityRequiredForPick = 50;
 
         assertThatThrownBy(() -> {
@@ -216,7 +212,6 @@ class LocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN의 재고 수량을 조정한다.")
     void adjustQuantity() {
-        final LocationLPN locationLPN = new LocationLPN();
         final Integer inventoryQuantity = locationLPN.getInventoryQuantity();
         final int adjustQuantity = 10;
 
@@ -229,7 +224,6 @@ class LocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN의 재고 수량을 조정한다. - 변경할 수량이 0보다 작은 경우 예외 발생")
     void adjustQuantity_invalid_quantity() {
-        final LocationLPN locationLPN = new LocationLPN();
         final int adjustQuantity = -1;
 
         assertThatThrownBy(() -> {

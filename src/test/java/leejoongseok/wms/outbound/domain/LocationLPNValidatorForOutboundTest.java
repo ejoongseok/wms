@@ -1,5 +1,6 @@
 package leejoongseok.wms.outbound.domain;
 
+import leejoongseok.wms.common.fixture.LocationLPNFixture;
 import leejoongseok.wms.location.domain.LocationLPN;
 import org.instancio.Instancio;
 import org.instancio.Select;
@@ -53,9 +54,9 @@ class LocationLPNValidatorForOutboundTest {
     }
 
     private List<LocationLPN> createInsufficientInventoryQuantityLocationLPNList() {
-        final LocationLPN locationLPN = Instancio.of(LocationLPN.class)
-                .supply(Select.field(LocationLPN::getInventoryQuantity), () -> 1)
-                .create();
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
+                .withInventoryQuantity(1)
+                .build();
         return List.of(locationLPN);
     }
 

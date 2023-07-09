@@ -60,12 +60,12 @@ public class Outbound extends BaseEntity {
     private PackagingMaterial recommendedPackagingMaterial;
     @Embedded
     private OutboundCustomer outboundCustomer;
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     @Enumerated(EnumType.STRING)
     @Column(name = "cushioning_material", nullable = false)
     @Comment("완충재")
     private CushioningMaterial cushioningMaterial;
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     @Column(name = "cushioning_material_quantity", nullable = false)
     @Comment("완충재 수량")
     private Integer cushioningMaterialQuantity;

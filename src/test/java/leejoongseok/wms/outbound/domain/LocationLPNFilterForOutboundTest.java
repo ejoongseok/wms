@@ -1,11 +1,15 @@
 package leejoongseok.wms.outbound.domain;
 
+import leejoongseok.wms.common.fixture.LPNFixture;
+import leejoongseok.wms.common.fixture.LocationFixture;
+import leejoongseok.wms.common.fixture.LocationLPNFixture;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.StorageType;
 import leejoongseok.wms.location.domain.UsagePurpose;
 import net.datafaker.Faker;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +20,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class LocationLPNFilterForOutboundTest {
 
+    private Faker faker;
+    private Location location;
+
+    @BeforeEach
+    void setUp() {
+        faker = new Faker();
+        location = LocationFixture.aLocation()
+                .withLocationBarcode(faker.idNumber().valid())
+                .withStorageType(StorageType.CELL)
+                .withUsagePurpose(UsagePurpose.STOW)
+                .build();
+    }
+
     @Test
     @DisplayName("출고 가능한 LocationLPN 목록으로 필터링한다.")
     void filter() {
@@ -23,8 +40,8 @@ class LocationLPNFilterForOutboundTest {
         final LocalDateTime validExpirationAt = createdDateTime.plusDays(1);
         final LocalDateTime invalidExpirationAt = createdDateTime.minusDays(1);
         final List<LocationLPN> locationLPNList = List.of(
-                createLocationLPN(1L, validExpirationAt, createdDateTime),
-                createLocationLPN(2L, invalidExpirationAt, createdDateTime.minusDays(1)));
+                createLocationLPN(createLPN(validExpirationAt, 1L, createdDateTime)),
+                createLocationLPN(createLPN(invalidExpirationAt, 2L, createdDateTime.minusDays(1))));
         final LocalDateTime filterAt = LocalDateTime.now();
 
         final List<LocationLPN> avaliableLocationLPNList = LocationLPNFilterForOutbound.filter(locationLPNList, filterAt);
@@ -32,28 +49,25 @@ class LocationLPNFilterForOutboundTest {
         assertThat(avaliableLocationLPNList).hasSize(1);
     }
 
-    private LocationLPN createLocationLPN(
-            final long itemId,
-            final LocalDateTime expirationAt,
-            final LocalDateTime toDay) {
-        final Faker faker = new Faker();
-        final String locationBarcode = faker.idNumber().valid();
-        final String lpnBarcode = faker.idNumber().valid();
+    private LocationLPN createLocationLPN(final LPN lpn) {
+        return LocationLPNFixture.aLocationLPN()
+                .withLocation(location)
+                .withLPN(lpn)
+                .withItemId(lpn.getItemId())
+                .build();
+    }
 
-        return new LocationLPN(
-                new Location(
-                        locationBarcode,
-                        StorageType.CELL,
-                        UsagePurpose.STOW
-                ),
-                new LPN(
-                        lpnBarcode,
-                        itemId,
-                        expirationAt,
-                        1L,
-                        toDay
-                ),
-                itemId);
+    private LPN createLPN(
+            final LocalDateTime validExpirationAt,
+            final Long itemId,
+            final LocalDateTime createdDateTime) {
+        return LPNFixture.aLPN()
+                .withLPNBarcode(faker.idNumber().valid())
+                .withExpirationAt(validExpirationAt)
+                .withItemId(itemId)
+                .withCreatedAt(createdDateTime)
+                .withInboundItemId(1L)
+                .build();
     }
 
     @Test
@@ -62,8 +76,8 @@ class LocationLPNFilterForOutboundTest {
         final LocalDateTime createdDateTime = LocalDateTime.now();
         final LocalDateTime invalidExpirationAt = createdDateTime.minusDays(1);
         final List<LocationLPN> locationLPNList = List.of(
-                createLocationLPN(1L, invalidExpirationAt, createdDateTime.minusDays(1)),
-                createLocationLPN(2L, invalidExpirationAt, createdDateTime.minusDays(2)));
+                createLocationLPN(createLPN(invalidExpirationAt, 1L, createdDateTime.minusDays(1))),
+                createLocationLPN(createLPN(invalidExpirationAt, 2L, createdDateTime.minusDays(2))));
         final LocalDateTime filterAt = LocalDateTime.now();
 
         final List<LocationLPN> avaliableLocationLPNList = LocationLPNFilterForOutbound.filter(locationLPNList, filterAt);

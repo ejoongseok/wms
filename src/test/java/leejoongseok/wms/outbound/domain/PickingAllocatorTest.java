@@ -1,13 +1,15 @@
 package leejoongseok.wms.outbound.domain;
 
+import leejoongseok.wms.common.fixture.ItemFixture;
+import leejoongseok.wms.common.fixture.LPNFixture;
+import leejoongseok.wms.common.fixture.LocationFixture;
+import leejoongseok.wms.common.fixture.LocationLPNFixture;
+import leejoongseok.wms.common.fixture.OutboundFixture;
+import leejoongseok.wms.common.fixture.OutboundItemFixture;
 import leejoongseok.wms.inbound.domain.LPN;
-import leejoongseok.wms.item.domain.Item;
 import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationLPN;
-import leejoongseok.wms.location.domain.UsagePurpose;
 import leejoongseok.wms.outbound.exception.NotEnoughInventoryException;
-import org.instancio.Instancio;
-import org.instancio.Select;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,24 +21,87 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PickingAllocatorTest {
 
+    private static Location createStowWith(final String locationBarcode) {
+        return LocationFixture.aLocationWithStow()
+                .withLocationBarcode(locationBarcode)
+                .build();
+    }
+
+    private static LPN createLPNWithItemIdAndExpirationAt(final long itemId, final LocalDateTime expirationAt) {
+        return LPNFixture.aLPN()
+                .withItemId(itemId)
+                .withExpirationAt(expirationAt)
+                .build();
+    }
+
     @Test
     @DisplayName("출고에 집품목록을 할당한다.")
     void allocate() {
-        final Outbound outbound = Instancio.of(Outbound.class)
-                .supply(Select.field(Outbound::getOutboundItems), () -> List.of(
-                        createOutboundItem(1L, 3),
-                        createOutboundItem(2L, 2),
-                        createOutboundItem(3L, 1)))
-                .supply(Select.field(Outbound::getOutboundStatus), () -> OutboundStatus.PICKING_READY)
-                .create();
+        final Outbound outbound = OutboundFixture.aOutboundWithPickingReadyStatus()
+                .withOutboundItems(List.of(
+                        OutboundItemFixture.aOutboundItemWithNoPickings()
+                                .withOutboundQuantity(3)
+                                .withItem(ItemFixture.aItem()
+                                        .withId(1L)
+                                        .build())
+                                .build(),
+                        OutboundItemFixture.aOutboundItemWithNoPickings()
+                                .withOutboundQuantity(2)
+                                .withItem(ItemFixture.aItem()
+                                        .withId(2L)
+                                        .build())
+                                .build(),
+                        OutboundItemFixture.aOutboundItemWithNoPickings()
+                                .withOutboundQuantity(1)
+                                .withItem(ItemFixture.aItem()
+                                        .withId(3L)
+                                        .build())
+                                .build()))
+                .build();
         final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1L);
         final List<LocationLPN> locationLPNList = List.of(
-                createLocationLPN(1L, 1L, "locationBarcode-1", 2, expirationAt),
-                createLocationLPN(1L, 2L, "locationBarcode-2", 3, expirationAt),
-                createLocationLPN(1L, 2L, "locationBarcode-3", 3, expirationAt),
-                createLocationLPN(2L, 3L, "locationBarcode-3", 1, expirationAt),
-                createLocationLPN(2L, 4L, "locationBarcode-4", 3, expirationAt),
-                createLocationLPN(3L, 5L, "locationBarcode-5", 2, expirationAt)
+                LocationLPNFixture.aLocationLPN()
+                        .withId(1L)
+                        .withLPN(createLPNWithItemIdAndExpirationAt(1L, expirationAt))
+                        .withLocation(createStowWith("locationBarcode-1"))
+                        .withInventoryQuantity(2)
+                        .withItemId(1L)
+                        .build(),
+                LocationLPNFixture.aLocationLPN()
+                        .withId(2L)
+                        .withLPN(createLPNWithItemIdAndExpirationAt(1L, expirationAt))
+                        .withLocation(createStowWith("locationBarcode-2"))
+                        .withInventoryQuantity(3)
+                        .withItemId(1L)
+                        .build(),
+                LocationLPNFixture.aLocationLPN()
+                        .withId(3L)
+                        .withLPN(createLPNWithItemIdAndExpirationAt(1L, expirationAt))
+                        .withLocation(createStowWith("locationBarcode-3"))
+                        .withInventoryQuantity(3)
+                        .withItemId(1L)
+                        .build(),
+                LocationLPNFixture.aLocationLPN()
+                        .withId(4L)
+                        .withLPN(createLPNWithItemIdAndExpirationAt(2L, expirationAt))
+                        .withLocation(createStowWith("locationBarcode-3"))
+                        .withInventoryQuantity(1)
+                        .withItemId(2L)
+                        .build(),
+                LocationLPNFixture.aLocationLPN()
+                        .withId(5L)
+                        .withLPN(createLPNWithItemIdAndExpirationAt(2L, expirationAt))
+                        .withLocation(createStowWith("locationBarcode-4"))
+                        .withInventoryQuantity(3)
+                        .withItemId(2L)
+                        .build(),
+                LocationLPNFixture.aLocationLPN()
+                        .withId(6L)
+                        .withLPN(createLPNWithItemIdAndExpirationAt(3L, expirationAt))
+                        .withLocation(createStowWith("locationBarcode-5"))
+                        .withInventoryQuantity(2)
+                        .withItemId(3L)
+                        .build()
         );
 
         PickingAllocator.allocate(outbound, locationLPNList);
@@ -58,57 +123,26 @@ class PickingAllocatorTest {
         assertThat(itemId3_OutboundItem.getPickings().get(0).getLocationLPN().getLocationBarcode()).isEqualTo("locationBarcode-5");
     }
 
-    private OutboundItem createOutboundItem(
-            final long itemId,
-            final int outboundQuantity) {
-        final Item item = createItem(itemId);
-        return Instancio.of(OutboundItem.class)
-                .supply(Select.field(OutboundItem::getOutboundQuantity), () -> outboundQuantity)
-                .supply(Select.field(OutboundItem::getItem), () -> item)
-                .ignore(Select.field(OutboundItem::getPickings))
-                .create();
-    }
-
-    private Item createItem(final Long itemId) {
-        return Instancio.of(Item.class)
-                .supply(Select.field(Item::getId), () -> itemId)
-                .create();
-    }
-
-    private LocationLPN createLocationLPN(
-            final Long itemId,
-            final long locationLPNId,
-            final String locationBarcode,
-            final int inventoryQuantity,
-            final LocalDateTime expirationAt) {
-        final LPN lpn = Instancio.of(LPN.class)
-                .supply(Select.field(LPN::getExpirationAt), () -> expirationAt)
-                .supply(Select.field(LPN::getItemId), () -> itemId)
-                .create();
-        final Location location = Instancio.of(Location.class)
-                .supply(Select.field(Location::getLocationBarcode), () -> locationBarcode)
-                .supply(Select.field(Location::getUsagePurpose), () -> UsagePurpose.STOW)
-                .create();
-        return Instancio.of(LocationLPN.class)
-                .supply(Select.field(LocationLPN::getId), () -> locationLPNId)
-                .supply(Select.field(LocationLPN::getLpn), () -> lpn)
-                .supply(Select.field(LocationLPN::getLocation), () -> location)
-                .supply(Select.field(LocationLPN::getInventoryQuantity), () -> inventoryQuantity)
-                .supply(Select.field(LocationLPN::getItemId), () -> itemId)
-                .create();
-    }
-
     @Test
     @DisplayName("출고에 집품목록을 할당한다. - itemId1 재고 부족")
     void allocate_fail_inventory() {
-        final Outbound outbound = Instancio.of(Outbound.class)
-                .supply(Select.field(Outbound::getOutboundItems), () -> List.of(
-                        createOutboundItem(1L, 3)))
-                .supply(Select.field(Outbound::getOutboundStatus), () -> OutboundStatus.PICKING_READY)
-                .create();
-        final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1L);
+        final Outbound outbound = OutboundFixture.aOutboundWithPickingReadyStatus()
+                .withOutboundItems(List.of(
+                        OutboundItemFixture.aOutboundItemWithNoPickings()
+                                .withOutboundQuantity(3)
+                                .withItem(ItemFixture.aItem()
+                                        .withId(1L)
+                                        .build())
+                                .build()))
+                .build();
         final List<LocationLPN> locationLPNList = List.of(
-                createLocationLPN(1L, 1L, "locationBarcode-1", 2, expirationAt)
+                LocationLPNFixture.aLocationLPN()
+                        .withId(1L)
+                        .withLPN(createLPNWithItemIdAndExpirationAt(1L, LocalDateTime.now().plusDays(1L)))
+                        .withLocation(createStowWith("locationBarcode-1"))
+                        .withInventoryQuantity(2)
+                        .withItemId(1L)
+                        .build()
         );
 
         assertThatThrownBy(() -> {
@@ -120,15 +154,31 @@ class PickingAllocatorTest {
     @Test
     @DisplayName("출고에 집품목록을 할당한다. - itemId1 재고 부족 (유통기한이 지남)")
     void allocate_fail_invalid_inventory() {
-        final Outbound outbound = Instancio.of(Outbound.class)
-                .supply(Select.field(Outbound::getOutboundItems), () -> List.of(
-                        createOutboundItem(1L, 3)))
-                .supply(Select.field(Outbound::getOutboundStatus), () -> OutboundStatus.PICKING_READY)
-                .create();
+        final Outbound outbound = OutboundFixture.aOutboundWithPickingReadyStatus()
+                .withOutboundItems(List.of(
+                        OutboundItemFixture.aOutboundItemWithNoPickings()
+                                .withOutboundQuantity(3)
+                                .withItem(ItemFixture.aItem()
+                                        .withId(1L)
+                                        .build())
+                                .build()))
+                .build();
         final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1L);
         final List<LocationLPN> locationLPNList = List.of(
-                createLocationLPN(1L, 1L, "locationBarcode-1", 2, expirationAt),
-                createLocationLPN(1L, 2L, "locationBarcode-2", 2, expirationAt.minusDays(3))
+                LocationLPNFixture.aLocationLPN()
+                        .withId(1L)
+                        .withLPN(createLPNWithItemIdAndExpirationAt(1L, expirationAt))
+                        .withLocation(createStowWith("locationBarcode-1"))
+                        .withInventoryQuantity(2)
+                        .withItemId(1L)
+                        .build(),
+                LocationLPNFixture.aLocationLPN()
+                        .withId(2L)
+                        .withLPN(createLPNWithItemIdAndExpirationAt(1L, expirationAt.minusDays(3)))
+                        .withLocation(createStowWith("locationBarcode-2"))
+                        .withInventoryQuantity(2)
+                        .withItemId(1L)
+                        .build()
         );
 
         assertThatThrownBy(() -> {

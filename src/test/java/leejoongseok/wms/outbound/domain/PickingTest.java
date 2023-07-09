@@ -1,8 +1,8 @@
 package leejoongseok.wms.outbound.domain;
 
+import leejoongseok.wms.common.fixture.LocationLPNFixture;
+import leejoongseok.wms.common.fixture.PickingFixture;
 import leejoongseok.wms.location.domain.LocationLPN;
-import org.instancio.Instancio;
-import org.instancio.Select;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,9 +14,9 @@ class PickingTest {
     @Test
     @DisplayName("집품한 상품이 있는지 확인한다.")
     void hasPickedItem() {
-        final Picking picking = Instancio.of(Picking.class)
-                .supply(Select.field(Picking::getPickedQuantity), () -> 1)
-                .create();
+        final Picking picking = PickingFixture.aPicking()
+                .withPickedQuantity(1)
+                .build();
 
         final boolean hasPickedItem = picking.hasPickedItem();
 
@@ -37,43 +37,31 @@ class PickingTest {
     @DisplayName("집품에 필요한 수량만큼 LocationLPN 재고를 차감한다.")
     void deductAllocatedInventory() {
         final int inventoryQuantity = 10;
-        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
+                .withInventoryQuantity(inventoryQuantity)
+                .build();
         final int quantityRequiredForPick = 5;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(quantityRequiredForPick)
+                .withLocationLPN(locationLPN)
+                .build();
 
         picking.deductAllocatedInventory();
 
         assertThat(locationLPN.getInventoryQuantity()).isEqualTo(inventoryQuantity - quantityRequiredForPick);
     }
 
-    private LocationLPN createLocationLPN(final int inventoryQuantity) {
-        return Instancio.of(LocationLPN.class)
-                .supply(Select.field(LocationLPN::getInventoryQuantity), () -> inventoryQuantity)
-                .create();
-    }
-
-    private Picking createPicking(
-            final int quantityRequiredForPick,
-            final LocationLPN locationLPN,
-            final PickingStatus pickingStatus) {
-        return Instancio.of(Picking.class)
-                .supply(Select.field(Picking::getQuantityRequiredForPick), () -> quantityRequiredForPick)
-                .supply(Select.field(Picking::getStatus), () -> pickingStatus)
-                .supply(Select.field(Picking::getLocationLPN), () -> locationLPN)
-                .ignore(Select.field(Picking::getPickedQuantity))
-                .create();
-    }
-
 
     @Test
     @DisplayName("집품에 필요한 수량만큼 LocationLPN 재고를 차감한다. - 집품의 상태가 READY가 아님")
     void deductAllocatedInventory_invalidStatus() {
-        final int inventoryQuantity = 10;
-        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
-        final int quantityRequiredForPick = 5;
-        final PickingStatus pickingStatus = PickingStatus.IN_PROGRESS;
-        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
+                .withInventoryQuantity(10)
+                .build();
+        final Picking picking = PickingFixture.aPickingWithInProgressPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(5)
+                .withLocationLPN(locationLPN)
+                .build();
 
         assertThatThrownBy(() -> {
             picking.deductAllocatedInventory();
@@ -84,11 +72,13 @@ class PickingTest {
     @Test
     @DisplayName("집품에 필요한 수량만큼 LocationLPN 재고를 차감한다. - 차감해야할 수량이 재고보다 많음")
     void deductAllocatedInventory_over_deduct_quantity() {
-        final int inventoryQuantity = 10;
-        final LocationLPN locationLPN = createLocationLPN(inventoryQuantity);
-        final int quantityRequiredForPick = 50;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(quantityRequiredForPick, locationLPN, pickingStatus);
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
+                .withInventoryQuantity(10)
+                .build();
+        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(50)
+                .withLocationLPN(locationLPN)
+                .build();
 
         assertThatThrownBy(() -> {
             picking.deductAllocatedInventory();
@@ -99,13 +89,12 @@ class PickingTest {
     @Test
     @DisplayName("집품한 수량을 증가시킨다.")
     void increasePickedQuantity() {
-        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
-        final int quantityRequiredForPick = 2;
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN().build();
         final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(
-                quantityRequiredForPick,
-                locationLPN,
-                pickingStatus);
+        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(2)
+                .withLocationLPN(locationLPN)
+                .build();
 
         picking.increasePickedQuantity(locationLPN);
 
@@ -116,13 +105,11 @@ class PickingTest {
     @Test
     @DisplayName("집품한 수량을 증가시킨다. - 집품완료")
     void increasePickedQuantity_completedPicking() {
-        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
-        final int quantityRequiredForPick = 2;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(
-                quantityRequiredForPick,
-                locationLPN,
-                pickingStatus);
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN().build();
+        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(2)
+                .withLocationLPN(locationLPN)
+                .build();
 
         picking.increasePickedQuantity(locationLPN);
         assertThat(picking.isInProgress()).isTrue();
@@ -135,14 +122,12 @@ class PickingTest {
     @Test
     @DisplayName("집품한 수량을 증가시킨다. - 집품해야할 LocatinLPN이 아님")
     void increasePickedQuantity_not_match_locationLPN() {
-        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
-        final LocationLPN locationLPN2 = Instancio.create(LocationLPN.class);
-        final int quantityRequiredForPick = 1;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(
-                quantityRequiredForPick,
-                locationLPN,
-                pickingStatus);
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN().build();
+        final LocationLPN locationLPN2 = LocationLPNFixture.aLocationLPN().build();
+        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(1)
+                .withLocationLPN(locationLPN)
+                .build();
 
         assertThatThrownBy(() -> {
             picking.increasePickedQuantity(locationLPN2);
@@ -153,13 +138,11 @@ class PickingTest {
     @Test
     @DisplayName("집품한 수량을 증가시킨다. - 이미 집품이 완료된 상태")
     void increasePickedQuantity_invalid_status() {
-        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
-        final int quantityRequiredForPick = 1;
-        final PickingStatus pickingStatus = PickingStatus.COMPLETED;
-        final Picking picking = createPicking(
-                quantityRequiredForPick,
-                locationLPN,
-                pickingStatus);
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN().build();
+        final Picking picking = PickingFixture.aPickingWithCompletedPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(1)
+                .withLocationLPN(locationLPN)
+                .build();
 
         assertThatThrownBy(() -> {
             picking.increasePickedQuantity(locationLPN);
@@ -170,13 +153,11 @@ class PickingTest {
     @Test
     @DisplayName("집품 수량을 직접 입력한 수량만큼 증가시킵니다.")
     void addManualPickedQuantity() {
-        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
-        final int quantityRequiredForPick = 2;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(
-                quantityRequiredForPick,
-                locationLPN,
-                pickingStatus);
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN().build();
+        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(2)
+                .withLocationLPN(locationLPN)
+                .build();
 
         picking.addManualPickedQuantity(locationLPN, 1);
 
@@ -187,13 +168,11 @@ class PickingTest {
     @Test
     @DisplayName("집품 수량을 직접 입력한 수량만큼 증가시킵니다. - 집품을 완료시킵니다.")
     void addManualPickedQuantity_complete() {
-        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
-        final int quantityRequiredForPick = 2;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(
-                quantityRequiredForPick,
-                locationLPN,
-                pickingStatus);
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN().build();
+        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(2)
+                .withLocationLPN(locationLPN)
+                .build();
 
         picking.addManualPickedQuantity(locationLPN, 2);
 
@@ -204,13 +183,11 @@ class PickingTest {
     @Test
     @DisplayName("집품 수량을 직접 입력한 수량만큼 증가시킵니다. - 집품을 완료시킵니다.2")
     void addManualPickedQuantity_complete2() {
-        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
-        final int quantityRequiredForPick = 2;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(
-                quantityRequiredForPick,
-                locationLPN,
-                pickingStatus);
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN().build();
+        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(2)
+                .withLocationLPN(locationLPN)
+                .build();
 
         picking.addManualPickedQuantity(locationLPN, 1);
         picking.addManualPickedQuantity(locationLPN, 1);
@@ -222,13 +199,11 @@ class PickingTest {
     @Test
     @DisplayName("집품 수량을 직접 입력한 수량만큼 증가시킵니다. - 이미 집품이 완료된 상태")
     void addManualPickedQuantity_already_compelted() {
-        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
-        final int quantityRequiredForPick = 2;
-        final PickingStatus pickingStatus = PickingStatus.COMPLETED;
-        final Picking picking = createPicking(
-                quantityRequiredForPick,
-                locationLPN,
-                pickingStatus);
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN().build();
+        final Picking picking = PickingFixture.aPickingWithCompletedPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(2)
+                .withLocationLPN(locationLPN)
+                .build();
 
         assertThatThrownBy(() -> {
             picking.addManualPickedQuantity(locationLPN, 1);
@@ -239,14 +214,12 @@ class PickingTest {
     @Test
     @DisplayName("집품 수량을 직접 입력한 수량만큼 증가시킵니다. - 집품해야할 LocatinLPN이 아님")
     void addManualPickedQuantity_not_match_locationLPN() {
-        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
-        final LocationLPN locationLPN2 = Instancio.create(LocationLPN.class);
-        final int quantityRequiredForPick = 1;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(
-                quantityRequiredForPick,
-                locationLPN,
-                pickingStatus);
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN().build();
+        final LocationLPN locationLPN2 = LocationLPNFixture.aLocationLPN().build();
+        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(1)
+                .withLocationLPN(locationLPN)
+                .build();
 
         assertThatThrownBy(() -> {
             picking.addManualPickedQuantity(locationLPN2, 1);
@@ -257,13 +230,11 @@ class PickingTest {
     @Test
     @DisplayName("집품 수량을 직접 입력한 수량만큼 증가시킵니다. - 집품해야할 수량보다 많이 입력")
     void addManualPickedQuantity_over_quantity() {
-        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
-        final int quantityRequiredForPick = 2;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(
-                quantityRequiredForPick,
-                locationLPN,
-                pickingStatus);
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN().build();
+        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(2)
+                .withLocationLPN(locationLPN)
+                .build();
 
         assertThatThrownBy(() -> {
             picking.addManualPickedQuantity(locationLPN, 3);
@@ -274,13 +245,11 @@ class PickingTest {
     @Test
     @DisplayName("집품 수량을 직접 입력한 수량만큼 증가시킵니다. - 집품해야할 수량보다 많이 입력2")
     void addManualPickedQuantity_over_quantity2() {
-        final LocationLPN locationLPN = Instancio.create(LocationLPN.class);
-        final int quantityRequiredForPick = 2;
-        final PickingStatus pickingStatus = PickingStatus.READY;
-        final Picking picking = createPicking(
-                quantityRequiredForPick,
-                locationLPN,
-                pickingStatus);
+        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN().build();
+        final Picking picking = PickingFixture.aPickingWithReadyPickingNoPickedQuantity()
+                .withQuantityRequiredForPick(2)
+                .withLocationLPN(locationLPN)
+                .build();
         picking.addManualPickedQuantity(locationLPN, 1);
         assertThatThrownBy(() -> {
             picking.addManualPickedQuantity(locationLPN, 2);

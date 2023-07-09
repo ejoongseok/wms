@@ -1,10 +1,11 @@
 package leejoongseok.wms.outbound.domain;
 
+import leejoongseok.wms.common.fixture.LPNFixture;
+import leejoongseok.wms.common.fixture.LocationFixture;
+import leejoongseok.wms.common.fixture.LocationLPNFixture;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationLPN;
-import org.instancio.Instancio;
-import org.instancio.Select;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -44,17 +45,18 @@ class EfficiencyLocationLPNSorterTest {
             final String locationBarcode,
             final int inventoryQuantity,
             final LocalDateTime expirationAt) {
-        final LPN lpn = Instancio.of(LPN.class)
-                .supply(Select.field(LPN::getExpirationAt), () -> expirationAt)
-                .create();
-        final Location location = Instancio.of(Location.class)
-                .supply(Select.field(Location::getLocationBarcode), () -> locationBarcode)
-                .create();
-        return Instancio.of(LocationLPN.class)
-                .supply(Select.field(LocationLPN::getId), () -> locationLPNId)
-                .supply(Select.field(LocationLPN::getLpn), () -> lpn)
-                .supply(Select.field(LocationLPN::getLocation), () -> location)
-                .supply(Select.field(LocationLPN::getInventoryQuantity), () -> inventoryQuantity)
-                .create();
+        final LPN lpn = LPNFixture.aLPN()
+                .withExpirationAt(expirationAt)
+                .build();
+        final Location location = LocationFixture.aLocation()
+                .withLocationBarcode(locationBarcode)
+                .build();
+        return LocationLPNFixture.aLocationLPN()
+                .withId(locationLPNId)
+                .withLPN(lpn)
+                .withLocation(location)
+                .withInventoryQuantity(inventoryQuantity)
+                .build();
+
     }
 }
