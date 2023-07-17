@@ -12,15 +12,14 @@ public enum PickingAllocator {
      */
     public static void allocate(
             final Outbound outbound,
-            final List<LocationLPN> locationLPNList) {
+            final LocationLPNList locationLPNList) {
         PickingAllocationValidator.validate(
                 outbound,
-                locationLPNList);
+                locationLPNList.locationLPNList());
 
         for (final OutboundItem outboundItem : outbound.getOutboundItems()) {
-            final List<LocationLPN> sortedLocationLPNList = filterByItemIdAndSortLocationLPNList(
-                    locationLPNList,
-                    outboundItem.getItemId());
+            final Long itemId = outboundItem.getItemId();
+            final List<LocationLPN> sortedLocationLPNList = locationLPNList.getEfficiencyLocationLPNList(itemId);
 
             final List<Picking> pickings = PickingCreator.createPickings(
                     outboundItem.getItemId(),
@@ -31,19 +30,6 @@ public enum PickingAllocator {
             outboundItem.assignPickings(pickings);
         }
 
-    }
-
-    /**
-     * 상품ID에 해당하는 LocationLPN을 집품하기에 효율적으로 정렬후 반환한다.
-     */
-    private static List<LocationLPN> filterByItemIdAndSortLocationLPNList(
-            final List<LocationLPN> locationLPNList,
-            final Long itemId) {
-        final List<LocationLPN> locationLPNS = locationLPNList.stream()
-                .filter(locationLPN -> locationLPN.getItemId().equals(itemId))
-                .toList();
-        return EfficiencyLocationLPNSorter.sort(
-                locationLPNS);
     }
 
 }
