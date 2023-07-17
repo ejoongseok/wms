@@ -11,7 +11,7 @@ public final class LocationLPNList {
         this.locationLPNList = locationLPNList;
     }
 
-    static List<LocationLPN> getEfficiencyLocationLPNList(final LocationLPNList locationLPNList, final Long itemId) {
+    List<LocationLPN> getEfficiencyLocationLPNList(final LocationLPNList locationLPNList, final Long itemId) {
         final List<LocationLPN> locationLPNS = listFrom(locationLPNList, itemId);
         return EfficiencyLocationLPNSorter.sort(
                 locationLPNS);
