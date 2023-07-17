@@ -39,15 +39,7 @@ public enum PickingAllocator {
     private static List<LocationLPN> filterByItemIdAndSortLocationLPNList(
             final LocationLPNList locationLPNList,
             final Long itemId) {
-        return getEfficiencyLocationLPNList(locationLPNList, itemId);
-    }
-
-    private static List<LocationLPN> getEfficiencyLocationLPNList(final LocationLPNList locationLPNList, final Long itemId) {
-        final List<LocationLPN> locationLPNS = locationLPNList.locationLPNList().stream()
-                .filter(locationLPN -> locationLPN.getItemId().equals(itemId))
-                .toList();
-        return EfficiencyLocationLPNSorter.sort(
-                locationLPNS);
+        return LocationLPNList.getEfficiencyLocationLPNList(locationLPNList, itemId);
     }
 
 }
