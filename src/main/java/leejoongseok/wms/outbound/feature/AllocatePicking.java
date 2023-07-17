@@ -44,9 +44,7 @@ public class AllocatePicking {
         final List<LocationLPN> locationLPNList = getLocationLPNList(
                 outbound.getItemIds());
 
-        PickingAllocator.allocate(outbound, new LocationLPNList(locationLPNList));
-        outbound.deductAllocatedInventory();
-        outbound.startPickingProgress();
+        allocatePicking(outbound, locationLPNList);
     }
 
     private Outbound getOutbound(final Request request) {
@@ -79,6 +77,12 @@ public class AllocatePicking {
             }
         }
         return lpnList;
+    }
+
+    private void allocatePicking(final Outbound outbound, final List<LocationLPN> locationLPNList) {
+        PickingAllocator.allocate(outbound, new LocationLPNList(locationLPNList));
+        outbound.deductAllocatedInventory();
+        outbound.startPickingProgress();
     }
 
     public record Request(
