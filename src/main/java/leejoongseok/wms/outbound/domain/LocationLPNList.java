@@ -12,9 +12,8 @@ public record LocationLPNList(List<LocationLPN> locationLPNList) {
     }
 
     private static List<LocationLPN> listFrom(final LocationLPNList locationLPNList, final Long itemId) {
-        final List<LocationLPN> locationLPNS = locationLPNList.locationLPNList().stream()
+        return locationLPNList.locationLPNList().stream()
                 .filter(locationLPN -> locationLPN.getItemId().equals(itemId))
                 .toList();
-        return locationLPNS;
     }
 }
