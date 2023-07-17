@@ -19,7 +19,7 @@ public enum PickingAllocator {
 
         for (final OutboundItem outboundItem : outbound.getOutboundItems()) {
             final List<LocationLPN> sortedLocationLPNList = filterByItemIdAndSortLocationLPNList(
-                    locationLPNList.locationLPNList(),
+                    locationLPNList,
                     outboundItem.getItemId());
 
             final List<Picking> pickings = PickingCreator.createPickings(
@@ -37,9 +37,9 @@ public enum PickingAllocator {
      * 상품ID에 해당하는 LocationLPN을 집품하기에 효율적으로 정렬후 반환한다.
      */
     private static List<LocationLPN> filterByItemIdAndSortLocationLPNList(
-            final List<LocationLPN> locationLPNList,
+            final LocationLPNList locationLPNList,
             final Long itemId) {
-        final List<LocationLPN> locationLPNS = locationLPNList.stream()
+        final List<LocationLPN> locationLPNS = locationLPNList.locationLPNList().stream()
                 .filter(locationLPN -> locationLPN.getItemId().equals(itemId))
                 .toList();
         return EfficiencyLocationLPNSorter.sort(
