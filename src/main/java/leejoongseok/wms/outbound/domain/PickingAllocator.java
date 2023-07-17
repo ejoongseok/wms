@@ -11,7 +11,8 @@ public enum PickingAllocator {
      * 집품을 할당한다.
      */
     public static void allocate(
-            final Outbound outbound, final LocationLPNList locationLPNList) {
+            final Outbound outbound,
+            final LocationLPNList locationLPNList) {
         PickingAllocationValidator.validate(
                 outbound,
                 locationLPNList.locationLPNList());
