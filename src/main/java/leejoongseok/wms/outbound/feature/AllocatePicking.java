@@ -8,6 +8,7 @@ import leejoongseok.wms.inbound.domain.LPNRepository;
 import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.LocationLPNRepository;
 import leejoongseok.wms.location.exception.LocationLPNNotFoundException;
+import leejoongseok.wms.outbound.domain.LocationLPNList;
 import leejoongseok.wms.outbound.domain.Outbound;
 import leejoongseok.wms.outbound.domain.OutboundRepository;
 import leejoongseok.wms.outbound.domain.PickingAllocator;
@@ -43,7 +44,7 @@ public class AllocatePicking {
         final List<LocationLPN> locationLPNList = getLocationLPNList(
                 outbound.getItemIds());
 
-        PickingAllocator.allocate(outbound, locationLPNList);
+        PickingAllocator.allocate(outbound, new LocationLPNList(locationLPNList));
         outbound.deductAllocatedInventory();
         outbound.startPickingProgress();
     }

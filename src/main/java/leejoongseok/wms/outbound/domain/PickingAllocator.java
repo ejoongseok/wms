@@ -11,15 +11,14 @@ public enum PickingAllocator {
      * 집품을 할당한다.
      */
     public static void allocate(
-            final Outbound outbound,
-            final List<LocationLPN> locationLPNList) {
+            final Outbound outbound, final LocationLPNList locationLPNList) {
         PickingAllocationValidator.validate(
                 outbound,
-                locationLPNList);
+                locationLPNList.locationLPNList());
 
         for (final OutboundItem outboundItem : outbound.getOutboundItems()) {
             final List<LocationLPN> sortedLocationLPNList = filterByItemIdAndSortLocationLPNList(
-                    locationLPNList,
+                    locationLPNList.locationLPNList(),
                     outboundItem.getItemId());
 
             final List<Picking> pickings = PickingCreator.createPickings(

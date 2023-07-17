@@ -104,7 +104,7 @@ class PickingAllocatorTest {
                         .build()
         );
 
-        PickingAllocator.allocate(outbound, locationLPNList);
+        PickingAllocator.allocate(outbound, new LocationLPNList(locationLPNList));
 
         /**
          * 아래와 같은 순서로 집품에 LocationLPN이 할당된다.
@@ -146,7 +146,7 @@ class PickingAllocatorTest {
         );
 
         assertThatThrownBy(() -> {
-            PickingAllocator.allocate(outbound, locationLPNList);
+            PickingAllocator.allocate(outbound, new LocationLPNList(locationLPNList));
         }).isInstanceOf(NotEnoughInventoryException.class)
                 .hasMessageContaining("집품할 상품의 재고가 부족합니다.상품ID: 1, 재고수량: 2, 필요한 수량: 3");
     }
@@ -182,7 +182,7 @@ class PickingAllocatorTest {
         );
 
         assertThatThrownBy(() -> {
-            PickingAllocator.allocate(outbound, locationLPNList);
+            PickingAllocator.allocate(outbound, new LocationLPNList(locationLPNList));
         }).isInstanceOf(NotEnoughInventoryException.class)
                 .hasMessageContaining("집품할 상품의 재고가 부족합니다.상품ID: 1, 재고수량: 2, 필요한 수량: 3");
     }
