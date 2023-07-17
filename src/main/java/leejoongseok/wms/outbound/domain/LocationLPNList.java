@@ -15,6 +15,17 @@ public final class LocationLPNList {
         this.locationLPNList = locationLPNList;
     }
 
+    List<LocationLPN> getEfficiencyLocationLPNList(final Long itemId) {
+        final List<LocationLPN> locationLPNList = listFrom(itemId);
+        return sort(locationLPNList);
+    }
+
+    private List<LocationLPN> listFrom(final Long itemId) {
+        return locationLPNList.stream()
+                .filter(locationLPN -> locationLPN.getItemId().equals(itemId))
+                .toList();
+    }
+
     /**
      * 집품하기 효율적으로 LocationLPN을 정렬한다.
      * 1. 유통기한이 가장 짧은 순서 (선입선출)
@@ -37,18 +48,6 @@ public final class LocationLPNList {
         if (!isAllFreshLocationLPN) {
             throw new IllegalArgumentException("유통기한이 지난 LPN이 존재합니다.");
         }
-    }
-
-    List<LocationLPN> getEfficiencyLocationLPNList(final Long itemId) {
-        final List<LocationLPN> locationLPNS = listFrom(itemId);
-        return sort(
-                locationLPNS);
-    }
-
-    private List<LocationLPN> listFrom(final Long itemId) {
-        return locationLPNList.stream()
-                .filter(locationLPN -> locationLPN.getItemId().equals(itemId))
-                .toList();
     }
 
     public List<LocationLPN> locationLPNList() {
