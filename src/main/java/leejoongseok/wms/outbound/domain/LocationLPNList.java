@@ -17,7 +17,7 @@ public final class LocationLPNList {
                 locationLPNS);
     }
 
-    private static List<LocationLPN> listFrom(final LocationLPNList locationLPNList, final Long itemId) {
+    private List<LocationLPN> listFrom(final LocationLPNList locationLPNList, final Long itemId) {
         return locationLPNList.locationLPNList().stream()
                 .filter(locationLPN -> locationLPN.getItemId().equals(itemId))
                 .toList();
