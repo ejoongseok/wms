@@ -12,13 +12,13 @@ public final class LocationLPNList {
     }
 
     List<LocationLPN> getEfficiencyLocationLPNList(final LocationLPNList locationLPNList, final Long itemId) {
-        final List<LocationLPN> locationLPNS = listFrom(locationLPNList, itemId);
+        final List<LocationLPN> locationLPNS = listFrom(itemId);
         return EfficiencyLocationLPNSorter.sort(
                 locationLPNS);
     }
 
-    private List<LocationLPN> listFrom(final LocationLPNList locationLPNList, final Long itemId) {
-        return locationLPNList.locationLPNList().stream()
+    private List<LocationLPN> listFrom(final Long itemId) {
+        return locationLPNList.stream()
                 .filter(locationLPN -> locationLPN.getItemId().equals(itemId))
                 .toList();
     }
