@@ -29,7 +29,7 @@ class EfficiencyLocationLPNSorterTest {
                 createLocationLPN(5L, "B0001", 1, today.plusDays(3))
         );
 
-        final List<LocationLPN> sortedLocationLPNList = EfficiencyLocationLPNSorter.sort(locationLPNList);
+        final List<LocationLPN> sortedLocationLPNList = LocationLPNList.sort(locationLPNList);
         assertThat(sortedLocationLPNList.get(0).getLocationBarcode()).isEqualTo("C0001");
         assertThat(sortedLocationLPNList.get(1).getLocationBarcode()).isEqualTo("D0001");
         assertThat(sortedLocationLPNList.get(2).getLocationBarcode()).isEqualTo("B0001");
