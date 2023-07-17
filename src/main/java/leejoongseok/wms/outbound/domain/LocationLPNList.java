@@ -32,7 +32,7 @@ public final class LocationLPNList {
      * 2. 재고수량이 많은 순서 (그래야 최대한 적은 로케이션 LPN으로 집품이 가능하니까)
      * 3. 로케이션 바코드 명으로 정렬 (보통 로케이션 바코드는 A -> Z 순서로 정렬되어 있음)
      */
-    private static List<LocationLPN> sort(final List<LocationLPN> locationLPNList) {
+    private List<LocationLPN> sort(final List<LocationLPN> locationLPNList) {
         validateParameter(locationLPNList);
         return locationLPNList.stream()
                 .sorted(Comparator.comparing(LocationLPN::getExpirationAt).reversed()
@@ -41,7 +41,7 @@ public final class LocationLPNList {
                 .toList();
     }
 
-    private static void validateParameter(final List<LocationLPN> locationLPNList) {
+    private void validateParameter(final List<LocationLPN> locationLPNList) {
         Assert.notEmpty(locationLPNList, "정렬하려는 LocationLPN이 존재하지 않습니다.");
         final boolean isAllFreshLocationLPN = locationLPNList.stream()
                 .allMatch(locationLPN -> locationLPN.isFreshLPNBy(LocalDateTime.now()));
