@@ -30,7 +30,7 @@ class LocationLPNListTest {
         );
         final LocationLPNList sut = new LocationLPNList(locationLPNList);
 
-        final List<LocationLPN> sortedLocationLPNList = sut.getEfficiencyLocationLPNList(itemId);
+        final List<LocationLPN> sortedLocationLPNList = sut.listFromEfficientlySorted(itemId);
 
         assertThat(sortedLocationLPNList.get(0).getLocationBarcode()).isEqualTo("C0001");
         assertThat(sortedLocationLPNList.get(1).getLocationBarcode()).isEqualTo("D0001");

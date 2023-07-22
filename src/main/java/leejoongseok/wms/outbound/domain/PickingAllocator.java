@@ -20,7 +20,7 @@ public enum PickingAllocator {
 
         for (final OutboundItem outboundItem : outbound.getOutboundItems()) {
             final Long itemId = outboundItem.getItemId();
-            final List<LocationLPN> sortedLocationLPNList = locationLPNList.getEfficiencyLocationLPNList(itemId);
+            final List<LocationLPN> sortedLocationLPNList = locationLPNList.listFromEfficientlySorted(itemId);
 
             // TODO Pickings.of()를 사용하도록 변경
             final List<Picking> pickings = PickingCreator.createPickings(
