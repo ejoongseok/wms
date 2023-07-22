@@ -1,8 +1,5 @@
 package leejoongseok.wms.outbound.domain;
 
-import leejoongseok.wms.common.fixture.LPNFixture;
-import leejoongseok.wms.common.fixture.LocationFixture;
-import leejoongseok.wms.common.fixture.LocationLPNFixture;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationLPN;
@@ -16,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static leejoongseok.wms.common.fixture.LPNFixture.aLPN;
+import static leejoongseok.wms.common.fixture.LocationFixture.aLocation;
+import static leejoongseok.wms.common.fixture.LocationLPNFixture.aLocationLPN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LocationLPNFilterForOutboundTest {
@@ -26,7 +26,7 @@ class LocationLPNFilterForOutboundTest {
     @BeforeEach
     void setUp() {
         faker = new Faker();
-        location = LocationFixture.aLocation()
+        location = aLocation()
                 .withLocationBarcode(faker.idNumber().valid())
                 .withStorageType(StorageType.CELL)
                 .withUsagePurpose(UsagePurpose.STOW)
@@ -50,7 +50,7 @@ class LocationLPNFilterForOutboundTest {
     }
 
     private LocationLPN createLocationLPN(final LPN lpn) {
-        return LocationLPNFixture.aLocationLPN()
+        return aLocationLPN()
                 .withLocation(location)
                 .withLPN(lpn)
                 .withItemId(lpn.getItemId())
@@ -61,7 +61,7 @@ class LocationLPNFilterForOutboundTest {
             final LocalDateTime validExpirationAt,
             final Long itemId,
             final LocalDateTime createdDateTime) {
-        return LPNFixture.aLPN()
+        return aLPN()
                 .withLPNBarcode(faker.idNumber().valid())
                 .withExpirationAt(validExpirationAt)
                 .withItemId(itemId)

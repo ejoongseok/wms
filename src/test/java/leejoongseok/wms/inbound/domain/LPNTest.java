@@ -1,12 +1,12 @@
 package leejoongseok.wms.inbound.domain;
 
-import leejoongseok.wms.common.fixture.LPNFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
+import static leejoongseok.wms.common.fixture.LPNFixture.aLPN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LPNTest {
@@ -16,7 +16,7 @@ class LPNTest {
     @BeforeEach
     void setUp() {
         today = LocalDateTime.now();
-        lpn = LPNFixture.aLPN()
+        lpn = aLPN()
                 .withExpirationAt(today)
                 .build();
     }

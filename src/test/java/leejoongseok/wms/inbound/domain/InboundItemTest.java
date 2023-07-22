@@ -1,12 +1,12 @@
 package leejoongseok.wms.inbound.domain;
 
-import leejoongseok.wms.common.fixture.InboundItemFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
+import static leejoongseok.wms.common.fixture.InboundItemFixture.aInboundItem;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -16,7 +16,7 @@ class InboundItemTest {
 
     @BeforeEach
     void setUp() {
-        inboundItem = InboundItemFixture.aInboundItem().build();
+        inboundItem = aInboundItem().build();
     }
 
     @Test

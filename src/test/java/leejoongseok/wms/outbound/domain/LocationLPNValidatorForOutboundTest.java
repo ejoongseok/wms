@@ -1,12 +1,12 @@
 package leejoongseok.wms.outbound.domain;
 
-import leejoongseok.wms.common.fixture.LocationLPNFixture;
 import leejoongseok.wms.location.domain.LocationLPN;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static leejoongseok.wms.common.fixture.LocationLPNFixture.aLocationLPN;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class LocationLPNValidatorForOutboundTest {
@@ -16,7 +16,7 @@ class LocationLPNValidatorForOutboundTest {
     @DisplayName("출고 대상 LocationLPN 목록이 출고 수량을 충족하는지 검증한다. [예외발생]")
     void validate_exception() {
         assertValidate(
-                List.of(LocationLPNFixture.aLocationLPN()
+                List.of(aLocationLPN()
                         .withInventoryQuantity(1)
                         .build()),
                 2,
@@ -24,7 +24,7 @@ class LocationLPNValidatorForOutboundTest {
                 "출고 가능한 재고가 부족합니다. 출고 가능한 재고 수량: 1 출고 요청 수량: 2");
 
         assertValidate(
-                List.of(LocationLPNFixture.aLocationLPN().build()),
+                List.of(aLocationLPN().build()),
                 0,
                 IllegalArgumentException.class,
                 "출고 요청 수량이 0보다 작거나 같습니다.");
@@ -56,7 +56,7 @@ class LocationLPNValidatorForOutboundTest {
     @Test
     @DisplayName("출고 대상 LocationLPN 목록이 출고 수량을 충족하는지 검증한다. [통과]")
     void sufficient_inventory_location_lpn_list_for_outbound() {
-        final List<LocationLPN> locationLPNList = List.of(LocationLPNFixture.aLocationLPN()
+        final List<LocationLPN> locationLPNList = List.of(aLocationLPN()
                 .withInventoryQuantity(2)
                 .build());
         final int orderQuantity = 2;

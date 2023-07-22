@@ -1,8 +1,5 @@
 package leejoongseok.wms.inbound.domain;
 
-import leejoongseok.wms.common.fixture.InboundFixture;
-import leejoongseok.wms.common.fixture.InboundItemFixture;
-import leejoongseok.wms.common.fixture.ItemFixture;
 import leejoongseok.wms.inbound.exception.InboundItemIdNotFoundException;
 import leejoongseok.wms.inbound.exception.UnconfirmedInboundException;
 import leejoongseok.wms.item.domain.Item;
@@ -14,6 +11,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static leejoongseok.wms.common.fixture.InboundFixture.aDefaultInbound;
+import static leejoongseok.wms.common.fixture.InboundItemFixture.aDefaultInboundItem;
+import static leejoongseok.wms.common.fixture.ItemFixture.aDefaultItem;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -25,14 +25,14 @@ class InboundTest {
 
     @BeforeEach
     void setUp() {
-        item = ItemFixture.aDefaultItem()
+        item = aDefaultItem()
                 .build();
 
-        inbound = InboundFixture.aDefaultInbound()
+        inbound = aDefaultInbound()
                 .withTotalAmount(BigDecimal.valueOf(2000))
                 .build();
 
-        inboundItem = InboundItemFixture.aDefaultInboundItem()
+        inboundItem = aDefaultInboundItem()
                 .withItem(item)
                 .build();
         inbound.addInboundItems(List.of(inboundItem));
@@ -42,7 +42,7 @@ class InboundTest {
     @DisplayName("[실패]입고에 입고 상품을 등록한다. - 입고 총액과 입고 상품 개별 총액이 일치하지 않는 경우")
     void fail_wrong_total_amount_addInboundItems() {
         final BigDecimal wrongTotalAmount = BigDecimal.valueOf(3000000);
-        final Inbound inbound = InboundFixture.aDefaultInbound()
+        final Inbound inbound = aDefaultInbound()
                 .withTotalAmount(wrongTotalAmount)
                 .build();
 

@@ -1,11 +1,11 @@
 package leejoongseok.wms.outbound.domain;
 
-import leejoongseok.wms.common.fixture.PackagingMaterialDimensionFixture;
-import leejoongseok.wms.common.fixture.PackagingMaterialFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static leejoongseok.wms.common.fixture.PackagingMaterialDimensionFixture.aPackagingMaterialDimension;
+import static leejoongseok.wms.common.fixture.PackagingMaterialFixture.aPackagingMaterial;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PackagingMaterialTest {
@@ -15,14 +15,14 @@ class PackagingMaterialTest {
 
     @BeforeEach
     void setUp() {
-        packagingMaterialDimension = PackagingMaterialDimensionFixture.aPackagingMaterialDimension()
+        packagingMaterialDimension = aPackagingMaterialDimension()
                 .withInnerWidthInMillimeters(100)
                 .withInnerHeightInMillimeters(100)
                 .withInnerLengthInMillimeters(100)
                 .withThicknessInMillimeters(1)
                 .build();
 
-        packagingMaterial = PackagingMaterialFixture.aPackagingMaterial()
+        packagingMaterial = aPackagingMaterial()
                 .withPackagingMaterialDimension(packagingMaterialDimension)
                 .withMaxWeightInGrams(1000)
                 .withName("포장자재1(최대무게 1키로 / 부피 100만)")

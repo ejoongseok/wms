@@ -1,14 +1,14 @@
 package leejoongseok.wms.location.domain;
 
-import leejoongseok.wms.common.fixture.LPNFixture;
-import leejoongseok.wms.common.fixture.LocationFixture;
-import leejoongseok.wms.common.fixture.LocationLPNFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static leejoongseok.wms.common.fixture.LPNFixture.aLPN;
+import static leejoongseok.wms.common.fixture.LocationFixture.aLocation;
+import static leejoongseok.wms.common.fixture.LocationLPNFixture.aLocationLPN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LocationLPNListTest {
@@ -46,12 +46,12 @@ class LocationLPNListTest {
             final int inventoryQuantity,
             final LocalDateTime expirationAt,
             final long itemId) {
-        return LocationLPNFixture.aLocationLPN()
+        return aLocationLPN()
                 .withId(locationLPNId)
-                .withLPN(LPNFixture.aLPN()
+                .withLPN(aLPN()
                         .withExpirationAt(expirationAt)
                         .build())
-                .withLocation(LocationFixture.aLocation()
+                .withLocation(aLocation()
                         .withLocationBarcode(locationBarcode)
                         .build())
                 .withInventoryQuantity(inventoryQuantity)

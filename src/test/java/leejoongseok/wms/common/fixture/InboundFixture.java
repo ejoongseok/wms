@@ -13,7 +13,6 @@ public class InboundFixture {
 
     private static final LocalDateTime orderRequestAt = LocalDateTime.now().minusDays(1);
     private static final LocalDateTime estimatedArrivalAt = LocalDateTime.now().plusDays(1);
-    private static final BigDecimal totalAmount = BigDecimal.valueOf(2000);
     private InstancioApi<Inbound> inboundInstance = Instancio.of(Inbound.class)
             .ignore(Select.field(Inbound::getInboundItems))
             .supply(Select.field(Inbound::getStatus), () -> InboundStatus.ORDER_REQUESTED);

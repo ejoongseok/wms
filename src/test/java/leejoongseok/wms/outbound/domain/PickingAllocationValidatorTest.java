@@ -1,12 +1,5 @@
 package leejoongseok.wms.outbound.domain;
 
-import leejoongseok.wms.common.fixture.ItemFixture;
-import leejoongseok.wms.common.fixture.LPNFixture;
-import leejoongseok.wms.common.fixture.LocationFixture;
-import leejoongseok.wms.common.fixture.LocationLPNFixture;
-import leejoongseok.wms.common.fixture.OutboundFixture;
-import leejoongseok.wms.common.fixture.OutboundItemFixture;
-import leejoongseok.wms.common.fixture.PackagingMaterialFixture;
 import leejoongseok.wms.location.domain.LocationLPN;
 import leejoongseok.wms.location.domain.StorageType;
 import leejoongseok.wms.outbound.exception.NotEnoughInventoryException;
@@ -16,6 +9,14 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static leejoongseok.wms.common.fixture.ItemFixture.aDefaultItem;
+import static leejoongseok.wms.common.fixture.LPNFixture.aLPN;
+import static leejoongseok.wms.common.fixture.LocationFixture.aLocationWithNoLocationLPNList;
+import static leejoongseok.wms.common.fixture.LocationFixture.aLocationWithStow;
+import static leejoongseok.wms.common.fixture.LocationLPNFixture.aLocationLPN;
+import static leejoongseok.wms.common.fixture.OutboundFixture.aOutboundWithPickingReadyStatus;
+import static leejoongseok.wms.common.fixture.OutboundItemFixture.aOutboundItem;
+import static leejoongseok.wms.common.fixture.PackagingMaterialFixture.aPackagingMaterial;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PickingAllocationValidatorTest {
@@ -23,21 +24,21 @@ class PickingAllocationValidatorTest {
     @Test
     @DisplayName("출고하려는 주문이 집품 가능한지 확인.")
     void validate() {
-        final Outbound outbound = OutboundFixture.aOutboundWithPickingReadyStatus()
-                .withRecommendedPackagingMaterial(PackagingMaterialFixture.aPackagingMaterial().build())
-                .withToteLocation(LocationFixture.aLocationWithNoLocationLPNList()
+        final Outbound outbound = aOutboundWithPickingReadyStatus()
+                .withRecommendedPackagingMaterial(aPackagingMaterial().build())
+                .withToteLocation(aLocationWithNoLocationLPNList()
                         .withStorageType(StorageType.TOTE)
                         .build())
                 .withOutboundItems(List.of(
-                        OutboundItemFixture.aOutboundItem()
+                        aOutboundItem()
                                 .withOutboundQuantity(1)
-                                .withItem(ItemFixture.aDefaultItem()
+                                .withItem(aDefaultItem()
                                         .build())
                                 .build()))
                 .build();
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
-                .withLocation(LocationFixture.aLocationWithStow().build())
-                .withLPN(LPNFixture.aLPN()
+        final LocationLPN locationLPN = aLocationLPN()
+                .withLocation(aLocationWithStow().build())
+                .withLPN(aLPN()
                         .withExpirationAt(LocalDateTime.now().plusDays(1))
                         .build())
                 .withInventoryQuantity(1)
@@ -51,21 +52,21 @@ class PickingAllocationValidatorTest {
     @Test
     @DisplayName("출고하려는 주문이 집품 가능한지 확인. - 유통기한 만료")
     void validate_expired() {
-        final Outbound outbound = OutboundFixture.aOutboundWithPickingReadyStatus()
-                .withRecommendedPackagingMaterial(PackagingMaterialFixture.aPackagingMaterial().build())
-                .withToteLocation(LocationFixture.aLocationWithNoLocationLPNList()
+        final Outbound outbound = aOutboundWithPickingReadyStatus()
+                .withRecommendedPackagingMaterial(aPackagingMaterial().build())
+                .withToteLocation(aLocationWithNoLocationLPNList()
                         .withStorageType(StorageType.TOTE)
                         .build())
                 .withOutboundItems(List.of(
-                        OutboundItemFixture.aOutboundItem()
+                        aOutboundItem()
                                 .withOutboundQuantity(1)
-                                .withItem(ItemFixture.aDefaultItem()
+                                .withItem(aDefaultItem()
                                         .build())
                                 .build()))
                 .build();
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
-                .withLocation(LocationFixture.aLocationWithStow().build())
-                .withLPN(LPNFixture.aLPN()
+        final LocationLPN locationLPN = aLocationLPN()
+                .withLocation(aLocationWithStow().build())
+                .withLPN(aLPN()
                         .withExpirationAt(LocalDateTime.now().minusDays(1))
                         .build())
                 .withInventoryQuantity(1)
@@ -81,22 +82,22 @@ class PickingAllocationValidatorTest {
     @Test
     @DisplayName("출고하려는 주문이 집품 가능한지 확인. - 재고 부족")
     void validate_inventory() {
-        final Outbound outbound = OutboundFixture.aOutboundWithPickingReadyStatus()
-                .withRecommendedPackagingMaterial(PackagingMaterialFixture.aPackagingMaterial().build())
-                .withToteLocation(LocationFixture.aLocationWithNoLocationLPNList()
+        final Outbound outbound = aOutboundWithPickingReadyStatus()
+                .withRecommendedPackagingMaterial(aPackagingMaterial().build())
+                .withToteLocation(aLocationWithNoLocationLPNList()
                         .withStorageType(StorageType.TOTE)
                         .build())
                 .withOutboundItems(List.of(
-                        OutboundItemFixture.aOutboundItem()
+                        aOutboundItem()
                                 .withOutboundQuantity(2)
-                                .withItem(ItemFixture.aDefaultItem()
+                                .withItem(aDefaultItem()
                                         .withId(1L)
                                         .build())
                                 .build()))
                 .build();
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
-                .withLocation(LocationFixture.aLocationWithStow().build())
-                .withLPN(LPNFixture.aLPN()
+        final LocationLPN locationLPN = aLocationLPN()
+                .withLocation(aLocationWithStow().build())
+                .withLPN(aLPN()
                         .withExpirationAt(LocalDateTime.now().minusDays(1))
                         .build())
                 .withInventoryQuantity(1)

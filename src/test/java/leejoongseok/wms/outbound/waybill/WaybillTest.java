@@ -1,11 +1,12 @@
 package leejoongseok.wms.outbound.waybill;
 
-import leejoongseok.wms.common.fixture.OutboundFixture;
 import leejoongseok.wms.outbound.domain.Outbound;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static leejoongseok.wms.common.fixture.OutboundFixture.aOutbound;
+import static leejoongseok.wms.common.fixture.OutboundFixture.aOutboundWithNoTrackingNumber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -21,7 +22,7 @@ class WaybillTest {
     @Test
     @DisplayName("출고에대한 운송장을 발행한다.")
     void request() {
-        final Outbound outbound = OutboundFixture.aOutboundWithNoTrackingNumber().build();
+        final Outbound outbound = aOutboundWithNoTrackingNumber().build();
 
         final String trackingNumber = waybill.request(outbound);
 
@@ -31,7 +32,7 @@ class WaybillTest {
     @Test
     @DisplayName("출고에대한 운송장을 발행한다. - 이미 운송장이 발행된 경우 예외가 발생한다.")
     void request_exists_trackingNumber() {
-        final Outbound outbound = OutboundFixture.aOutbound().build();
+        final Outbound outbound = aOutbound().build();
 
         assertThatThrownBy(() -> {
             waybill.request(outbound);

@@ -1,14 +1,15 @@
 package leejoongseok.wms.location.domain;
 
-import leejoongseok.wms.common.fixture.LPNFixture;
-import leejoongseok.wms.common.fixture.LocationFixture;
-import leejoongseok.wms.common.fixture.LocationLPNFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
+import static leejoongseok.wms.common.fixture.LPNFixture.aLPN;
+import static leejoongseok.wms.common.fixture.LocationFixture.aLocationWithMove;
+import static leejoongseok.wms.common.fixture.LocationFixture.aLocationWithStow;
+import static leejoongseok.wms.common.fixture.LocationLPNFixture.aLocationLPN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -57,8 +58,8 @@ class LocationLPNTest {
     @Test
     @DisplayName("LPN의 유통기한이 입력한 날짜보다 남았는지 확인한다. [해당일자는 유통기한 전임.]")
     void isFreshBy() {
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
-                .withLPN(LPNFixture.aLPN()
+        final LocationLPN locationLPN = aLocationLPN()
+                .withLPN(aLPN()
                         .withExpirationAt(LocalDateTime.now())
                         .build())
                 .build();
@@ -72,8 +73,8 @@ class LocationLPNTest {
     @Test
     @DisplayName("LPN의 유통기한이 입력한 날짜보다 남았는지 확인한다. [해당 일자는 유통기한을 지남.]")
     void isExpired() {
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
-                .withLPN(LPNFixture.aLPN()
+        final LocationLPN locationLPN = aLocationLPN()
+                .withLPN(aLPN()
                         .withExpirationAt(LocalDateTime.now())
                         .build())
                 .build();
@@ -97,7 +98,7 @@ class LocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN의 재고 수량이 존재하는지 확인한다. - 비어있음")
     void hasInventory_empty() {
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
+        final LocationLPN locationLPN = aLocationLPN()
                 .withInventoryQuantity(0)
                 .build();
 
@@ -109,11 +110,11 @@ class LocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN이 집품 가능한지 확인한다.")
     void isPickingAllocatable() {
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
-                .withLPN(LPNFixture.aLPN()
+        final LocationLPN locationLPN = aLocationLPN()
+                .withLPN(aLPN()
                         .withExpirationAt(LocalDateTime.now().plusDays(1))
                         .build())
-                .withLocation(LocationFixture.aLocationWithStow().build())
+                .withLocation(aLocationWithStow().build())
                 .withInventoryQuantity(1)
                 .build();
 
@@ -125,11 +126,11 @@ class LocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN이 집품 가능한지 확인한다. - 유통기한 지남")
     void isPickingAllocatable_expiredLPN() {
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
-                .withLPN(LPNFixture.aLPN()
+        final LocationLPN locationLPN = aLocationLPN()
+                .withLPN(aLPN()
                         .withExpirationAt(LocalDateTime.now().minusDays(1))
                         .build())
-                .withLocation(LocationFixture.aLocationWithStow().build())
+                .withLocation(aLocationWithStow().build())
                 .withInventoryQuantity(1)
                 .build();
 
@@ -141,11 +142,11 @@ class LocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN이 집품 가능한지 확인한다. - 사용 용도가 진열이 아님")
     void isPickingAllocatable_invalidUsagePurpose() {
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
-                .withLPN(LPNFixture.aLPN()
+        final LocationLPN locationLPN = aLocationLPN()
+                .withLPN(aLPN()
                         .withExpirationAt(LocalDateTime.now().plusDays(1))
                         .build())
-                .withLocation(LocationFixture.aLocationWithMove().build())
+                .withLocation(aLocationWithMove().build())
                 .withInventoryQuantity(1)
                 .build();
 
@@ -157,11 +158,11 @@ class LocationLPNTest {
     @Test
     @DisplayName("로케이션 LPN이 집품 가능한지 확인한다. - 재고 수량이 0")
     void isPickingAllocatable_inventoryQuantity() {
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
-                .withLPN(LPNFixture.aLPN()
+        final LocationLPN locationLPN = aLocationLPN()
+                .withLPN(aLPN()
                         .withExpirationAt(LocalDateTime.now().plusDays(1))
                         .build())
-                .withLocation(LocationFixture.aLocationWithMove().build())
+                .withLocation(aLocationWithMove().build())
                 .withInventoryQuantity(0)
                 .build();
 
@@ -173,7 +174,7 @@ class LocationLPNTest {
     @Test
     @DisplayName("집품에 필요한 수량만큼 재고를 차감한다.")
     void deductInventory() {
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
+        final LocationLPN locationLPN = aLocationLPN()
                 .withInventoryQuantity(10)
                 .build();
         final int quantityRequiredForPick = 5;
@@ -186,7 +187,7 @@ class LocationLPNTest {
     @Test
     @DisplayName("집품에 필요한 수량만큼 재고를 차감한다. - 차감할 수량이 재고 수량보다 많음")
     void deductInventory_over_pick_quantity() {
-        final LocationLPN locationLPN = LocationLPNFixture.aLocationLPN()
+        final LocationLPN locationLPN = aLocationLPN()
                 .withInventoryQuantity(10)
                 .build();
         final int quantityRequiredForPick = 50;

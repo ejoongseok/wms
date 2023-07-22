@@ -1,8 +1,5 @@
 package leejoongseok.wms.outbound.domain;
 
-import leejoongseok.wms.common.fixture.LPNFixture;
-import leejoongseok.wms.common.fixture.LocationFixture;
-import leejoongseok.wms.common.fixture.LocationLPNFixture;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationLPN;
@@ -12,19 +9,22 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static leejoongseok.wms.common.fixture.LPNFixture.aLPN;
+import static leejoongseok.wms.common.fixture.LocationFixture.aLocation;
+import static leejoongseok.wms.common.fixture.LocationLPNFixture.aLocationLPN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PickingCreatorTest {
 
     private static LPN createLPN() {
-        return LPNFixture.aLPN()
+        return aLPN()
                 .withExpirationAt(LocalDateTime.now().plusDays(1L))
                 .withItemId(1L)
                 .build();
     }
 
     private static Location createLocation(final String locationBarcode) {
-        return LocationFixture.aLocation()
+        return aLocation()
                 .withLocationBarcode(locationBarcode)
                 .build();
     }
@@ -33,21 +33,21 @@ class PickingCreatorTest {
     @DisplayName("재고가 집품해야할 수량보다 충분하면 출고상품의 집품목록을 생성한다.")
     void createPickings() {
         final List<LocationLPN> locationLPNList = List.of(
-                LocationLPNFixture.aLocationLPN()
+                aLocationLPN()
                         .withId(3L)
                         .withLPN(createLPN())
                         .withLocation(createLocation("locationBarcode-3"))
                         .withInventoryQuantity(3)
                         .withItemId(1L)
                         .build(),
-                LocationLPNFixture.aLocationLPN()
+                aLocationLPN()
                         .withId(2L)
                         .withLPN(createLPN())
                         .withLocation(createLocation("locationBarcode-2"))
                         .withInventoryQuantity(2)
                         .withItemId(1L)
                         .build(),
-                LocationLPNFixture.aLocationLPN()
+                aLocationLPN()
                         .withId(1L)
                         .withLPN(createLPN())
                         .withLocation(createLocation("locationBarcode-1"))

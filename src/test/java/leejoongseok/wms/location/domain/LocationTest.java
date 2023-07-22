@@ -1,12 +1,17 @@
 package leejoongseok.wms.location.domain;
 
-import leejoongseok.wms.common.fixture.LPNFixture;
-import leejoongseok.wms.common.fixture.LocationFixture;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.location.exception.LocationLPNNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static leejoongseok.wms.common.fixture.LPNFixture.aLPN;
+import static leejoongseok.wms.common.fixture.LocationFixture.aLocation;
+import static leejoongseok.wms.common.fixture.LocationFixture.aLocationWithCell;
+import static leejoongseok.wms.common.fixture.LocationFixture.aLocationWithMove;
+import static leejoongseok.wms.common.fixture.LocationFixture.aLocationWithNoLocationLPNList;
+import static leejoongseok.wms.common.fixture.LocationFixture.aLocationWithStow;
+import static leejoongseok.wms.common.fixture.LocationFixture.aLocationWithTote;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -15,9 +20,9 @@ class LocationTest {
     @Test
     @DisplayName("로케이션에 LPN을 등록한다.")
     void assignLPN() {
-        final Location location = LocationFixture.aLocationWithNoLocationLPNList()
+        final Location location = aLocationWithNoLocationLPNList()
                 .build();
-        final LPN lpn = LPNFixture.aLPN()
+        final LPN lpn = aLPN()
                 .withLPNBarcode("lpnBarcode")
                 .build();
 
@@ -44,9 +49,9 @@ class LocationTest {
     @Test
     @DisplayName("로케이션에 같은 LPN을 두번 등록할 경우 LocationLPN은 하나만 생성되고 재고수량이 2가 된다.")
     void duplicate_assignLPN() {
-        final Location location = LocationFixture.aLocationWithNoLocationLPNList()
+        final Location location = aLocationWithNoLocationLPNList()
                 .build();
-        final LPN lpn = LPNFixture.aLPN()
+        final LPN lpn = aLPN()
                 .withLPNBarcode("lpnBarcode")
                 .build();
 
@@ -61,9 +66,9 @@ class LocationTest {
     @Test
     @DisplayName("직접 입력한 재고 수량을 로케이션 LPN에 추가한다.")
     void addManualInventoryToLocationLPN() {
-        final Location location = LocationFixture.aLocationWithNoLocationLPNList()
+        final Location location = aLocationWithNoLocationLPNList()
                 .build();
-        final LPN lpn = LPNFixture.aLPN()
+        final LPN lpn = aLPN()
                 .withLPNBarcode("lpnBarcode")
                 .build();
         location.assignLPN(lpn);
@@ -78,9 +83,9 @@ class LocationTest {
     @Test
     @DisplayName("[실패] 직접 입력한 재고 수량을 로케이션 LPN에 추가한다. - locationLPN이 없는 경우")
     void fail_not_found_location_lpn_addManualInventoryToLocationLPN() {
-        final Location location = LocationFixture.aLocation()
+        final Location location = aLocation()
                 .build();
-        final LPN lpn = LPNFixture.aLPN()
+        final LPN lpn = aLPN()
                 .withLPNBarcode("lpnBarcode")
                 .build();
         final int inventoryQuantity = 10;
@@ -94,9 +99,9 @@ class LocationTest {
     @Test
     @DisplayName("[실패] 직접 입력한 재고 수량을 로케이션 LPN에 추가한다. - 추가하려는 재고 수량이 0보다 작거나 같은경우")
     void fail_invalid_inventory_quantity_addManualInventoryToLocationLPN() {
-        final Location location = LocationFixture.aLocation()
+        final Location location = aLocation()
                 .build();
-        final LPN lpn = LPNFixture.aLPN()
+        final LPN lpn = aLPN()
                 .withLPNBarcode("lpnBarcode")
                 .build();
         location.assignLPN(lpn);
@@ -111,7 +116,7 @@ class LocationTest {
     @Test
     @DisplayName("로케이션이 토트인지 확인한다.")
     void isTote() {
-        final Location tote = LocationFixture.aLocationWithTote()
+        final Location tote = aLocationWithTote()
                 .build();
 
         final boolean isTote = tote.isTote();
@@ -122,7 +127,7 @@ class LocationTest {
     @Test
     @DisplayName("로케이션이 토트인지 확인한다. - 토트가 아닌 경우 isTote는 false")
     void isCell() {
-        final Location cell = LocationFixture.aLocationWithCell()
+        final Location cell = aLocationWithCell()
                 .build();
 
         final boolean isTote = cell.isTote();
@@ -133,9 +138,9 @@ class LocationTest {
     @Test
     @DisplayName("로케이션에 LPN이 있는지 확인한다.")
     void hasLocationLPN() {
-        final Location location = LocationFixture.aLocation()
+        final Location location = aLocation()
                 .build();
-        final LPN lpn = LPNFixture.aLPN()
+        final LPN lpn = aLPN()
                 .withLPNBarcode("lpnBarcode")
                 .build();
         location.assignLPN(lpn);
@@ -148,7 +153,7 @@ class LocationTest {
     @Test
     @DisplayName("로케이션에 LPN이 있는지 확인한다. - LPN이 없는 경우 false")
     void hasLocationLPN_fals() {
-        final Location location = LocationFixture.aLocationWithNoLocationLPNList()
+        final Location location = aLocationWithNoLocationLPNList()
                 .build();
 
         final boolean hasLocationLPN = location.hasLocationLPN();
@@ -159,7 +164,7 @@ class LocationTest {
     @Test
     @DisplayName("로케이션의 용도가 진열인지 확인한다.")
     void isStow() {
-        final Location location = LocationFixture.aLocationWithStow()
+        final Location location = aLocationWithStow()
                 .build();
 
         final boolean isStow = location.isStow();
@@ -171,7 +176,7 @@ class LocationTest {
     @Test
     @DisplayName("로케이션의 용도가 진열인지 확인한다. - 진열이 아닌 경우 false")
     void isStow_false() {
-        final Location location = LocationFixture.aLocationWithMove()
+        final Location location = aLocationWithMove()
                 .build();
 
         final boolean isStow = location.isStow();
@@ -182,9 +187,9 @@ class LocationTest {
     @Test
     @DisplayName("하위 로케이션을 추가한다.")
     void addChildLocation() {
-        final Location parentLocation = LocationFixture.aLocationWithTote()
+        final Location parentLocation = aLocationWithTote()
                 .build();
-        final Location childLocation = LocationFixture.aLocationWithCell()
+        final Location childLocation = aLocationWithCell()
                 .build();
 
         parentLocation.addChildLocation(childLocation);
@@ -197,9 +202,9 @@ class LocationTest {
     @Test
     @DisplayName("하위 로케이션을 추가한다. - 하위 로케이션이 이미 추가된 경우")
     void addChildLocation_already_exists() {
-        final Location parentLocation = LocationFixture.aLocationWithTote()
+        final Location parentLocation = aLocationWithTote()
                 .build();
-        final Location childLocation = LocationFixture.aLocationWithCell()
+        final Location childLocation = aLocationWithCell()
                 .build();
 
         parentLocation.addChildLocation(childLocation);
@@ -212,9 +217,9 @@ class LocationTest {
     @Test
     @DisplayName("하위 로케이션을 추가한다. - 하위 로케이션의 크기가 부모 로케이션의 크기보다 큰 경우")
     void addChildLocation_over_size() {
-        final Location parentLocation = LocationFixture.aLocationWithCell()
+        final Location parentLocation = aLocationWithCell()
                 .build();
-        final Location childLocation = LocationFixture.aLocationWithTote()
+        final Location childLocation = aLocationWithTote()
                 .build();
 
         assertThatThrownBy(() -> {
@@ -227,11 +232,11 @@ class LocationTest {
     @Test
     @DisplayName("입력한 수량만큼 LocationLPN의 재고를 추가한다.")
     void increaseInventory() {
-        final Location fromLocation = LocationFixture.aLocation()
+        final Location fromLocation = aLocation()
                 .build();
-        final Location toLocation = LocationFixture.aLocation()
+        final Location toLocation = aLocation()
                 .build();
-        final LPN lpn = LPNFixture.aLPN()
+        final LPN lpn = aLPN()
                 .withLPNBarcode("lpnBarcode")
                 .build();
         fromLocation.assignLPN(lpn);
@@ -248,11 +253,11 @@ class LocationTest {
     @Test
     @DisplayName("입력한 수량만큼 LocationLPN의 재고를 추가한다. - 추가하려는 재고가 0이하")
     void increaseInventory_zero_quantity() {
-        final Location fromLocation = LocationFixture.aLocation()
+        final Location fromLocation = aLocation()
                 .build();
-        final Location toLocation = LocationFixture.aLocation()
+        final Location toLocation = aLocation()
                 .build();
-        final LPN lpn = LPNFixture.aLPN()
+        final LPN lpn = aLPN()
                 .withLPNBarcode("lpnBarcode")
                 .build();
         fromLocation.assignLPN(lpn);
