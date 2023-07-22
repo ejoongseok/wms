@@ -1,9 +1,8 @@
-package leejoongseok.wms.outbound.domain;
+package leejoongseok.wms.location.domain;
 
 import leejoongseok.wms.common.fixture.LPNFixture;
 import leejoongseok.wms.common.fixture.LocationFixture;
 import leejoongseok.wms.common.fixture.LocationLPNFixture;
-import leejoongseok.wms.location.domain.LocationLPN;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

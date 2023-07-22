@@ -1,6 +1,5 @@
-package leejoongseok.wms.outbound.domain;
+package leejoongseok.wms.location.domain;
 
-import leejoongseok.wms.location.domain.LocationLPN;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ public final class LocationLPNList {
         this.locationLPNList = locationLPNList;
     }
 
-    List<LocationLPN> getEfficiencyLocationLPNList(final Long itemId) {
+    public List<LocationLPN> getEfficiencyLocationLPNList(final Long itemId) {
         final List<LocationLPN> locationLPNList = listFrom(itemId);
         return sort(locationLPNList);
     }

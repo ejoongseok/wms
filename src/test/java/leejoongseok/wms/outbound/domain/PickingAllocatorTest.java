@@ -9,6 +9,7 @@ import leejoongseok.wms.common.fixture.OutboundItemFixture;
 import leejoongseok.wms.inbound.domain.LPN;
 import leejoongseok.wms.location.domain.Location;
 import leejoongseok.wms.location.domain.LocationLPN;
+import leejoongseok.wms.location.domain.LocationLPNList;
 import leejoongseok.wms.outbound.exception.NotEnoughInventoryException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
